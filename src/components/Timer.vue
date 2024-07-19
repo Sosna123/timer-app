@@ -31,8 +31,6 @@ export default defineComponent({
                 currentTimeStr.value = formatNormal(currentTime.value.toString())
                 timerRunning = false
                 const time = {id: timeId, str: currentTimeStr.value, num: currentTime.value, added2: false, addedDnf: false}
-                console.log(timeId)
-                console.log(time)
                 timeId++
                 
                 jscookie.set({
@@ -48,6 +46,12 @@ export default defineComponent({
         if(jscookie.get("timeId")){
             timeId = jscookie.get("timeId")
         }
+
+        document.body.addEventListener("keyup", (e) => {
+            if(e.code == "Space"){
+                manageTimer()
+            }
+        })
 
         //* return
         return{
