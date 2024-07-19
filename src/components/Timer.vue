@@ -8,11 +8,13 @@ import formatNormal from '@/js/timeFormat';
 export default defineComponent({
     setup(props, { emit }){
         //* vars
+        let jscookie = require("jscookie")
         let currentTimeStr = ref<string>("0.00")
         let currentTime = ref<number>(0)
         let startOfTimer : number|null = null
         let timerRunning: boolean = false
-        let intervalTimer:any = null
+        let intervalTimer: undefined|number
+        let timeId: number = 0
 
         //* functions
         function manageTimer(){
@@ -25,13 +27,26 @@ export default defineComponent({
                 timerRunning = true
             }else{
                 clearInterval(intervalTimer)
-                currentTime.value = new Date().getTime() - startOfTimer!
-                currentTimeStr.value = formatNormal((Math.trunc(currentTime.value/10)).toString())
+                currentTime.value = Math.trunc((new Date().getTime() - startOfTimer!) / 10)
+                currentTimeStr.value = formatNormal(currentTime.value.toString())
                 timerRunning = false
-                const time = {str: currentTimeStr.value, num: currentTime.value}
+                const time = {id: timeId, str: currentTimeStr.value, num: currentTime.value, added2: false, addedDnf: false}
+                console.log(timeId)
+                console.log(time)
+                timeId++
+                
+                jscookie.set({
+                    name:"timeId",
+                    value: timeId,
+                    exdays: 365 * 10
+                })
+
                 emit('time-done', time)
             }
+        }
 
+        if(jscookie.get("timeId")){
+            timeId = jscookie.get("timeId")
         }
 
         //* return
