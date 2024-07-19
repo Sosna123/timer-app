@@ -1,14 +1,14 @@
 <template>
-    <div @click="manageTimer()" class="fs-1">{{ currentTimeStr }}</div>
+    <div @click="manageTimer();" class="fs-1">{{ currentTimeStr }}</div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import formatNormal from '@/js/timeFormat';
 export default defineComponent({
-    setup(){
+    setup(props, { emit }){
         //* vars
-        let currentTimeStr = ref<string>("click me")
+        let currentTimeStr = ref<string>("0.00")
         let currentTime = ref<number>(0)
         let startOfTimer : number|null = null
         let timerRunning: boolean = false
@@ -28,6 +28,8 @@ export default defineComponent({
                 currentTime.value = new Date().getTime() - startOfTimer!
                 currentTimeStr.value = formatNormal((Math.trunc(currentTime.value/10)).toString())
                 timerRunning = false
+                const time = {str: currentTimeStr.value, num: currentTime.value}
+                emit('time-done', time)
             }
 
         }
