@@ -16,12 +16,20 @@ import Timer from "../components/Timer.vue"
 import TimeList from "../components/TimeList.vue"
 export default defineComponent({
     setup(){
+        let jscookie = require("jscookie")
         let timeArray = ref<{str:string, num:number}[]>([])
         
         function addTime(time:{str:string, num:number}){
             timeArray.value.push(time)
+            jscookie.set({
+                name:"timeList",
+                value: JSON.stringify(timeArray.value),
+                exdays: 365 * 10
+            })
         }
         
+        timeArray = JSON.parse(jscookie.get('timeList'))
+
         return{
             timeArray,
             addTime
@@ -32,5 +40,11 @@ export default defineComponent({
 </script>
 
 <style>
+.timeList{
+    height: 100vh;
+}
 
+.headingTimeList{
+    display: sticky;
+}
 </style>
