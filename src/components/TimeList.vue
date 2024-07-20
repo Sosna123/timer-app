@@ -2,6 +2,7 @@
     <div
         class="timeList bg-primary-subtle overflow-y-scroll overflow-x-hidden p-3 d-inline-block float-start">
         <h1 class="headingTimeList">Your times:</h1>
+        <h3>Your PB: {{ pbTime.str }}</h3>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
                 {{ time.str }}
@@ -29,6 +30,19 @@ export default defineComponent({
                 addedDnf: boolean;
             }[]
         >([]);
+        let pbTime = ref<{
+            id: number;
+            str: string;
+            num: number;
+            added2: boolean;
+            addedDnf: boolean;
+        }>({
+            id: 0,
+            str: "0.00",
+            num: 0,
+            added2: false,
+            addedDnf: false,
+        });
         let changeScramble: number = 0;
 
         function addTime(time: {
@@ -39,20 +53,7 @@ export default defineComponent({
             addedDnf: boolean;
         }) {
             timeArray.value.push(time);
-
-            jscookie.set({
-                name: "timeList",
-                value: JSON.stringify(timeArray.value),
-                exdays: 365 * 10,
-            });
         }
-
-        watch(
-            () => props.time,
-            (time) => {
-                addTime(time);
-            }
-        );
 
         function modifyTime(
             action: "plus2" | "dnf" | "remove",
@@ -108,13 +109,68 @@ export default defineComponent({
                     }
                 });
             }
-
-            jscookie.set({
-                name: "timeList",
-                value: JSON.stringify(timeArray.value),
-                exdays: 365 * 10,
-            });
         }
+
+        watch(
+            () => props.time,
+            (time) => {
+                addTime(time);
+            }
+        );
+
+        watch(
+            () => timeArray.value,
+            () => {
+                // cookies change
+                jscookie.set({
+                    name: "timeList",
+                    value: JSON.stringify(timeArray.value),
+                    exdays: 365 * 10,
+                });
+
+                // pb change
+                let timeArrayCopy = timeArray.value;
+                timeArrayCopy = timeArrayCopy.filter((e) => !e.addedDnf);
+                if (timeArrayCopy.length > 0) {
+                    pbTime.value = timeArrayCopy.sort(
+                        (
+                            a: {
+                                id: number;
+                                str: string;
+                                num: number;
+                                added2: boolean;
+                                addedDnf: boolean;
+                            },
+                            b: {
+                                id: number;
+                                str: string;
+                                num: number;
+                                added2: boolean;
+                                addedDnf: boolean;
+                            }
+                        ) => {
+                            if (a.num > b.num && !a.addedDnf) {
+                                return 1;
+                            } else if (a.num < b.num && !b.addedDnf) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    )[0];
+                } else {
+                    console.log("no pb");
+                    pbTime.value = {
+                        id: 0,
+                        str: "0.00",
+                        num: 0,
+                        added2: false,
+                        addedDnf: false,
+                    };
+                }
+            },
+            { deep: true }
+        );
 
         if (jscookie.get("timeList")) {
             timeArray.value = JSON.parse(jscookie.get("timeList"));
@@ -123,6 +179,7 @@ export default defineComponent({
         return {
             timeArray,
             changeScramble,
+            pbTime,
             addTime,
             modifyTime,
         };

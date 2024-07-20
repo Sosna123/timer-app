@@ -64,6 +64,9 @@ export default defineComponent({
         }
 
         document.body.addEventListener("keyup", (e) => {
+            if (timerRunning && e.code != "Space") {
+                manageTimer();
+            }
             if (e.code == "Space") {
                 manageTimer();
             }
