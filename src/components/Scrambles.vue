@@ -33,7 +33,7 @@ export default defineComponent({
 
 <style>
 .scrambles{
-    height: 10vh;
+    height: 15vh;
     width: 70%;
 }
 

@@ -68,7 +68,7 @@ export default defineComponent({
 
 <style>
 .timerDiv{
-    height: 90vh;
+    height: 85vh;
     width: 70%;
 }
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="timeList bg-primary-subtle overflow-scroll p-3 d-inline-block float-start">
+    <div class="timeList bg-primary-subtle overflow-y-scroll overflow-x-hidden p-3 d-inline-block float-start">
         <h1 class="headingTimeList">Your times:</h1>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
