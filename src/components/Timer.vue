@@ -5,6 +5,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import formatNormal from '@/js/timeFormat';
+import Scrambles from '@/components/Scrambles.vue'
 export default defineComponent({
     setup(props, { emit }){
         //* vars
@@ -58,7 +59,8 @@ export default defineComponent({
             currentTimeStr,
             manageTimer
         }
-    }
+    },
+    components: {Scrambles}
 })
 </script>
 

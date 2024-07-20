@@ -10,12 +10,14 @@
             </li>
         </ul>
     </div>
+    <Scrambles />
     <Timer class="float-start" @time-done="i => addTime(i)"/>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import Timer from "../components/Timer.vue"
+import Scrambles from '@/components/Scrambles.vue'
 import formatNormal from '@/js/timeFormat';
 export default defineComponent({
     setup(){
@@ -93,7 +95,7 @@ export default defineComponent({
             addTime, modifyTime
         }
     },
-    components: {Timer}
+    components: {Timer, Scrambles}
 })
 </script>
 
