@@ -1,6 +1,22 @@
 <template>
-    <div
-        class="scrambles bg-dark-subtle p-1 text-center float-start d-flex align-items-center justify-content-center">
+    <div class="scrambles bg-dark-subtle p-1 text-center float-start">
+        <select
+            name="scramble-type"
+            id="scramble-type"
+            class="d-block text-center"
+            v-model="scrambleType">
+            <option value="333">3x3</option>
+            <option value="222">2x2</option>
+            <option value="444">4x4</option>
+            <option value="555">5x5</option>
+            <option value="666">6x6</option>
+            <option value="777">7x7</option>
+            <option value="clock">Clock</option>
+            <option value="minx">Megaminx</option>
+            <option value="pyram">Pyraminx</option>
+            <option value="skewb">Skewb</option>
+            <option value="sq1">Square-1</option>
+        </select>
         <h3 @click="changeScramble()" class="m-1 ms-2 fs-2">
             {{ scramble[0].scramble_string }}
         </h3>
@@ -15,8 +31,29 @@ export default defineComponent({
     props: ["changeScramble"],
     setup(props) {
         const Scrambow = require("scrambow").Scrambow;
-        const scrambleGen = new Scrambow();
+        let scrambleGen = new Scrambow();
         let scramble = ref<{ scramble_string: string }[]>(scrambleGen.get(1));
+        type ScrambleType =
+            | "333"
+            | "222"
+            | "444"
+            | "555"
+            | "666"
+            | "777"
+            | "clock"
+            | "minx"
+            | "pyram"
+            | "skweb"
+            | "sq1";
+        let scrambleType = ref<ScrambleType>("333");
+
+        watch(
+            () => scrambleType.value,
+            (scramType) => {
+                scrambleGen = new Scrambow().setType(scramType);
+                changeScramble();
+            }
+        );
 
         function changeScramble() {
             scramble.value = scrambleGen.get(1);
@@ -31,6 +68,7 @@ export default defineComponent({
 
         return {
             scramble,
+            scrambleType,
             changeScramble,
         };
     },
