@@ -5,39 +5,42 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { ref } from 'vue';
-import { watch } from 'vue';
+import { defineComponent } from "vue";
+import { ref } from "vue";
+import { watch } from "vue";
 export default defineComponent({
-    props:['changeScramble'],
-    setup(props){
-        const Scrambow = require("scrambow").Scrambow
-        const scrambleGen = new Scrambow()
-        let scramble = ref<{"scramble_string":string}[]>(scrambleGen.get(1))
+    props: ["changeScramble"],
+    setup(props) {
+        const Scrambow = require("scrambow").Scrambow;
+        const scrambleGen = new Scrambow();
+        let scramble = ref<{ scramble_string: string }[]>(scrambleGen.get(1));
 
-        function changeScramble(){
-            scramble.value = scrambleGen.get(1)
+        function changeScramble() {
+            scramble.value = scrambleGen.get(1);
         }
 
-        watch(() => props.changeScramble, () => {
-            changeScramble()
-        })
+        watch(
+            () => props.changeScramble,
+            () => {
+                changeScramble();
+            }
+        );
 
-        return{
+        return {
             scramble,
-            changeScramble
-        }
-    }
-})
+            changeScramble,
+        };
+    },
+});
 </script>
 
 <style>
-.scrambles{
+.scrambles {
     height: 15vh;
     width: 70%;
 }
 
-.scrambles > h3{
+.scrambles > h3 {
     cursor: pointer;
 }
 </style>
