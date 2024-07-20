@@ -1,5 +1,6 @@
 <template>
-    <div class="timerDiv text-center d-flex align-items-center justify-content-center">
+    <div
+        class="timerDiv text-center d-flex align-items-center justify-content-center">
         <p @click="manageTimer()" class="timerText">{{ currentTimeStr }}</p>
     </div>
 </template>
@@ -25,13 +26,19 @@ export default defineComponent({
                 startOfTimer = new Date().getTime();
                 intervalTimer = setInterval(() => {
                     currentTime.value = new Date().getTime() - startOfTimer!;
-                    currentTimeStr.value = formatNormal(Math.trunc(currentTime.value / 10).toString());
+                    currentTimeStr.value = formatNormal(
+                        Math.trunc(currentTime.value / 10).toString()
+                    );
                 }, 10);
                 timerRunning = true;
             } else {
                 clearInterval(intervalTimer);
-                currentTime.value = Math.trunc((new Date().getTime() - startOfTimer!) / 10);
-                currentTimeStr.value = formatNormal(currentTime.value.toString());
+                currentTime.value = Math.trunc(
+                    (new Date().getTime() - startOfTimer!) / 10
+                );
+                currentTimeStr.value = formatNormal(
+                    currentTime.value.toString()
+                );
                 timerRunning = false;
                 const time = {
                     id: timeId,

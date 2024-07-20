@@ -1,5 +1,6 @@
 <template>
-    <div class="timeList bg-primary-subtle overflow-y-scroll overflow-x-hidden p-3 d-inline-block float-start">
+    <div
+        class="timeList bg-primary-subtle overflow-y-scroll overflow-x-hidden p-3 d-inline-block float-start">
         <h1 class="headingTimeList">Your times:</h1>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
@@ -19,10 +20,24 @@ export default defineComponent({
     props: ["time"],
     setup(props) {
         let jscookie = require("jscookie");
-        let timeArray = ref<{ id: number; str: string; num: number; added2: boolean; addedDnf: boolean }[]>([]);
+        let timeArray = ref<
+            {
+                id: number;
+                str: string;
+                num: number;
+                added2: boolean;
+                addedDnf: boolean;
+            }[]
+        >([]);
         let changeScramble: number = 0;
 
-        function addTime(time: { id: number; str: string; num: number; added2: boolean; addedDnf: boolean }) {
+        function addTime(time: {
+            id: number;
+            str: string;
+            num: number;
+            added2: boolean;
+            addedDnf: boolean;
+        }) {
             timeArray.value.push(time);
 
             jscookie.set({
@@ -41,7 +56,13 @@ export default defineComponent({
 
         function modifyTime(
             action: "plus2" | "dnf" | "remove",
-            time: { id: number; str: string; num: number; added2: boolean; addedDnf: boolean }
+            time: {
+                id: number;
+                str: string;
+                num: number;
+                added2: boolean;
+                addedDnf: boolean;
+            }
         ) {
             if (action == "plus2") {
                 timeArray.value.forEach((e) => {

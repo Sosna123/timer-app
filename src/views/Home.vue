@@ -17,10 +17,22 @@ import Timer from "../components/Timer.vue";
 import Scrambles from "@/components/Scrambles.vue";
 export default defineComponent({
     setup() {
-        let time = ref<{ id: number; str: string; num: number; added2: boolean; addedDnf: boolean }>();
+        let time = ref<{
+            id: number;
+            str: string;
+            num: number;
+            added2: boolean;
+            addedDnf: boolean;
+        }>();
         let changeScramble: number = 0;
 
-        function addTime(i: { id: number; str: string; num: number; added2: boolean; addedDnf: boolean }) {
+        function addTime(i: {
+            id: number;
+            str: string;
+            num: number;
+            added2: boolean;
+            addedDnf: boolean;
+        }) {
             time.value = i;
         }
 

@@ -1,6 +1,9 @@
 <template>
-    <div class="scrambles bg-dark-subtle p-1 text-center float-start d-flex align-items-center justify-content-center">
-        <h3 @click="changeScramble()" class="m-1 ms-2 fs-2">{{ scramble[0].scramble_string }}</h3>
+    <div
+        class="scrambles bg-dark-subtle p-1 text-center float-start d-flex align-items-center justify-content-center">
+        <h3 @click="changeScramble()" class="m-1 ms-2 fs-2">
+            {{ scramble[0].scramble_string }}
+        </h3>
     </div>
 </template>
 
