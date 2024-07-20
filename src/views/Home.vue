@@ -10,8 +10,8 @@
             </li>
         </ul>
     </div>
-    <Scrambles />
-    <Timer class="float-start" @time-done="i => addTime(i)"/>
+    <Scrambles :change-scramble="changeScramble"/>
+    <Timer class="float-start" @time-done="i => {addTime(i); changeScramble++}"/>
 </template>
 
 <script lang="ts">
@@ -23,6 +23,7 @@ export default defineComponent({
     setup(){
         let jscookie = require("jscookie")
         let timeArray = ref<{id:number, str:string, num:number, added2:boolean, addedDnf:boolean}[]>([])
+        let changeScramble:number = 0
         
         function addTime(time:{id:number, str:string, num:number, added2:boolean, addedDnf:boolean}){
             timeArray.value.push(time)
@@ -91,7 +92,7 @@ export default defineComponent({
         }
 
         return{
-            timeArray,
+            timeArray, changeScramble,
             addTime, modifyTime
         }
     },

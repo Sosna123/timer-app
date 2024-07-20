@@ -10,7 +10,6 @@
     "bootstrap": "^5.3.3",
     "crypto-browserify": "^3.12.0",
     "jscookie": "^1.1.0",
-    "mitt": "^3.0.1",
     "scrambow": "^1.8.1",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3"

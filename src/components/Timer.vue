@@ -1,5 +1,7 @@
 <template>
-    <div @click="manageTimer();" class="fs-1">{{ currentTimeStr }}</div>
+    <div class="timerDiv text-center d-flex align-items-center justify-content-center">
+        <p @click="manageTimer();" class="timerText">{{ currentTimeStr }}</p>
+    </div>
 </template>
 
 <script lang="ts">
@@ -60,10 +62,18 @@ export default defineComponent({
             manageTimer
         }
     },
-    components: {Scrambles}
+    components: {Scrambles},
 })
 </script>
 
 <style>
+.timerDiv{
+    height: 90vh;
+    width: 70%;
+}
 
+.timerText{
+    cursor: pointer;
+    font-size: 128px;
+}
 </style>
