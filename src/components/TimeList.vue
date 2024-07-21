@@ -3,6 +3,7 @@
         class="timeList bg-primary-subtle overflow-y-scroll overflow-x-hidden p-3 d-inline-block float-start">
         <h1 class="headingTimeList">Your times:</h1>
         <h3>Your PB: {{ pbTime.str }}</h3>
+        <h3>Your ao5: {{}}</h3>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
                 {{ time.str }}
@@ -28,6 +29,19 @@ export default defineComponent({
                 num: number;
                 added2: boolean;
                 addedDnf: boolean;
+            }[]
+        >([]);
+        let timeArrayAvgs = ref<
+            {
+                id: number;
+                str: string;
+                num: number;
+                added2: boolean;
+                addedDnf: boolean;
+                ao5: {
+                    str: string;
+                    num: number;
+                };
             }[]
         >([]);
         let pbTime = ref<{
@@ -172,12 +186,70 @@ export default defineComponent({
             { deep: true }
         );
 
+        function calcAvgs(time: {
+            id: number;
+            num: number;
+            str: string;
+            added2: boolean;
+            addedDnf: boolean;
+        }) {
+            let timeArrayCopy = timeArray.value;
+            timeArrayCopy
+                .filter((e) => {
+                    if (
+                        e.id == time.id ||
+                        e.id == time.id - 1 ||
+                        e.id == time.id - 2 ||
+                        e.id == time.id - 3 ||
+                        e.id == time.id - 4
+                    ) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                })
+                .sort((a, b) => {
+                    if (a.num > b.num && !a.addedDnf) {
+                        return 1;
+                    } else if (a.num < b.num && !b.addedDnf) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+            timeArrayCopy.pop();
+            timeArrayCopy.shift();
+            let avg5 = timeArrayCopy.reduce((acc, e) => {
+                acc.num += e.num;
+                return acc;
+            });
+            avg5.num = avg5.num / 3;
+            let result = {
+                id: time.id,
+                str: time.str,
+                num: time.num,
+                added2: false,
+                addedDnf: false,
+                ao5: {
+                    str: formatNormal(avg5.num.toString()),
+                    num: avg5.num,
+                },
+            };
+
+            timeArrayAvgs.value.push(result);
+        }
+
+        timeArray.value.forEach((e) => {
+            calcAvgs(e);
+        });
+
         if (jscookie.get("timeList")) {
             timeArray.value = JSON.parse(jscookie.get("timeList"));
         }
 
         return {
             timeArray,
+            timeArrayAvgs,
             changeScramble,
             pbTime,
             addTime,
