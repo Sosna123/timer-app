@@ -30,6 +30,7 @@ import { watch } from "vue";
 export default defineComponent({
     props: ["changeScramble"],
     setup(props) {
+        //* vars
         const Scrambow = require("scrambow").Scrambow;
         let scrambleGen = new Scrambow();
         let scramble = ref<{ scramble_string: string }[]>(scrambleGen.get(1));
@@ -47,6 +48,7 @@ export default defineComponent({
             | "sq1";
         let scrambleType = ref<ScrambleType>("333");
 
+        //* watch if scramble type changes
         watch(
             () => scrambleType.value,
             (scramType) => {
@@ -55,10 +57,12 @@ export default defineComponent({
             }
         );
 
+        //* change the scramble
         function changeScramble() {
             scramble.value = scrambleGen.get(1);
         }
 
+        //* watch if you need to change scramble
         watch(
             () => props.changeScramble,
             () => {

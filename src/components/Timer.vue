@@ -20,9 +20,10 @@ export default defineComponent({
         let intervalTimer: undefined | number;
         let timeId: number = 0;
 
-        //* functions
+        //* change state of timer
         function manageTimer() {
             if (!timerRunning) {
+                //* start timer if its not running
                 startOfTimer = new Date().getTime();
                 intervalTimer = setInterval(() => {
                     currentTime.value = new Date().getTime() - startOfTimer!;
@@ -32,6 +33,7 @@ export default defineComponent({
                 }, 10);
                 timerRunning = true;
             } else {
+                //* stop timer if its running
                 clearInterval(intervalTimer);
                 currentTime.value = Math.trunc(
                     (new Date().getTime() - startOfTimer!) / 10
@@ -55,25 +57,32 @@ export default defineComponent({
                     exdays: 365 * 10,
                 });
 
+                //* send the time to TimeList
                 emit("time-done", time);
             }
         }
 
+        //* check if time is removed to update timeId
         watch(
             () => props.removeTime,
             (removeTime) => {
-                console.log("change found in removeTime");
                 if (jscookie.get("timeId")) {
-                    console.log("time removed and restoring timeid");
                     timeId = jscookie.get("timeId");
+                    jscookie.set({
+                        name: "timeId",
+                        value: timeId,
+                        exdays: 365 * 10,
+                    });
                 }
             }
         );
 
+        //* load timeId from cookie
         if (jscookie.get("timeId")) {
             timeId = jscookie.get("timeId");
         }
 
+        //* turn on the timer when space is pressed
         document.body.addEventListener("keyup", (e) => {
             if (timerRunning && e.code != "Space") {
                 manageTimer();
@@ -83,7 +92,6 @@ export default defineComponent({
             }
         });
 
-        //* return
         return {
             currentTimeStr,
             manageTimer,

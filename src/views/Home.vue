@@ -4,7 +4,6 @@
         @time-deleted="
             (i) => {
                 timeRemoved++;
-                console.log('setting up a prop');
             }
         " />
     <Scrambles :change-scramble="changeScramble" />
@@ -25,6 +24,7 @@ import Timer from "../components/Timer.vue";
 import Scrambles from "@/components/Scrambles.vue";
 export default defineComponent({
     setup() {
+        //* vars
         let time = ref<{
             id: number;
             str: string;
@@ -35,6 +35,7 @@ export default defineComponent({
         let changeScramble = ref<number>(0);
         let timeRemoved = ref<number>(0);
 
+        //* use a prop to send time to TimeList
         function addTime(i: {
             id: number;
             str: string;

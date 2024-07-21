@@ -26,6 +26,7 @@ import formatNormal from "@/js/timeFormat";
 export default defineComponent({
     props: ["time"],
     setup(props, { emit }) {
+        //* vars
         let jscookie = require("jscookie");
         let timeArray = ref<
             {
@@ -57,6 +58,7 @@ export default defineComponent({
         });
         let changeScramble: number = 0;
 
+        //* push the time to timeArray
         function addTime(time: {
             id: number;
             str: string;
@@ -67,6 +69,7 @@ export default defineComponent({
             timeArray.value.push(time);
         }
 
+        //* modify the time to add +2, dnf or remove it
         function modifyTime(
             action: "plus2" | "dnf" | "remove",
             time: {
@@ -77,6 +80,7 @@ export default defineComponent({
                 addedDnf: boolean;
             }
         ) {
+            //* add +2 to time
             if (action == "plus2") {
                 timeArray.value.forEach((e) => {
                     if (e.id == time.id && !e.added2) {
@@ -95,6 +99,7 @@ export default defineComponent({
                     }
                 });
             } else if (action == "dnf") {
+                //* change time to dnf
                 timeArray.value.forEach((e) => {
                     if (e.id == time.id && !e.addedDnf) {
                         if (e.added2) {
@@ -110,10 +115,9 @@ export default defineComponent({
                     }
                 });
             } else if (action == "remove") {
-                console.log("removing time");
+                //* remove the time and update the ids
                 timeArray.value.forEach((e) => {
                     if (e.id == time.id) {
-                        console.log("setting a cookie for new timeId");
                         let timeId = jscookie.get("timeId");
                         timeId--;
                         jscookie.set({
@@ -121,7 +125,6 @@ export default defineComponent({
                             value: timeId,
                             exdays: 365 * 10,
                         });
-                        console.log("emitting timeDeleted");
                         emit("timeDeleted", timeId);
                         timeArray.value = timeArray.value.filter((e) => {
                             if (e.id != time.id) {
@@ -137,6 +140,7 @@ export default defineComponent({
             }
         }
 
+        //* calculate mean of session
         function meanOfArr(
             array: {
                 id: number;
@@ -158,6 +162,7 @@ export default defineComponent({
             }
         }
 
+        //* track props to add to timeArray
         watch(
             () => props.time,
             (time) => {
@@ -165,18 +170,19 @@ export default defineComponent({
             }
         );
 
+        //* watch for an timeArray change to save it and update pb
         watch(
             timeArray,
-            () => {
-                // cookies change
+            (timeArray) => {
+                //* cookies change
                 jscookie.set({
                     name: "timeList",
-                    value: JSON.stringify(timeArray.value),
+                    value: JSON.stringify(timeArray),
                     exdays: 365 * 10,
                 });
 
-                // pb change
-                let timeArrayCopy = timeArray.value;
+                //* pb change
+                let timeArrayCopy = timeArray;
                 timeArrayCopy = timeArrayCopy.filter((e) => !e.addedDnf);
                 if (timeArrayCopy.length > 0) {
                     pbTime.value = timeArrayCopy.sort(
@@ -214,12 +220,19 @@ export default defineComponent({
                         addedDnf: false,
                     };
                 }
+
+                //* calculate avg of 5 (still todo)
+                if (timeArray.length >= 5) {
+                    timeArrayAvgs.value = [];
+                    timeArray.forEach((e) => {
+                        timeArrayAvgs.value.push(calcAvg(e));
+                    });
+                }
             },
             { deep: true }
         );
 
-        // jezeli wieksze od 5 dodaj n = length, liczy dlugosc, odejmuje 5 i to co zostaje to jest ilosc do odciecia z przodu
-
+        //* function to calculate avg of 5
         function calcAvg(time: {
             id: number;
             str: string;
@@ -230,9 +243,8 @@ export default defineComponent({
             str: string;
             num: number;
         } {
-            // kopiuj arraya
+            //* copy the array and shorten it to 5 times
             let timeArrayCopy = [...timeArray.value];
-            // usuń wszystkie z poza avga
             timeArrayCopy.filter((e) => {
                 if (
                     e.id == time.id ||
@@ -251,7 +263,7 @@ export default defineComponent({
                     num: 0,
                 };
             }
-            // posortuj malejąco
+            //* sort the array and remove the first and last element
             timeArrayCopy.sort((a, b) => {
                 if (a.num > b.num) {
                     return 1;
@@ -261,7 +273,6 @@ export default defineComponent({
                     return 0;
                 }
             });
-            // usuń najszybszy i najwolniejszy czas
             timeArrayCopy.shift();
             timeArrayCopy.pop();
             let avg = timeArrayCopy.reduce((acc, e) => {
@@ -274,28 +285,13 @@ export default defineComponent({
             };
         }
 
-        watch(
-            timeArray,
-            (timeArray) => {
-                if (timeArray.length >= 5) {
-                    timeArrayAvgs.value = [];
-                    timeArray.forEach((e) => {
-                        timeArrayAvgs.value.push(calcAvg(e));
-                    });
-                }
-            },
-            { deep: true }
-        );
+        watch(timeArray, (timeArray) => {}, { deep: true });
 
-        watch(
-            () => {
-                timeArrayAvgs.value;
-            },
-            (time) => {
-                console.log(time);
-            }
-        );
+        watch(timeArrayAvgs, (time) => {
+            console.log(time);
+        });
 
+        //* restore timeArray from cookies
         if (jscookie.get("timeList")) {
             timeArray.value = JSON.parse(jscookie.get("timeList"));
         }
