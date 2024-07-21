@@ -3,6 +3,8 @@
         class="timeList bg-primary-subtle overflow-y-scroll overflow-x-hidden p-3 d-inline-block float-start">
         <h1 class="headingTimeList">Your times:</h1>
         <h3>Your PB: {{ pbTime.str }}</h3>
+        <h3>Your mean: {{ meanOfArr(timeArray) }}</h3>
+        <h3>Your PB: {{ pbTime.str }}</h3>
         <button @click="console.log(timeArrayAvgs)">
             console.log(timeArrayAvgs)
         </button>
@@ -131,6 +133,27 @@ export default defineComponent({
                         e.id--;
                     }
                 });
+            }
+        }
+
+        function meanOfArr(
+            array: {
+                id: number;
+                str: string;
+                num: number;
+                added2: boolean;
+                addedDnf: boolean;
+            }[]
+        ): string {
+            if (array.length > 0) {
+                let sumOfTimes = array.reduce((acc, e) => {
+                    return acc + e.num;
+                }, 0);
+                let meanNum = Math.trunc(sumOfTimes / array.length);
+                let meanStr: string = formatNormal(meanNum.toString());
+                return meanStr;
+            } else {
+                return "0.00";
             }
         }
 
@@ -283,6 +306,7 @@ export default defineComponent({
             pbTime,
             addTime,
             modifyTime,
+            meanOfArr,
         };
     },
 });
