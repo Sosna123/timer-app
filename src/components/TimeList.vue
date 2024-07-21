@@ -2,9 +2,10 @@
     <div
         class="timeList bg-primary-subtle overflow-y-scroll overflow-x-hidden p-3 d-inline-block float-start">
         <h1 class="headingTimeList">Your times:</h1>
-        <h3>Your PB: {{ pbTime.str }}</h3>
-        <h3>Your mean: {{ meanOfArr(timeArray) }}</h3>
-        <h3>Your PB: {{ pbTime.str }}</h3>
+        <h3>Solves: {{ timeArray.length }}</h3>
+        <h3>PB: {{ pbTime.str }}</h3>
+        <h3>Mean: {{ meanOfArr(timeArray) }}</h3>
+        <hr />
         <button @click="console.log(timeArrayAvgs)">
             console.log(timeArrayAvgs)
         </button>
