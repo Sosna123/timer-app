@@ -1,7 +1,15 @@
 <template>
-    <TimeList :time="time" />
+    <TimeList
+        :time="time"
+        @time-deleted="
+            (i) => {
+                timeRemoved++;
+                console.log('setting up a prop');
+            }
+        " />
     <Scrambles :change-scramble="changeScramble" />
     <Timer
+        :remove-time="timeRemoved"
         @time-done="
             (i) => {
                 addTime(i);
@@ -24,7 +32,8 @@ export default defineComponent({
             added2: boolean;
             addedDnf: boolean;
         }>();
-        let changeScramble: number = 0;
+        let changeScramble = ref<number>(0);
+        let timeRemoved = ref<number>(0);
 
         function addTime(i: {
             id: number;
@@ -39,6 +48,7 @@ export default defineComponent({
         return {
             time,
             changeScramble,
+            timeRemoved,
             addTime,
         };
     },

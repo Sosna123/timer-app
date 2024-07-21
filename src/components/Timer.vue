@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import formatNormal from "@/js/timeFormat";
 import Scrambles from "@/components/Scrambles.vue";
 export default defineComponent({
@@ -59,6 +59,17 @@ export default defineComponent({
             }
         }
 
+        watch(
+            () => props.removeTime,
+            (removeTime) => {
+                console.log("change found in removeTime");
+                if (jscookie.get("timeId")) {
+                    console.log("time removed and restoring timeid");
+                    timeId = jscookie.get("timeId");
+                }
+            }
+        );
+
         if (jscookie.get("timeId")) {
             timeId = jscookie.get("timeId");
         }
@@ -79,6 +90,7 @@ export default defineComponent({
         };
     },
     components: { Scrambles },
+    props: { removeTime: Number },
 });
 </script>
 

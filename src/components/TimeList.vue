@@ -4,7 +4,7 @@
         <h1 class="headingTimeList">Your times:</h1>
         <h3>Your PB: {{ pbTime.str }}</h3>
         <button @click="console.log(timeArrayAvgs)">
-            console.log(arrayavgs)
+            console.log(timeArrayAvgs)
         </button>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
@@ -22,7 +22,7 @@ import { defineComponent, ref, watch } from "vue";
 import formatNormal from "@/js/timeFormat";
 export default defineComponent({
     props: ["time"],
-    setup(props) {
+    setup(props, { emit }) {
         let jscookie = require("jscookie");
         let timeArray = ref<
             {
@@ -107,14 +107,28 @@ export default defineComponent({
                     }
                 });
             } else if (action == "remove") {
+                console.log("removing time");
                 timeArray.value.forEach((e) => {
                     if (e.id == time.id) {
+                        console.log("setting a cookie for new timeId");
+                        let timeId = jscookie.get("timeId");
+                        timeId--;
+                        jscookie.set({
+                            name: "timeId",
+                            value: timeId,
+                            exdays: 365 * 10,
+                        });
+                        console.log("emitting timeDeleted");
+                        emit("timeDeleted", timeId);
                         timeArray.value = timeArray.value.filter((e) => {
                             if (e.id != time.id) {
                                 return true;
                             }
                             return false;
                         });
+                    }
+                    if (e.id > time.id) {
+                        e.id--;
                     }
                 });
             }
