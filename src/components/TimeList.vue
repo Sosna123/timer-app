@@ -3,7 +3,9 @@
         class="timeList bg-primary-subtle overflow-y-scroll overflow-x-hidden p-3 d-inline-block float-start">
         <h1 class="headingTimeList">Your times:</h1>
         <h3>Your PB: {{ pbTime.str }}</h3>
-        <h3>Your ao5: {{}}</h3>
+        <button @click="console.log(timeArrayAvgs)">
+            console.log(arrayavgs)
+        </button>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
                 {{ time.str }}
@@ -33,15 +35,8 @@ export default defineComponent({
         >([]);
         let timeArrayAvgs = ref<
             {
-                id: number;
                 str: string;
                 num: number;
-                added2: boolean;
-                addedDnf: boolean;
-                ao5: {
-                    str: string;
-                    num: number;
-                };
             }[]
         >([]);
         let pbTime = ref<{
@@ -133,7 +128,7 @@ export default defineComponent({
         );
 
         watch(
-            () => timeArray.value,
+            timeArray,
             () => {
                 // cookies change
                 jscookie.set({
@@ -173,7 +168,6 @@ export default defineComponent({
                         }
                     )[0];
                 } else {
-                    console.log("no pb");
                     pbTime.value = {
                         id: 0,
                         str: "0.00",
@@ -186,62 +180,83 @@ export default defineComponent({
             { deep: true }
         );
 
-        function calcAvgs(time: {
+        // jezeli wieksze od 5 dodaj n = length, liczy dlugosc, odejmuje 5 i to co zostaje to jest ilosc do odciecia z przodu
+
+        function calcAvg(time: {
             id: number;
-            num: number;
             str: string;
+            num: number;
             added2: boolean;
             addedDnf: boolean;
-        }) {
-            let timeArrayCopy = timeArray.value;
-            timeArrayCopy
-                .filter((e) => {
-                    if (
-                        e.id == time.id ||
-                        e.id == time.id - 1 ||
-                        e.id == time.id - 2 ||
-                        e.id == time.id - 3 ||
-                        e.id == time.id - 4
-                    ) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                })
-                .sort((a, b) => {
-                    if (a.num > b.num && !a.addedDnf) {
-                        return 1;
-                    } else if (a.num < b.num && !b.addedDnf) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                });
-            timeArrayCopy.pop();
-            timeArrayCopy.shift();
-            let avg5 = timeArrayCopy.reduce((acc, e) => {
-                acc.num += e.num;
-                return acc;
+        }): {
+            str: string;
+            num: number;
+        } {
+            // kopiuj arraya
+            let timeArrayCopy = [...timeArray.value];
+            // usuń wszystkie z poza avga
+            timeArrayCopy.filter((e) => {
+                if (
+                    e.id == time.id ||
+                    e.id == time.id - 1 ||
+                    e.id == time.id - 2 ||
+                    e.id == time.id - 3 ||
+                    e.id == time.id - 4
+                ) {
+                    return true;
+                }
+                return false;
             });
-            avg5.num = avg5.num / 3;
-            let result = {
-                id: time.id,
-                str: time.str,
-                num: time.num,
-                added2: false,
-                addedDnf: false,
-                ao5: {
-                    str: formatNormal(avg5.num.toString()),
-                    num: avg5.num,
-                },
+            if (timeArrayCopy.length < 5) {
+                return {
+                    str: "0.00",
+                    num: 0,
+                };
+            }
+            // posortuj malejąco
+            timeArrayCopy.sort((a, b) => {
+                if (a.num > b.num) {
+                    return 1;
+                } else if (a.num < b.num) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
+            // usuń najszybszy i najwolniejszy czas
+            timeArrayCopy.shift();
+            timeArrayCopy.pop();
+            let avg = timeArrayCopy.reduce((acc, e) => {
+                return acc + e.num;
+            }, 0);
+            avg = Math.trunc(avg / 3);
+            return {
+                str: formatNormal(avg.toString()),
+                num: avg,
             };
-
-            timeArrayAvgs.value.push(result);
         }
 
-        timeArray.value.forEach((e) => {
-            calcAvgs(e);
-        });
+        watch(
+            timeArray,
+            (timeArray) => {
+                if (timeArray.length >= 5) {
+                    timeArrayAvgs.value = [];
+                    timeArray.forEach((e) => {
+                        timeArrayAvgs.value.push(calcAvg(e));
+                    });
+                }
+            },
+            { deep: true }
+        );
+
+        watch(
+            () => {
+                timeArrayAvgs.value;
+            },
+            (time) => {
+                console.log(time);
+            }
+        );
 
         if (jscookie.get("timeList")) {
             timeArray.value = JSON.parse(jscookie.get("timeList"));
