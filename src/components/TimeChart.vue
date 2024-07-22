@@ -17,7 +17,7 @@ export default defineComponent({
         let lineChart: any;
 
         //* create or update every time timeList changes
-        function createCanvas() {
+        function updateChart() {
             if (lineChart) {
                 lineChart.destroy();
             }
@@ -69,20 +69,17 @@ export default defineComponent({
         onMounted(() => {
             canvas = document.getElementById("timeChart") as HTMLCanvasElement;
             canvas = canvas.getContext("2d");
-            createCanvas();
+            updateChart();
         });
 
-        //* added two watches because chart works wierdly with each of them but with both it works fine
+        //* watching for array change to update chart
         watch(
             () => props.timeList,
             () => {
-                createCanvas();
-            }
+                updateChart();
+            },
+            { deep: true }
         );
-
-        watch(props.timeList, () => {
-            createCanvas();
-        });
 
         return { timeList: props.timeList };
     },
