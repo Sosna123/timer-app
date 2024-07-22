@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-light p-1 me-3">
+    <div class="bg-light p-1 me-3 rounded-2">
         <canvas id="timeChart"></canvas>
     </div>
 </template>

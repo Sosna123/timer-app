@@ -1,5 +1,5 @@
 <template>
-    <div class="scrambles bg-dark-subtle p-1 text-center float-start">
+    <div class="scrambles p-1 text-center float-start">
         <select
             name="scramble-type"
             id="scramble-type"
@@ -83,9 +83,11 @@ export default defineComponent({
 .scrambles {
     height: 15vh;
     width: 70%;
+    background-color: #2c2c2c;
 }
 
 .scrambles > h3 {
     cursor: pointer;
+    color: white;
 }
 </style>

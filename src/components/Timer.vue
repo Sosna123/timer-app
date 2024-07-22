@@ -112,10 +112,12 @@ export default defineComponent({
 .timerDiv {
     height: 85vh;
     width: 70%;
+    background-color: #434343;
 }
 
 .timerText {
     cursor: pointer;
     font-size: 128px;
+    color: white;
 }
 </style>

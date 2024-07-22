@@ -1,6 +1,6 @@
 <template>
     <div
-        class="timeList bg-primary-subtle overflow-y-scroll overflow-x-hidden p-3 d-inline-block float-start">
+        class="timeList overflow-y-scroll overflow-x-hidden p-3 d-inline-block float-start">
         <div class="timeListChart d-inline-block">
             <TimeChart :timeList="timeArray" />
         </div>
@@ -341,9 +341,22 @@ export default defineComponent({
 .timeList {
     height: 100vh;
     width: 30%;
+    background-color: #242323;
 }
 
 .headingTimeList {
-    display: sticky;
+    color: white;
+}
+
+hr {
+    border-color: white;
+}
+
+ul > li {
+    color: white;
+}
+
+h3 {
+    color: white;
 }
 </style>
