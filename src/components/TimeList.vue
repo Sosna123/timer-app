@@ -19,7 +19,11 @@
                 {{ time.str }}
                 <button @click="modifyTime('plus2', time)">+2</button>
                 <button @click="modifyTime('dnf', time)">dnf</button>
-                <button @click="modifyTime('remove', time)">-</button>
+                <button
+                    class="removeButton"
+                    @click="modifyTime('remove', time)">
+                    -
+                </button>
             </li>
         </ul>
     </div>
@@ -144,6 +148,16 @@ export default defineComponent({
                         e.id--;
                     }
                 });
+            }
+
+            //* defocus the buttons after clicking to fix the bug of deleting times instead of adding them
+            let buttons = Array.from(
+                document.getElementsByClassName(
+                    "removeButton"
+                ) as HTMLCollectionOf<HTMLButtonElement>
+            );
+            for (let e of buttons) {
+                e.blur();
             }
         }
 
