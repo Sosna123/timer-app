@@ -242,7 +242,8 @@ export default defineComponent({
                     };
                 }
 
-                //* calculate avg of 5 (still todo)
+                //TODO
+                //* calculate avg of 5
                 if (timeArray.length >= 5) {
                     timeArrayAvgs.value = [];
                     timeArray.forEach((e) => {
@@ -253,6 +254,7 @@ export default defineComponent({
             { deep: true }
         );
 
+        //TODO
         //* function to calculate avg of 5
         function calcAvg(time: {
             id: number;
@@ -264,45 +266,50 @@ export default defineComponent({
             str: string;
             num: number;
         } {
-            //* copy the array and shorten it to 5 times
             let timeArrayCopy = [...timeArray.value];
-            timeArrayCopy.filter((e) => {
-                if (
-                    e.id == time.id ||
-                    e.id == time.id - 1 ||
-                    e.id == time.id - 2 ||
-                    e.id == time.id - 3 ||
-                    e.id == time.id - 4
-                ) {
-                    return true;
-                }
-                return false;
-            });
-            if (timeArrayCopy.length < 5) {
-                return {
-                    str: "0.00",
-                    num: 0,
-                };
-            }
-            //* sort the array and remove the first and last element
-            timeArrayCopy.sort((a, b) => {
-                if (a.num > b.num) {
-                    return 1;
-                } else if (a.num < b.num) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            });
+            timeArrayCopy
+                .filter((e) => {
+                    if (
+                        e.id == time.id ||
+                        e.id == time.id - 1 ||
+                        e.id == time.id - 2 ||
+                        e.id == time.id - 3 ||
+                        e.id == time.id - 4
+                    ) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                })
+                .sort((a, b) => {
+                    if (a.num > b.num && !a.addedDnf) {
+                        return 1;
+                    } else if (a.num < b.num && !b.addedDnf) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+
             timeArrayCopy.shift();
             timeArrayCopy.pop();
-            let avg = timeArrayCopy.reduce((acc, e) => {
+
+            timeArrayCopy.forEach((e) => {
+                if (e.addedDnf) {
+                    return {
+                        str: "DNF",
+                        num: -1,
+                    };
+                }
+            });
+
+            let sumOfTimes = timeArrayCopy.reduce((acc, e) => {
                 return acc + e.num;
             }, 0);
-            avg = Math.trunc(avg / 3);
+
             return {
-                str: formatNormal(avg.toString()),
-                num: avg,
+                str: formatNormal((sumOfTimes / 3).toString()),
+                num: sumOfTimes / 3,
             };
         }
 
