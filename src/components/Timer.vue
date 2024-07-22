@@ -84,11 +84,17 @@ export default defineComponent({
 
         //* turn on the timer when space is pressed
         document.body.addEventListener("keyup", (e) => {
-            if (timerRunning && e.code != "Space") {
+            if (timerRunning && e.code != "Space" && e.code != "Escape") {
                 manageTimer();
             }
             if (e.code == "Space") {
                 manageTimer();
+            }
+            if (e.code == "Escape" && timerRunning) {
+                clearInterval(intervalTimer);
+                timerRunning = false;
+                currentTime.value = 0;
+                currentTimeStr.value = "0.00";
             }
         });
 
