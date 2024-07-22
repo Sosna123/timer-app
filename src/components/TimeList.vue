@@ -1,10 +1,15 @@
 <template>
     <div
         class="timeList bg-primary-subtle overflow-y-scroll overflow-x-hidden p-3 d-inline-block float-start">
-        <h1 class="headingTimeList">Your times:</h1>
-        <h3>Solves: {{ timeArray.length }}</h3>
-        <h3>PB: {{ pbTime.str }}</h3>
-        <h3>Mean: {{ meanOfArr(timeArray) }}</h3>
+        <div class="timeListChart d-inline-block">
+            <TimeChart :timeList="timeArray" />
+        </div>
+        <div class="timeListText d-inline-block">
+            <h1 class="headingTimeList">Your times:</h1>
+            <h3>Solves: {{ timeArray.length }}</h3>
+            <h3>PB: {{ pbTime.str }}</h3>
+            <h3>Mean: {{ meanOfArr(timeArray) }}</h3>
+        </div>
         <hr />
         <button @click="console.log(timeArrayAvgs)">
             console.log(timeArrayAvgs)
@@ -23,8 +28,10 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
 import formatNormal from "@/js/timeFormat";
+import TimeChart from "@/components/TimeChart.vue";
 export default defineComponent({
     props: ["time"],
+    components: { TimeChart },
     setup(props, { emit }) {
         //* vars
         let jscookie = require("jscookie");
