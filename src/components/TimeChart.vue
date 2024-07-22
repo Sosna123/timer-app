@@ -8,6 +8,7 @@
 import { defineComponent, watch } from "vue";
 import Chart from "chart.js/auto";
 import { onMounted } from "vue";
+import formatNormal from "@/js/timeFormat";
 export default defineComponent({
     props: ["timeList"],
     setup(props) {
@@ -24,6 +25,33 @@ export default defineComponent({
                 type: "line",
                 options: {
                     animation: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value: any) {
+                                    return formatNormal(value.toString());
+                                },
+                            },
+                        },
+                        x: {
+                            display: false,
+                        },
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem: any) {
+                                    return formatNormal(
+                                        tooltipItem.parsed.y.toString()
+                                    );
+                                },
+                                title: function (tooltipItem: any) {
+                                    return "";
+                                },
+                            },
+                        },
+                    },
                 },
                 data: {
                     labels: props.timeList.map((i: any) => i.num),
