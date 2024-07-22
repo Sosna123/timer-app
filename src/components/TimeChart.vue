@@ -1,5 +1,7 @@
 <template>
-    <div><canvas id="timeChart"></canvas></div>
+    <div class="bg-light p-1 me-3">
+        <canvas id="timeChart"></canvas>
+    </div>
 </template>
 
 <script lang="ts">
@@ -9,9 +11,11 @@ import { onMounted } from "vue";
 export default defineComponent({
     props: ["timeList"],
     setup(props) {
+        //* vars
         let canvas: any;
         let lineChart: any;
 
+        //* create or update every time timeList changes
         function createCanvas() {
             if (lineChart) {
                 lineChart.destroy();
@@ -33,11 +37,20 @@ export default defineComponent({
             });
         }
 
+        //* create canvas when html is loaded
         onMounted(() => {
             canvas = document.getElementById("timeChart") as HTMLCanvasElement;
             canvas = canvas.getContext("2d");
             createCanvas();
         });
+
+        //* added two watches because chart works wierdly with each of them but with both it works fine
+        watch(
+            () => props.timeList,
+            () => {
+                createCanvas();
+            }
+        );
 
         watch(props.timeList, () => {
             createCanvas();
