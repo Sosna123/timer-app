@@ -17,7 +17,15 @@
         </button>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
-                {{ time.str }}
+                <p class="d-inline-block">{{ time.str }}</p>
+                <!-- <p>
+                    ao5:
+                    {{
+                        timeArray.length >= 5 && timeArrayAvgs.length > 0
+                            ? timeArrayAvgs[time.id - 4].str
+                            : "-"
+                    }}
+                </p> -->
                 <button @click="modifyTime('plus2', time)">+2</button>
                 <button @click="modifyTime('dnf', time)">dnf</button>
                 <button
@@ -245,6 +253,7 @@ export default defineComponent({
 
                 //* calculate avg of 5
                 if (timeArray.length >= 5) {
+                    timeArrayAvgs.value = [];
                     calcAvg();
                 }
 
@@ -254,6 +263,14 @@ export default defineComponent({
                     value: JSON.stringify(timeArray),
                     exdays: 365 * 10,
                 });
+
+                if (timeArray.length == 0) {
+                    jscookie.set({
+                        name: "timeId",
+                        value: 0,
+                        exdays: 365 * 10,
+                    });
+                }
             },
             { deep: true }
         );
@@ -270,26 +287,32 @@ export default defineComponent({
 
             allAvgsTimes.forEach((array) => {
                 array.sort((a, b) => {
-                    if (a.num > b.num && !a.addedDnf) {
+                    if (a.addedDnf) {
+                        return -1;
+                    }
+                    if (b.addedDnf) {
                         return 1;
-                    } else if (a.num < b.num && !b.addedDnf) {
+                    }
+
+                    if (a.num > b.num) {
+                        return 1;
+                    } else if (a.num < b.num) {
                         return -1;
                     } else {
                         return 0;
                     }
                 });
 
+                if (array.length < 5) {
+                    timeArrayAvgs.value.push({
+                        str: "DNF",
+                        num: -1,
+                    });
+                    return;
+                }
+
                 array.shift();
                 array.pop();
-
-                array.forEach((e) => {
-                    if (e.addedDnf) {
-                        return {
-                            str: "DNF",
-                            num: -1,
-                        };
-                    }
-                });
 
                 let sumOfTimes = array.reduce((acc, e) => {
                     return acc + e.num;
@@ -307,33 +330,40 @@ export default defineComponent({
             timeArrayAvgs,
             (timeArrayAvgs) => {
                 //* update pbao5
-                if (timeArrayAvgs.length > 0) {
-                    pbAo5.value = timeArrayAvgs.sort(
-                        (
-                            a: {
-                                str: string;
-                                num: number;
-                            },
-                            b: {
-                                str: string;
-                                num: number;
-                            }
-                        ) => {
-                            if (a.num > b.num) {
-                                return 1;
-                            } else if (a.num < b.num) {
-                                return -1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    )[0];
-                } else {
-                    pbAo5.value = {
-                        str: "0.00",
-                        num: 0,
-                    };
-                }
+                // if (timeArrayAvgs.length > 0) {
+                //     pbAo5.value = timeArrayAvgs
+                //         .filter((e) => {
+                //             if (e.num < 0) {
+                //                 return false;
+                //             }
+                //             return true;
+                //         })
+                //         .sort(
+                //             (
+                //                 a: {
+                //                     str: string;
+                //                     num: number;
+                //                 },
+                //                 b: {
+                //                     str: string;
+                //                     num: number;
+                //                 }
+                //             ) => {
+                //                 if (a.num > b.num) {
+                //                     return 1;
+                //                 } else if (a.num < b.num) {
+                //                     return -1;
+                //                 } else {
+                //                     return 0;
+                //                 }
+                //             }
+                //         )[0];
+                // } else {
+                //     pbAo5.value = {
+                //         str: "0.00",
+                //         num: 0,
+                //     };
+                // }
 
                 //* cookies change
                 jscookie.set({
