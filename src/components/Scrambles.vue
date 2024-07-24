@@ -3,7 +3,7 @@
         <select
             name="scramble-type"
             id="scramble-type"
-            class="d-block text-center user-select-none"
+            class="d-block text-center"
             v-model="scrambleType">
             <option value="333">3x3</option>
             <option value="222">2x2</option>
@@ -17,7 +17,7 @@
             <option value="skewb">Skewb</option>
             <option value="sq1">Square-1</option>
         </select>
-        <h3 @click="changeScramble()" class="m-1 ms-2 fs-2">
+        <h3 @click="changeScramble()" class="m-1 ms-2 fs-2 user-select-none">
             {{ scramble[0].scramble_string }}
         </h3>
     </div>

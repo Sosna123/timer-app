@@ -1,7 +1,9 @@
 <template>
     <div
         class="timerDiv text-center d-flex align-items-center justify-content-center">
-        <p @click="manageTimer()" class="timerText">{{ currentTimeStr }}</p>
+        <p @click="manageTimer()" class="timerText user-select-none">
+            {{ currentTimeStr }}
+        </p>
     </div>
 </template>
 
