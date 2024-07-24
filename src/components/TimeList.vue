@@ -255,6 +255,8 @@ export default defineComponent({
                 if (timeArray.length >= 5) {
                     timeArrayAvgs.value = [];
                     calcAvg();
+                } else {
+                    timeArrayAvgs.value = [];
                 }
 
                 //* cookies change
@@ -330,40 +332,40 @@ export default defineComponent({
             timeArrayAvgs,
             (timeArrayAvgs) => {
                 //* update pbao5
-                // if (timeArrayAvgs.length > 0) {
-                //     pbAo5.value = timeArrayAvgs
-                //         .filter((e) => {
-                //             if (e.num < 0) {
-                //                 return false;
-                //             }
-                //             return true;
-                //         })
-                //         .sort(
-                //             (
-                //                 a: {
-                //                     str: string;
-                //                     num: number;
-                //                 },
-                //                 b: {
-                //                     str: string;
-                //                     num: number;
-                //                 }
-                //             ) => {
-                //                 if (a.num > b.num) {
-                //                     return 1;
-                //                 } else if (a.num < b.num) {
-                //                     return -1;
-                //                 } else {
-                //                     return 0;
-                //                 }
-                //             }
-                //         )[0];
-                // } else {
-                //     pbAo5.value = {
-                //         str: "0.00",
-                //         num: 0,
-                //     };
-                // }
+                if (timeArrayAvgs.length > 0) {
+                    pbAo5.value = timeArrayAvgs
+                        .filter((e) => {
+                            if (e.num < 0) {
+                                return false;
+                            }
+                            return true;
+                        })
+                        .sort(
+                            (
+                                a: {
+                                    str: string;
+                                    num: number;
+                                },
+                                b: {
+                                    str: string;
+                                    num: number;
+                                }
+                            ) => {
+                                if (a.num > b.num) {
+                                    return 1;
+                                } else if (a.num < b.num) {
+                                    return -1;
+                                } else {
+                                    return 0;
+                                }
+                            }
+                        )[0];
+                } else {
+                    pbAo5.value = {
+                        str: "0.00",
+                        num: 0,
+                    };
+                }
 
                 //* cookies change
                 jscookie.set({
