@@ -3,7 +3,7 @@
         <select
             name="scramble-type"
             id="scramble-type"
-            class="d-block text-center"
+            class="d-block text-center user-select-none"
             v-model="scrambleType">
             <option value="333">3x3</option>
             <option value="222">2x2</option>
