@@ -7,7 +7,8 @@
         <div class="timeListText d-inline-block">
             <h1 class="headingTimeList">Your times:</h1>
             <h3>Solves: {{ timeArray.length }}</h3>
-            <h3>PB: {{ pbTime.str }}</h3>
+            <h3>PB single: {{ pbTime.str }}</h3>
+            <h3>PB ao5: {{ pbAo5.str }}</h3>
             <h3>Mean: {{ meanOfArr(timeArray) }}</h3>
         </div>
         <hr />
@@ -30,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, toRaw, watch } from "vue";
 import formatNormal from "@/js/timeFormat";
 import TimeChart from "@/components/TimeChart.vue";
 export default defineComponent({
@@ -66,6 +67,13 @@ export default defineComponent({
             num: 0,
             added2: false,
             addedDnf: false,
+        });
+        let pbAo5 = ref<{
+            str: string;
+            num: number;
+        }>({
+            str: "0.00",
+            num: 0,
         });
         let changeScramble: number = 0;
 
@@ -195,13 +203,6 @@ export default defineComponent({
         watch(
             timeArray,
             (timeArray) => {
-                //* cookies change
-                jscookie.set({
-                    name: "timeList",
-                    value: JSON.stringify(timeArray),
-                    exdays: 365 * 10,
-                });
-
                 //* pb change
                 let timeArrayCopy = timeArray;
                 timeArrayCopy = timeArrayCopy.filter((e) => !e.addedDnf);
@@ -242,46 +243,33 @@ export default defineComponent({
                     };
                 }
 
-                //TODO
                 //* calculate avg of 5
                 if (timeArray.length >= 5) {
-                    timeArrayAvgs.value = [];
-                    timeArray.forEach((e) => {
-                        timeArrayAvgs.value.push(calcAvg(e));
-                    });
+                    calcAvg();
                 }
+
+                //* cookies change
+                jscookie.set({
+                    name: "timeArray",
+                    value: JSON.stringify(timeArray),
+                    exdays: 365 * 10,
+                });
             },
             { deep: true }
         );
 
-        //TODO
         //* function to calculate avg of 5
-        function calcAvg(time: {
-            id: number;
-            str: string;
-            num: number;
-            added2: boolean;
-            addedDnf: boolean;
-        }): {
-            str: string;
-            num: number;
-        } {
-            let timeArrayCopy = [...timeArray.value];
-            timeArrayCopy
-                .filter((e) => {
-                    if (
-                        e.id == time.id ||
-                        e.id == time.id - 1 ||
-                        e.id == time.id - 2 ||
-                        e.id == time.id - 3 ||
-                        e.id == time.id - 4
-                    ) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                })
-                .sort((a, b) => {
+        function calcAvg() {
+            let timeArrayCopy = [...toRaw(timeArray.value)];
+
+            let allAvgsTimes = timeArrayCopy
+                .slice(4)
+                .map((_v, i) => timeArrayCopy.slice(i, i + 5));
+
+            let results: any = [];
+
+            allAvgsTimes.forEach((array) => {
+                array.sort((a, b) => {
                     if (a.num > b.num && !a.addedDnf) {
                         return 1;
                     } else if (a.num < b.num && !b.addedDnf) {
@@ -291,37 +279,78 @@ export default defineComponent({
                     }
                 });
 
-            timeArrayCopy.shift();
-            timeArrayCopy.pop();
+                array.shift();
+                array.pop();
 
-            timeArrayCopy.forEach((e) => {
-                if (e.addedDnf) {
-                    return {
-                        str: "DNF",
-                        num: -1,
-                    };
-                }
+                array.forEach((e) => {
+                    if (e.addedDnf) {
+                        return {
+                            str: "DNF",
+                            num: -1,
+                        };
+                    }
+                });
+
+                let sumOfTimes = array.reduce((acc, e) => {
+                    return acc + e.num;
+                }, 0);
+
+                sumOfTimes = Math.trunc(sumOfTimes / 3);
+                timeArrayAvgs.value.push({
+                    str: formatNormal(sumOfTimes.toString()),
+                    num: sumOfTimes,
+                });
             });
-
-            let sumOfTimes = timeArrayCopy.reduce((acc, e) => {
-                return acc + e.num;
-            }, 0);
-
-            return {
-                str: formatNormal((sumOfTimes / 3).toString()),
-                num: sumOfTimes / 3,
-            };
         }
 
-        watch(timeArray, (timeArray) => {}, { deep: true });
+        watch(
+            timeArrayAvgs,
+            (timeArrayAvgs) => {
+                //* update pbao5
+                if (timeArrayAvgs.length > 0) {
+                    pbAo5.value = timeArrayAvgs.sort(
+                        (
+                            a: {
+                                str: string;
+                                num: number;
+                            },
+                            b: {
+                                str: string;
+                                num: number;
+                            }
+                        ) => {
+                            if (a.num > b.num) {
+                                return 1;
+                            } else if (a.num < b.num) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    )[0];
+                } else {
+                    pbAo5.value = {
+                        str: "0.00",
+                        num: 0,
+                    };
+                }
 
-        watch(timeArrayAvgs, (time) => {
-            console.log(time);
-        });
+                //* cookies change
+                jscookie.set({
+                    name: "timeArrayAvgs",
+                    value: JSON.stringify(timeArrayAvgs),
+                    exdays: 365 * 10,
+                });
+            },
+            { deep: true }
+        );
 
-        //* restore timeArray from cookies
-        if (jscookie.get("timeList")) {
-            timeArray.value = JSON.parse(jscookie.get("timeList"));
+        //* restore values from cookies
+        if (jscookie.get("timeArray")) {
+            timeArray.value = JSON.parse(jscookie.get("timeArray"));
+        }
+        if (jscookie.get("timeArrayAvgs")) {
+            timeArrayAvgs.value = JSON.parse(jscookie.get("timeArrayAvgs"));
         }
 
         return {
@@ -329,6 +358,7 @@ export default defineComponent({
             timeArrayAvgs,
             changeScramble,
             pbTime,
+            pbAo5,
             addTime,
             modifyTime,
             meanOfArr,
