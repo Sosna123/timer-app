@@ -42,6 +42,9 @@ export default defineComponent({
                     currentTime.value.toString()
                 );
                 timerRunning = false;
+                if (!jscookie.get("timeId")) {
+                    timeId = 0;
+                }
                 const time = {
                     id: timeId,
                     str: currentTimeStr.value,
