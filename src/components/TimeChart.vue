@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-light p-1 me-3 rounded-2">
+    <div class="p-1 me-3 rounded-2">
         <canvas id="timeChart"></canvas>
     </div>
 </template>
@@ -32,10 +32,19 @@ export default defineComponent({
                                 callback: function (value: any) {
                                     return formatNormal(value.toString());
                                 },
+                                color: "rgba(255,255,255,0.5)",
+                            },
+                            grid: {
+                                color: "rgba(255,255,255,0.5)",
                             },
                         },
                         x: {
-                            display: false,
+                            grid: {
+                                color: "rgba(255,255,255,0.5)",
+                            },
+                            ticks: {
+                                color: "rgba(255,255,255,0)",
+                            },
                         },
                     },
                     plugins: {
