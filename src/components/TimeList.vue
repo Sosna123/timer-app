@@ -6,26 +6,24 @@
         </div>
         <div class="timeListText d-inline-block">
             <h1 class="headingTimeList">Your times:</h1>
-            <h3>Solves: {{ timeArray.length }}</h3>
-            <h3>PB single: {{ pbTime.str }}</h3>
-            <h3>PB ao5: {{ pbAo5.str }}</h3>
-            <h3>Mean: {{ meanOfArr(timeArray) }}</h3>
+            <h4 class="m-0">Solves: {{ timeArray.length }}</h4>
+            <h4 class="m-0">PB single: {{ pbTime.str }}</h4>
+            <h4 class="m-0">PB ao5: {{ pbAo5.str }}</h4>
+            <h4 class="m-0">Mean: {{ meanOfArr(timeArray) }}</h4>
         </div>
         <hr />
-        <button @click="console.log(timeArrayAvgs)">
-            console.log(timeArrayAvgs)
-        </button>
+        <button @click="clearCookies()">clear cookies</button>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
-                <p class="d-inline-block">{{ time.str }}</p>
-                <!-- <p>
+                <p class="d-inline-block me-3">{{ time.str }}</p>
+                <p class="d-inline-block me-3">
                     ao5:
                     {{
                         timeArray.length >= 5 && timeArrayAvgs.length > 0
-                            ? timeArrayAvgs[time.id - 4].str
+                            ? timeArrayAvgs[timeArrayAvgs.length - 1].str // timeArrayAvgs[???].str
                             : "-"
                     }}
-                </p> -->
+                </p>
                 <button @click="modifyTime('plus2', time)">+2</button>
                 <button @click="modifyTime('dnf', time)">dnf</button>
                 <button
@@ -47,7 +45,7 @@ export default defineComponent({
     components: { TimeChart },
     setup(props, { emit }) {
         //* vars
-        let jscookie = require("jscookie");
+        const jscookie = require("js-cookie");
         let timeArray = ref<
             {
                 id: number;
@@ -147,11 +145,7 @@ export default defineComponent({
                     if (e.id == time.id) {
                         let timeId = jscookie.get("timeId");
                         timeId--;
-                        jscookie.set({
-                            name: "timeId",
-                            value: timeId,
-                            exdays: 365 * 10,
-                        });
+                        jscookie.set("timeId", timeId, { expires: 365 * 10 });
                         emit("timeDeleted", timeId);
                         timeArray.value = timeArray.value.filter((e) => {
                             if (e.id != time.id) {
@@ -260,18 +254,12 @@ export default defineComponent({
                 }
 
                 //* cookies change
-                jscookie.set({
-                    name: "timeArray",
-                    value: JSON.stringify(timeArray),
-                    exdays: 365 * 10,
+                jscookie.set("timeArray", JSON.stringify(timeArray), {
+                    expires: 365 * 10,
                 });
 
                 if (timeArray.length == 0) {
-                    jscookie.set({
-                        name: "timeId",
-                        value: 0,
-                        exdays: 365 * 10,
-                    });
+                    jscookie.set("timeId", 0, { expires: 365 * 10 });
                 }
             },
             { deep: true }
@@ -368,10 +356,8 @@ export default defineComponent({
                 }
 
                 //* cookies change
-                jscookie.set({
-                    name: "timeArrayAvgs",
-                    value: JSON.stringify(timeArrayAvgs),
-                    exdays: 365 * 10,
+                jscookie.set("timeArrayAvgs", JSON.stringify(timeArrayAvgs), {
+                    expires: 365 * 10,
                 });
             },
             { deep: true }
@@ -385,15 +371,27 @@ export default defineComponent({
             timeArrayAvgs.value = JSON.parse(jscookie.get("timeArrayAvgs"));
         }
 
+        function clearCookies() {
+            jscookie.remove("timeArray", { path: "" });
+            jscookie.remove("timeArrayAvgs", { path: "" });
+            jscookie.remove("timeId", { path: "" });
+            timeArray.value = [];
+            timeArrayAvgs.value = [];
+            emit("timeDeleted");
+        }
+
         return {
+            //* vars
             timeArray,
             timeArrayAvgs,
             changeScramble,
             pbTime,
             pbAo5,
+            //* functions
             addTime,
             modifyTime,
             meanOfArr,
+            clearCookies,
         };
     },
 });
@@ -418,7 +416,8 @@ ul > li {
     color: white;
 }
 
-h3 {
+h3,
+h4 {
     color: white;
 }
 </style>
