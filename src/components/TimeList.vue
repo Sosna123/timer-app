@@ -248,7 +248,7 @@ export default defineComponent({
                 //* calculate avg of 5
                 if (timeArray.length >= 5) {
                     timeArrayAvgs.value = [];
-                    calcAvg();
+                    calcAvgs();
                 } else {
                     timeArrayAvgs.value = [];
                 }
@@ -265,8 +265,13 @@ export default defineComponent({
             { deep: true }
         );
 
+        const getConsecutiveArrays = <T, _>(arr: T[], size: number): T[][] =>
+            size > arr.length
+                ? []
+                : arr.slice(size - 1).map((_, i) => arr.slice(i, size + i));
+
         //* function to calculate avg of 5
-        function calcAvg() {
+        function calcAvgs() {
             let timeArrayCopy: {
                 id: number;
                 str: string;
@@ -275,58 +280,66 @@ export default defineComponent({
                 addedDnf: boolean;
             }[] = [...toRaw(timeArray.value)];
 
-            const getConsecutiveArrays = <T, _>(
-                arr: T[],
-                size: number
-            ): T[][] =>
-                size > arr.length
-                    ? []
-                    : arr.slice(size - 1).map((_, i) => arr.slice(i, size + i));
+            let allArrays = getConsecutiveArrays(timeArrayCopy, 5);
 
-            getConsecutiveArrays(timeArrayCopy, 5).forEach((array) => {
-                array.sort((a, b) => {
-                    if (a.addedDnf) {
-                        return -1;
-                    }
-                    if (b.addedDnf) {
-                        return 1;
-                    }
+            allArrays.forEach((array) => {
+                calcAvg(array);
+            });
+        }
 
-                    if (a.num > b.num) {
-                        return 1;
-                    } else if (a.num < b.num) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                });
-
-                console.log("after sorting", array);
-
-                array.shift();
-                array.pop();
-
-                console.log("after deleting fastest and slowest times", array);
-
-                if (array.length < 3) {
-                    timeArrayAvgs.value.push({
-                        str: "DNF",
-                        num: -1,
-                    });
+        function calcAvg(
+            array: {
+                id: number;
+                str: string;
+                num: number;
+                added2: boolean;
+                addedDnf: boolean;
+            }[]
+        ) {
+            array.sort((a, b) => {
+                if (a.addedDnf) {
+                    return 1;
+                }
+                if (b.addedDnf) {
+                    return -1;
                 }
 
-                console.log("dnf avg check");
+                if (a.num > b.num) {
+                    return 1;
+                } else if (a.num < b.num) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
 
+            array.shift();
+            array.pop();
+
+            let dnfAvg: boolean = false;
+
+            array.forEach((e) => {
+                if (e.addedDnf) {
+                    dnfAvg = true;
+                }
+            });
+
+            if (dnfAvg) {
+                timeArrayAvgs.value.push({
+                    str: "DNF",
+                    num: -1,
+                });
+            } else {
                 let sumOfTimes = array.reduce((acc, e) => {
                     return acc + e.num;
                 }, 0);
 
-                sumOfTimes = Math.trunc(sumOfTimes / 3);
+                sumOfTimes = Math.round(sumOfTimes / 3);
                 timeArrayAvgs.value.push({
                     str: formatNormal(sumOfTimes.toString()),
                     num: sumOfTimes,
                 });
-            });
+            }
         }
 
         watch(
@@ -334,14 +347,14 @@ export default defineComponent({
             (timeArrayAvgs) => {
                 //* update pbao5
                 if (timeArrayAvgs.length > 0) {
-                    pbAo5.value = timeArrayAvgs
-                        .filter((e) => {
-                            if (e.num < 0) {
-                                return false;
-                            }
-                            return true;
-                        })
-                        .sort(
+                    timeArrayAvgs.filter((e) => {
+                        if (e.num < 0) {
+                            return false;
+                        }
+                        return true;
+                    });
+                    if (timeArrayAvgs.length > 0) {
+                        timeArrayAvgs.sort(
                             (
                                 a: {
                                     str: string;
@@ -360,7 +373,14 @@ export default defineComponent({
                                     return 0;
                                 }
                             }
-                        )[0];
+                        );
+                        pbAo5.value = timeArrayAvgs[0];
+                    } else {
+                        pbAo5.value = {
+                            str: "0.00",
+                            num: 0,
+                        };
+                    }
                 } else {
                     pbAo5.value = {
                         str: "0.00",
