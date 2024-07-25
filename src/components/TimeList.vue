@@ -267,15 +267,23 @@ export default defineComponent({
 
         //* function to calculate avg of 5
         function calcAvg() {
-            let timeArrayCopy = [...toRaw(timeArray.value)];
+            let timeArrayCopy: {
+                id: number;
+                str: string;
+                num: number;
+                added2: boolean;
+                addedDnf: boolean;
+            }[] = [...toRaw(timeArray.value)];
 
-            let allAvgsTimes = timeArrayCopy
-                .slice(4)
-                .map((_v, i) => timeArrayCopy.slice(i, i + 5));
+            const getConsecutiveArrays = <T, _>(
+                arr: T[],
+                size: number
+            ): T[][] =>
+                size > arr.length
+                    ? []
+                    : arr.slice(size - 1).map((_, i) => arr.slice(i, size + i));
 
-            let results: any = [];
-
-            allAvgsTimes.forEach((array) => {
+            getConsecutiveArrays(timeArrayCopy, 5).forEach((array) => {
                 array.sort((a, b) => {
                     if (a.addedDnf) {
                         return -1;
@@ -293,16 +301,21 @@ export default defineComponent({
                     }
                 });
 
-                if (array.length < 5) {
+                console.log("after sorting", array);
+
+                array.shift();
+                array.pop();
+
+                console.log("after deleting fastest and slowest times", array);
+
+                if (array.length < 3) {
                     timeArrayAvgs.value.push({
                         str: "DNF",
                         num: -1,
                     });
-                    return;
                 }
 
-                array.shift();
-                array.pop();
+                console.log("dnf avg check");
 
                 let sumOfTimes = array.reduce((acc, e) => {
                     return acc + e.num;

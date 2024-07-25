@@ -52,7 +52,7 @@ export default defineComponent({
                     timeId = 0;
                 }
                 const time = {
-                    id: timeId,
+                    id: Number(timeId),
                     str: currentTimeStr.value,
                     num: currentTime.value,
                     added2: false,
