@@ -1,10 +1,9 @@
 <template>
-    <div
-        class="timerDiv text-center d-flex align-items-center justify-content-center">
+    <div class="timerDiv text-center d-block pa-5 bg-tertiary">
         <p
             @click="manageTimer()"
-            class="timerText user-select-none"
-            :class="{ spaceDown: spaceDown }">
+            class="timerText user-select-none cursor-pointer"
+            :class="{ 'text-amber': spaceDown }">
             {{ currentTimeStr }}
         </p>
     </div>
@@ -122,15 +121,11 @@ export default defineComponent({
 
 <style>
 .timerDiv {
-    height: 85vh;
-    width: 70%;
     background-color: #434343;
 }
 
 .timerText {
-    cursor: pointer;
     font-size: 128px;
-    color: white;
 }
 
 .spaceDown {

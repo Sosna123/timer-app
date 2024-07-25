@@ -1,17 +1,19 @@
 <template>
-    <div class="scrambles pa-1 text-center" height="20vh" width="70%">
+    <div class="scrambles text-center pa-5 bg-secondary">
         <v-select
             label="Scramble Type"
             :items="selectItems"
             item-title="name"
             item-value="value"
-            v-model="scrambleType">
+            v-model="scrambleType"
+            density="compact"
+            hide-details>
         </v-select>
-        <h3
+        <h2
             @click="changeScramble()"
-            class="ma-1 mt-2 fs-2 user-select-none cursor-pointer">
+            class="fs-2 user-select-none cursor-pointer ma-0">
             {{ scramble[0].scramble_string }}
-        </h3>
+        </h2>
     </div>
 </template>
 

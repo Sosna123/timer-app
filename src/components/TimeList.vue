@@ -1,23 +1,22 @@
 <template>
-    <div
-        class="timeList overflow-y-scroll overflow-x-hidden p-3 d-inline-block float-start">
-        <div class="timeListChart d-inline-block">
+    <div class="timeList overflow-y-scroll overflow-x-hidden pa-5 bg-primary">
+        <div class="d-inline-block">
             <TimeChart :timeList="timeArray" />
         </div>
-        <div class="timeListText d-inline-block">
+        <div class="d-inline-block">
             <h1 class="headingTimeList">Your times:</h1>
-            <h4 class="m-0">Solves: {{ timeArray.length }}</h4>
-            <h4 class="m-0">PB single: {{ pbTime.str }}</h4>
-            <h4 class="m-0">PB ao5: {{ pbAo5.str }}</h4>
-            <h4 class="m-0">Mean: {{ meanOfArr(timeArray) }}</h4>
+            <h2 class="ma-0">Solves: {{ timeArray.length }}</h2>
+            <h2 class="ma-0">PB single: {{ pbTime.str }}</h2>
+            <h2 class="ma-0">PB ao5: {{ pbAo5.str }}</h2>
+            <h2 class="ma-0">Mean: {{ meanOfArr(timeArray) }}</h2>
         </div>
-        <hr />
+        <v-divider class="border-opacity-100 my-3"></v-divider>
         <v-btn @click="clearCookies()">
             <button>clear cookies</button>
         </v-btn>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
-                <p class="d-inline-block me-3">{{ time.str }}</p>
+                <p class="d-inline-block me-3 timeListText">{{ time.str }}</p>
                 <v-btn @click="modifyTime('plus2', time)" class="mr-2">
                     <button>+2</button>
                 </v-btn>
@@ -430,25 +429,10 @@ export default defineComponent({
 
 <style>
 .timeList {
-    height: 100vh;
-    width: 30%;
     background-color: #242323;
 }
 
-.headingTimeList {
-    color: white;
-}
-
-hr {
-    border-color: white;
-}
-
-ul > li {
-    color: white;
-}
-
-h3,
-h4 {
-    color: white;
+.timeListText {
+    font-size: 32px;
 }
 </style>

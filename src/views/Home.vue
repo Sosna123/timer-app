@@ -1,20 +1,55 @@
 <template>
-    <TimeList
-        :time="time"
-        @time-deleted="
-            (i) => {
-                timeRemoved++;
-            }
-        " />
-    <Scrambles :change-scramble="changeScramble" />
-    <Timer
-        :remove-time="timeRemoved"
-        @time-done="
-            (i) => {
-                addTime(i);
-                changeScramble++;
-            }
-        " />
+    <!-- <v-row class="d-flex pa-0">
+        <v-col cols="4" class="pa-0">
+            <TimeList
+                style="height: 100vh"
+                :time="time"
+                @time-deleted="
+                    (i) => {
+                        timeRemoved++;
+                    }
+                " />
+        </v-col>
+        <v-col cols="8" class="pa-0" style="height: 100vh">
+            <Scrambles class="pa-0" :change-scramble="changeScramble" />
+            <Timer
+                class="pa-0"
+                :remove-time="timeRemoved"
+                @time-done="
+                    (i) => {
+                        addTime(i);
+                        changeScramble++;
+                    }
+                " />
+        </v-col>
+    </v-row> -->
+
+    <div style="height: 100vh; width: 35%" class="float-left">
+        <TimeList
+            style="height: 100vh"
+            :time="time"
+            @time-deleted="
+                (i) => {
+                    timeRemoved++;
+                }
+            " />
+    </div>
+    <div style="height: 100vh; width: 65%" class="float-left">
+        <Scrambles
+            class="pa-0"
+            :change-scramble="changeScramble"
+            style="height: 30vh" />
+        <Timer
+            class="pa-0"
+            style="height: 70vh"
+            :remove-time="timeRemoved"
+            @time-done="
+                (i) => {
+                    addTime(i);
+                    changeScramble++;
+                }
+            " />
+    </div>
 </template>
 
 <script lang="ts">
@@ -58,11 +93,6 @@ export default defineComponent({
 </script>
 
 <style>
-.timeList {
-    height: 100vh;
-    width: 30%;
-}
-
 .headingTimeList {
     display: sticky;
 }
