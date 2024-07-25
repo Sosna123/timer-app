@@ -12,25 +12,23 @@
             <h4 class="m-0">Mean: {{ meanOfArr(timeArray) }}</h4>
         </div>
         <hr />
-        <button @click="clearCookies()">clear cookies</button>
+        <v-btn @click="clearCookies()">
+            <button>clear cookies</button>
+        </v-btn>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
                 <p class="d-inline-block me-3">{{ time.str }}</p>
-                <!-- <p class="d-inline-block me-3">
-                    ao5:
-                    {{
-                        timeArray.length >= 5 && timeArrayAvgs.length > 0
-                            ? timeArrayAvgs[timeArrayAvgs.length - 1].str // timeArrayAvgs[???].str
-                            : "-"
-                    }}
-                </p> -->
-                <button @click="modifyTime('plus2', time)">+2</button>
-                <button @click="modifyTime('dnf', time)">dnf</button>
-                <button
-                    class="removeButton"
+                <v-btn @click="modifyTime('plus2', time)" class="mr-2">
+                    <button>+2</button>
+                </v-btn>
+                <v-btn @click="modifyTime('dnf', time)" class="mr-2">
+                    <button>dnf</button>
+                </v-btn>
+                <v-btn
+                    class="removeButton mr-2"
                     @click="modifyTime('remove', time)">
-                    -
-                </button>
+                    <button>-</button>
+                </v-btn>
             </li>
         </ul>
     </div>

@@ -1,23 +1,15 @@
 <template>
-    <div class="scrambles p-1 text-center float-start">
-        <select
-            name="scramble-type"
-            id="scramble-type"
-            class="d-block text-center"
+    <div class="scrambles pa-1 text-center" height="20vh" width="70%">
+        <v-select
+            label="Scramble Type"
+            :items="selectItems"
+            item-title="name"
+            item-value="value"
             v-model="scrambleType">
-            <option value="333">3x3</option>
-            <option value="222">2x2</option>
-            <option value="444">4x4</option>
-            <option value="555">5x5</option>
-            <option value="666">6x6</option>
-            <option value="777">7x7</option>
-            <option value="clock">Clock</option>
-            <option value="minx">Megaminx</option>
-            <option value="pyram">Pyraminx</option>
-            <option value="skewb">Skewb</option>
-            <option value="sq1">Square-1</option>
-        </select>
-        <h3 @click="changeScramble()" class="m-1 ms-2 fs-2 user-select-none">
+        </v-select>
+        <h3
+            @click="changeScramble()"
+            class="ma-1 mt-2 fs-2 user-select-none cursor-pointer">
             {{ scramble[0].scramble_string }}
         </h3>
     </div>
@@ -31,6 +23,20 @@ export default defineComponent({
     props: ["changeScramble"],
     setup(props) {
         //* vars
+        const selectItems = [
+            { value: "333", name: "3x3" },
+            { value: "222", name: "2x2" },
+            { value: "444", name: "4x4" },
+            { value: "555", name: "5x5" },
+            { value: "666", name: "6x6" },
+            { value: "777", name: "7x7" },
+            { value: "clock", name: "Clock" },
+            { value: "minx", name: "Megaminx" },
+            { value: "pyram", name: "Pyraminx" },
+            { value: "skewb", name: "Skewb" },
+            { value: "sq1", name: "Square-1" },
+        ];
+
         const Scrambow = require("scrambow").Scrambow;
         let scrambleGen = new Scrambow();
         let scramble = ref<{ scramble_string: string }[]>(scrambleGen.get(1));
@@ -73,6 +79,7 @@ export default defineComponent({
         return {
             scramble,
             scrambleType,
+            selectItems,
             changeScramble,
         };
     },
@@ -81,8 +88,6 @@ export default defineComponent({
 
 <style>
 .scrambles {
-    height: 15vh;
-    width: 70%;
     background-color: #2c2c2c;
 }
 
