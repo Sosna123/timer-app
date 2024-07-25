@@ -17,7 +17,7 @@ import Scrambles from "@/components/Scrambles.vue";
 export default defineComponent({
     setup(props, { emit }) {
         //* vars
-        let jscookie = require("js-cookie");
+        const jscookie = require("js-cookie");
         let currentTimeStr = ref<string>("0.00");
         let currentTime = ref<number>(0);
         let startOfTimer: number | null = null;
@@ -60,7 +60,7 @@ export default defineComponent({
                 };
                 timeId++;
 
-                jscookie.set("timeId", timeId, { exdays: 365 * 10 });
+                jscookie.set("timeId", timeId, { expires: 365 * 10 });
 
                 //* send the time to TimeList
                 emit("time-done", time);
@@ -73,6 +73,9 @@ export default defineComponent({
             (removeTime) => {
                 if (jscookie.get("timeId")) {
                     timeId = jscookie.get("timeId");
+                    jscookie.set("timeId", timeId, { expires: 365 * 10 });
+                } else {
+                    timeId = 0;
                     jscookie.set("timeId", timeId, { expires: 365 * 10 });
                 }
             }

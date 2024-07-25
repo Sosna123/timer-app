@@ -16,14 +16,14 @@
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
                 <p class="d-inline-block me-3">{{ time.str }}</p>
-                <p class="d-inline-block me-3">
+                <!-- <p class="d-inline-block me-3">
                     ao5:
                     {{
                         timeArray.length >= 5 && timeArrayAvgs.length > 0
                             ? timeArrayAvgs[timeArrayAvgs.length - 1].str // timeArrayAvgs[???].str
                             : "-"
                     }}
-                </p>
+                </p> -->
                 <button @click="modifyTime('plus2', time)">+2</button>
                 <button @click="modifyTime('dnf', time)">dnf</button>
                 <button
@@ -372,12 +372,12 @@ export default defineComponent({
         }
 
         function clearCookies() {
-            jscookie.remove("timeArray", { path: "" });
-            jscookie.remove("timeArrayAvgs", { path: "" });
-            jscookie.remove("timeId", { path: "" });
             timeArray.value = [];
             timeArrayAvgs.value = [];
             emit("timeDeleted");
+            jscookie.remove("timeArray");
+            jscookie.remove("timeArrayAvgs");
+            jscookie.remove("timeId");
         }
 
         return {
