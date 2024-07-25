@@ -1,7 +1,10 @@
 <template>
     <div
         class="timerDiv text-center d-flex align-items-center justify-content-center">
-        <p @click="manageTimer()" class="timerText user-select-none">
+        <p
+            @click="manageTimer()"
+            class="timerText user-select-none"
+            :class="{ spaceDown: spaceDown }">
             {{ currentTimeStr }}
         </p>
     </div>
@@ -21,6 +24,7 @@ export default defineComponent({
         let timerRunning: boolean = false;
         let intervalTimer: undefined | number;
         let timeId: number = 0;
+        let spaceDown = ref<boolean>(false);
 
         //* change state of timer
         function manageTimer() {
@@ -89,6 +93,7 @@ export default defineComponent({
 
         //* turn on the timer when space is pressed
         document.body.addEventListener("keyup", (e) => {
+            spaceDown.value = false;
             if (timerRunning && e.code != "Space" && e.code != "Escape") {
                 manageTimer();
             }
@@ -103,8 +108,15 @@ export default defineComponent({
             }
         });
 
+        document.body.addEventListener("keydown", (e) => {
+            if (e.code == "Space" && !timerRunning) {
+                spaceDown.value = true;
+            }
+        });
+
         return {
             currentTimeStr,
+            spaceDown,
             manageTimer,
         };
     },
@@ -124,5 +136,9 @@ export default defineComponent({
     cursor: pointer;
     font-size: 128px;
     color: white;
+}
+
+.spaceDown {
+    color: #ffff00;
 }
 </style>
