@@ -13,11 +13,13 @@
         </v-select>
         <h2
             @click="changeScramble()"
-            class="fs-2 cursor-pointer ma-0 text-color-white scramble-text"
+            class="fs-2 cursor-pointer ma-0 text-color-white lg-scramble-textLG xl-scramble-textXL"
             style="user-select: none"
             :class="{
-                smallFont: smallFont === 1,
-                smallerFont: smallFont === 2,
+                'lg-smallFontLG': smallFont === 1,
+                'xl-smallFontXL': smallFont === 1,
+                'lg-smallerFontLG': smallFont === 2,
+                'xl-smallerFontXL': smallFont === 2,
             }">
             {{ scramble[0].scramble_string }}
         </h2>
@@ -116,15 +118,27 @@ export default defineComponent({
 </script>
 
 <style>
-.scramble-text {
+.scramble-textXL {
     font-size: 48px;
 }
 
-.smallFont {
+.smallFontXL {
     font-size: 32px !important;
 }
 
-.smallerFont {
+.smallerFontXL {
     font-size: 24px !important;
+}
+
+.scramble-textL {
+    font-size: 64px;
+}
+
+.smallFontL {
+    font-size: 24px !important;
+}
+
+.smallerFontL {
+    font-size: 12px !important;
 }
 </style>

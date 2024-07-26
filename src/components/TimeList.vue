@@ -1,13 +1,4 @@
 <template>
-    <div v-if="editingUsername">
-        <ChangeUsername
-            :username="username"
-            @username-changed="
-                (i) => {
-                    changeUsername(i);
-                }
-            " />
-    </div>
     <div class="timeList overflow-y-scroll overflow-x-hidden pa-5 bg-primary">
         <div class="d-inline-block">
             <TimeChart :timeList="timeArray" />
@@ -21,8 +12,8 @@
         </div>
         <v-divider class="border-opacity-100 my-4"></v-divider>
         <v-btn
-            @click="editingUsername = !editingUsername"
-            :disabled="editingUsername">
+            @click="$emit('changeUsername', true)"
+            :disabled="$props.editingUsername">
             <button>Change Username</button>
         </v-btn>
         <ul>
@@ -42,19 +33,19 @@
                 <v-btn
                     @click="modifyTime('plus2', time)"
                     class="timeBtn mr-2"
-                    :disabled="editingUsername">
+                    :disabled="$props.editingUsername">
                     <button>+2</button>
                 </v-btn>
                 <v-btn
                     @click="modifyTime('dnf', time)"
                     class="timeBtn mr-2"
-                    :disabled="editingUsername">
+                    :disabled="$props.editingUsername">
                     <button>dnf</button>
                 </v-btn>
                 <v-btn
                     @click="modifyTime('remove', time)"
                     class="timeBtn mr-2"
-                    :disabled="editingUsername">
+                    :disabled="$props.editingUsername">
                     <button>-</button>
                 </v-btn>
             </li>
@@ -68,7 +59,7 @@ import formatNormal from "@/js/timeFormat";
 import TimeChart from "@/components/TimeChart.vue";
 import ChangeUsername from "@/components/ChangeUsername.vue";
 export default defineComponent({
-    props: ["time"],
+    props: ["time", "username", "editingUsername"],
     components: { TimeChart, ChangeUsername },
     setup(props, { emit }) {
         //* types
@@ -104,8 +95,6 @@ export default defineComponent({
             num: 0,
         });
         let changeScramble: number = 0;
-        let username = ref<string>("user2");
-        let editingUsername = ref<boolean>(false);
 
         //* communication with database
         async function fetchData(method: string, body?: object) {
@@ -123,7 +112,7 @@ export default defineComponent({
             fetchData("get").then((e) => {
                 clearCookies();
                 e.forEach((i: any) => {
-                    if (i.username == username.value) {
+                    if (i.username == props.username) {
                         let newTime = {
                             id: i.id,
                             str: i.str,
@@ -137,15 +126,15 @@ export default defineComponent({
             });
         }
         function postData(body: any) {
-            body.username = username.value;
+            body.username = props.username;
             fetchData("post", body);
         }
         function putData(body: any) {
-            body.username = username.value;
+            body.username = props.username;
             fetchData("put", body);
         }
         function delData(body: any) {
-            body.username = username.value;
+            body.username = props.username;
             fetchData("delete", body);
         }
 
@@ -475,19 +464,13 @@ export default defineComponent({
             jscookie.remove("timeId");
         }
 
-        function changeUsername(newUsername: string) {
-            username.value = newUsername;
-            editingUsername.value = false;
-        }
-
-        watch(editingUsername, (editingUsername) => {
-            emit("editingUsername", editingUsername);
-        });
-
-        watch(username, (username) => {
-            clearCookies();
-            getData();
-        });
+        watch(
+            () => props.username,
+            () => {
+                clearCookies();
+                getData();
+            }
+        );
 
         clearCookies();
         getData();
@@ -499,10 +482,7 @@ export default defineComponent({
             changeScramble,
             pbTime,
             pbAo5,
-            username,
-            editingUsername,
             //* functions
-            changeUsername,
             addTime,
             modifyTime,
             meanOfArr,

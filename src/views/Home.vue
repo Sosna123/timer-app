@@ -24,16 +24,28 @@
         </v-col>
     </v-row> -->
 
+    <div v-if="editingUsername">
+        <ChangeUsername
+            :username="username"
+            @username-changed="
+                (i) => {
+                    changeUsernameFunc(i);
+                }
+            " />
+    </div>
+
     <div style="height: 100vh; width: 35%" class="float-left">
         <TimeList
             style="height: 100vh"
             :time="time"
+            :username="username"
+            :editing-username="editingUsername"
             @time-deleted="
                 (i) => {
                     timeRemoved++;
                 }
             "
-            @editingUsername="
+            @changeUsername="
                 (i) => {
                     editingUsername = i;
                 }
@@ -77,7 +89,9 @@ export default defineComponent({
         }>();
         let changeScramble = ref<number>(0);
         let timeRemoved = ref<number>(0);
+        let username = ref<string>("user1");
         let editingUsername = ref<boolean>(false);
+        const jscookie = require("js-cookie");
 
         //* use a prop to send time to TimeList
         function addTime(i: {
@@ -90,12 +104,24 @@ export default defineComponent({
             time.value = i;
         }
 
+        function changeUsernameFunc(newUsername: string) {
+            username.value = newUsername;
+            editingUsername.value = false;
+            jscookie.set("username", newUsername, { expires: 365 * 10 });
+        }
+
+        if (jscookie.get("username")) {
+            username.value = jscookie.get("username");
+        }
+
         return {
             time,
             changeScramble,
             timeRemoved,
+            username,
             editingUsername,
             addTime,
+            changeUsernameFunc,
         };
     },
 });
