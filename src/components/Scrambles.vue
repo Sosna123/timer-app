@@ -8,7 +8,8 @@
             v-model="scrambleType"
             density="compact"
             hide-details
-            class="mb-1">
+            class="mb-1"
+            :disabled="disableInput">
         </v-select>
         <h2
             @click="changeScramble()"
@@ -28,7 +29,7 @@ import { defineComponent } from "vue";
 import { ref } from "vue";
 import { watch } from "vue";
 export default defineComponent({
-    props: ["changeScramble"],
+    props: ["changeScramble", "disableInput"],
     setup(props) {
         //* vars
         const selectItems = [
@@ -62,6 +63,7 @@ export default defineComponent({
             | "skweb"
             | "sq1";
         let scrambleType = ref<ScrambleType>("333");
+        let disableInput = ref<boolean>(false);
 
         //* watch if scramble type changes
         watch(
@@ -93,6 +95,12 @@ export default defineComponent({
             () => props.changeScramble,
             () => {
                 changeScramble();
+            }
+        );
+        watch(
+            () => props.disableInput,
+            (disableInputProp) => {
+                disableInput.value = disableInputProp;
             }
         );
 

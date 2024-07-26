@@ -22,6 +22,7 @@ const vuetify = createVuetify({
                     primary: colors.grey.darken3,
                     secondary: colors.grey.darken2,
                     tertiary: colors.grey.darken1,
+                    background: "rgb(0, 0, 0)",
                 },
             },
             purple: {

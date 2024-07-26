@@ -32,12 +32,18 @@
                 (i) => {
                     timeRemoved++;
                 }
+            "
+            @editingUsername="
+                (i) => {
+                    editingUsername = i;
+                }
             " />
     </div>
     <div style="height: 100vh; width: 65%" class="float-left">
         <Scrambles
             class="pa-0"
             :change-scramble="changeScramble"
+            :disable-input="editingUsername"
             style="height: 27vh" />
         <Timer
             class="pa-0"
@@ -57,7 +63,9 @@ import { defineComponent, ref } from "vue";
 import TimeList from "../components/TimeList.vue";
 import Timer from "../components/Timer.vue";
 import Scrambles from "@/components/Scrambles.vue";
+import ChangeUsername from "@/components/ChangeUsername.vue";
 export default defineComponent({
+    components: { TimeList, Timer, Scrambles, ChangeUsername },
     setup() {
         //* vars
         let time = ref<{
@@ -69,6 +77,7 @@ export default defineComponent({
         }>();
         let changeScramble = ref<number>(0);
         let timeRemoved = ref<number>(0);
+        let editingUsername = ref<boolean>(false);
 
         //* use a prop to send time to TimeList
         function addTime(i: {
@@ -85,10 +94,10 @@ export default defineComponent({
             time,
             changeScramble,
             timeRemoved,
+            editingUsername,
             addTime,
         };
     },
-    components: { TimeList, Timer, Scrambles },
 });
 </script>
 

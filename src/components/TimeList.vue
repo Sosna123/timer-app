@@ -1,4 +1,13 @@
 <template>
+    <div v-if="editingUsername">
+        <ChangeUsername
+            :username="username"
+            @username-changed="
+                (i) => {
+                    changeUsername(i);
+                }
+            " />
+    </div>
     <div class="timeList overflow-y-scroll overflow-x-hidden pa-5 bg-primary">
         <div class="d-inline-block">
             <TimeChart :timeList="timeArray" />
@@ -11,8 +20,10 @@
             <h2 class="ma-0">Mean: {{ meanOfArr(timeArray) }}</h2>
         </div>
         <v-divider class="border-opacity-100 my-4"></v-divider>
-        <v-btn @click="clearCookies()">
-            <button>clear cookies</button>
+        <v-btn
+            @click="editingUsername = !editingUsername"
+            :disabled="editingUsername">
+            <button>Change Username</button>
         </v-btn>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
@@ -28,13 +39,22 @@
                             : "0.00"
                     }}
                 </p>
-                <v-btn @click="modifyTime('plus2', time)" class="timeBtn mr-2">
+                <v-btn
+                    @click="modifyTime('plus2', time)"
+                    class="timeBtn mr-2"
+                    :disabled="editingUsername">
                     <button>+2</button>
                 </v-btn>
-                <v-btn @click="modifyTime('dnf', time)" class="timeBtn mr-2">
+                <v-btn
+                    @click="modifyTime('dnf', time)"
+                    class="timeBtn mr-2"
+                    :disabled="editingUsername">
                     <button>dnf</button>
                 </v-btn>
-                <v-btn @click="modifyTime('remove', time)" class="timeBtn mr-2">
+                <v-btn
+                    @click="modifyTime('remove', time)"
+                    class="timeBtn mr-2"
+                    :disabled="editingUsername">
                     <button>-</button>
                 </v-btn>
             </li>
@@ -46,9 +66,10 @@
 import { defineComponent, ref, toRaw, watch } from "vue";
 import formatNormal from "@/js/timeFormat";
 import TimeChart from "@/components/TimeChart.vue";
+import ChangeUsername from "@/components/ChangeUsername.vue";
 export default defineComponent({
     props: ["time"],
-    components: { TimeChart },
+    components: { TimeChart, ChangeUsername },
     setup(props, { emit }) {
         //* types
         type Time = {
@@ -61,28 +82,14 @@ export default defineComponent({
 
         //* vars
         const jscookie = require("js-cookie");
-        let timeArray = ref<
-            {
-                id: number;
-                str: string;
-                num: number;
-                added2: boolean;
-                addedDnf: boolean;
-            }[]
-        >([]);
+        let timeArray = ref<Time[]>([]);
         let timeArrayAvgs = ref<
             {
                 str: string;
                 num: number;
             }[]
         >([]);
-        let pbTime = ref<{
-            id: number;
-            str: string;
-            num: number;
-            added2: boolean;
-            addedDnf: boolean;
-        }>({
+        let pbTime = ref<Time>({
             id: 0,
             str: "0.00",
             num: 0,
@@ -98,6 +105,7 @@ export default defineComponent({
         });
         let changeScramble: number = 0;
         let username = ref<string>("user2");
+        let editingUsername = ref<boolean>(false);
 
         //* communication with database
         async function fetchData(method: string, body?: object) {
@@ -467,6 +475,21 @@ export default defineComponent({
             jscookie.remove("timeId");
         }
 
+        function changeUsername(newUsername: string) {
+            username.value = newUsername;
+            editingUsername.value = false;
+        }
+
+        watch(editingUsername, (editingUsername) => {
+            emit("editingUsername", editingUsername);
+        });
+
+        watch(username, (username) => {
+            clearCookies();
+            getData();
+        });
+
+        clearCookies();
         getData();
 
         return {
@@ -476,7 +499,10 @@ export default defineComponent({
             changeScramble,
             pbTime,
             pbAo5,
+            username,
+            editingUsername,
             //* functions
+            changeUsername,
             addTime,
             modifyTime,
             meanOfArr,
