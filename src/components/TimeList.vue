@@ -16,7 +16,9 @@
         </v-btn>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
-                <p class="d-inline-block me-3 timeListText">{{ time.str }}</p>
+                <p class="d-inline-block me-3 timeListText">
+                    {{ time.str }}
+                </p>
                 <p class="d-inline-block me-3 timeListText">|</p>
                 <p class="d-inline-block me-3 timeListText">
                     a05:
@@ -26,15 +28,13 @@
                             : "0.00"
                     }}
                 </p>
-                <v-btn @click="modifyTime('plus2', time)" class="mr-2">
+                <v-btn @click="modifyTime('plus2', time)" class="timeBtn mr-2">
                     <button>+2</button>
                 </v-btn>
-                <v-btn @click="modifyTime('dnf', time)" class="mr-2">
+                <v-btn @click="modifyTime('dnf', time)" class="timeBtn mr-2">
                     <button>dnf</button>
                 </v-btn>
-                <v-btn
-                    class="removeButton mr-2"
-                    @click="modifyTime('remove', time)">
+                <v-btn @click="modifyTime('remove', time)" class="timeBtn mr-2">
                     <button>-</button>
                 </v-btn>
             </li>
@@ -169,8 +169,8 @@ export default defineComponent({
             //* defocus the buttons after clicking to fix the bug of deleting times instead of adding them
             let buttons = Array.from(
                 document.getElementsByClassName(
-                    "removeButton"
-                ) as HTMLCollectionOf<HTMLButtonElement>
+                    "timeBtn"
+                ) as HTMLCollectionOf<HTMLElement>
             );
             for (let e of buttons) {
                 e.blur();

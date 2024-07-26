@@ -38,10 +38,10 @@
         <Scrambles
             class="pa-0"
             :change-scramble="changeScramble"
-            style="height: 30vh" />
+            style="height: 27vh" />
         <Timer
             class="pa-0"
-            style="height: 70vh"
+            style="height: 73vh"
             :remove-time="timeRemoved"
             @time-done="
                 (i) => {
