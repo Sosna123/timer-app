@@ -50,6 +50,15 @@ export default defineComponent({
     props: ["time"],
     components: { TimeChart },
     setup(props, { emit }) {
+        //* types
+        type Time = {
+            id: number;
+            str: string;
+            num: number;
+            added2: boolean;
+            addedDnf: boolean;
+        };
+
         //* vars
         const jscookie = require("js-cookie");
         let timeArray = ref<
@@ -88,6 +97,49 @@ export default defineComponent({
             num: 0,
         });
         let changeScramble: number = 0;
+        let username = ref<string>("user2");
+
+        //* communication with database
+        async function fetchData(method: string, body?: object) {
+            const fetched = await fetch("http://localhost:3000/", {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+            });
+            const data = await fetched.json();
+            return data;
+        }
+        function getData() {
+            fetchData("get").then((e) => {
+                clearCookies();
+                e.forEach((i: any) => {
+                    if (i.username == username.value) {
+                        let newTime = {
+                            id: i.id,
+                            str: i.str,
+                            num: i.num,
+                            added2: i.added2,
+                            addedDnf: i.addedDnf,
+                        };
+                        timeArray.value.push(newTime);
+                    }
+                });
+            });
+        }
+        function postData(body: any) {
+            body.username = username.value;
+            fetchData("post", body);
+        }
+        function putData(body: any) {
+            body.username = username.value;
+            fetchData("put", body);
+        }
+        function delData(body: any) {
+            body.username = username.value;
+            fetchData("delete", body);
+        }
 
         //* push the time to timeArray
         function addTime(time: {
@@ -98,6 +150,7 @@ export default defineComponent({
             addedDnf: boolean;
         }) {
             timeArray.value.push(time);
+            postData(time);
         }
 
         //* modify the time to add +2, dnf or remove it
@@ -119,7 +172,6 @@ export default defineComponent({
                             e.addedDnf = !e.addedDnf;
                             e.str = formatNormal(e.num.toString());
                         }
-                        console.log(e);
                         e.added2 = !e.added2;
                         e.num += 200;
                         e.str = formatNormal(e.num.toString()) + "+";
@@ -129,6 +181,7 @@ export default defineComponent({
                         e.str = formatNormal(e.num.toString());
                     }
                 });
+                putData(time);
             } else if (action == "dnf") {
                 //* change time to dnf
                 timeArray.value.forEach((e) => {
@@ -145,23 +198,18 @@ export default defineComponent({
                         e.str = formatNormal(e.num.toString());
                     }
                 });
+                putData(time);
             } else if (action == "remove") {
-                //* remove the time and update the ids
+                //* remove the time
+                delData(time);
                 timeArray.value.forEach((e) => {
                     if (e.id == time.id) {
-                        let timeId = jscookie.get("timeId");
-                        timeId--;
-                        jscookie.set("timeId", timeId, { expires: 365 * 10 });
-                        emit("timeDeleted", timeId);
                         timeArray.value = timeArray.value.filter((e) => {
                             if (e.id != time.id) {
                                 return true;
                             }
                             return false;
                         });
-                    }
-                    if (e.id > time.id) {
-                        e.id--;
                     }
                 });
             }
@@ -418,6 +466,8 @@ export default defineComponent({
             jscookie.remove("timeArrayAvgs");
             jscookie.remove("timeId");
         }
+
+        getData();
 
         return {
             //* vars
