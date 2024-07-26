@@ -10,13 +10,22 @@
             <h2 class="ma-0">PB ao5: {{ pbAo5.str }}</h2>
             <h2 class="ma-0">Mean: {{ meanOfArr(timeArray) }}</h2>
         </div>
-        <v-divider class="border-opacity-100 my-3"></v-divider>
+        <v-divider class="border-opacity-100 my-4"></v-divider>
         <v-btn @click="clearCookies()">
             <button>clear cookies</button>
         </v-btn>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
                 <p class="d-inline-block me-3 timeListText">{{ time.str }}</p>
+                <p class="d-inline-block me-3 timeListText">|</p>
+                <p class="d-inline-block me-3 timeListText">
+                    a05:
+                    {{
+                        timeArrayAvgs.length > 0 && time.id >= 4
+                            ? timeArrayAvgs.toReversed()[time.id - 4].str
+                            : "0.00"
+                    }}
+                </p>
                 <v-btn @click="modifyTime('plus2', time)" class="mr-2">
                     <button>+2</button>
                 </v-btn>
