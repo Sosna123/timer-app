@@ -31,6 +31,13 @@ const vuetify = createVuetify({
                     tertiary: colors.deepPurple.darken1,
                 },
             },
+            amber: {
+                colors: {
+                    primary: colors.amber.darken3,
+                    secondary: colors.amber.darken2,
+                    tertiary: colors.amber.darken1,
+                },
+            },
         },
     },
 });

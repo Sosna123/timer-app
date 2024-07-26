@@ -1,5 +1,5 @@
 <template>
-    <div class="scrambles text-center pa-5 bg-secondary">
+    <div class="text-center pa-5 bg-secondary">
         <v-select
             label="Scramble Type"
             :items="selectItems"
@@ -7,11 +7,17 @@
             item-value="value"
             v-model="scrambleType"
             density="compact"
-            hide-details>
+            hide-details
+            class="mb-1">
         </v-select>
         <h2
             @click="changeScramble()"
-            class="fs-2 user-select-none cursor-pointer ma-0">
+            class="fs-2 cursor-pointer ma-0 text-color-white scramble-text"
+            style="user-select: none"
+            :class="{
+                smallFont: smallFont === 1,
+                smallerFont: smallFont === 2,
+            }">
             {{ scramble[0].scramble_string }}
         </h2>
     </div>
@@ -41,6 +47,7 @@ export default defineComponent({
 
         const Scrambow = require("scrambow").Scrambow;
         let scrambleGen = new Scrambow();
+        let smallFont = ref<0 | 1 | 2>(0);
         let scramble = ref<{ scramble_string: string }[]>(scrambleGen.get(1));
         type ScrambleType =
             | "333"
@@ -62,6 +69,17 @@ export default defineComponent({
             (scramType) => {
                 scrambleGen = new Scrambow().setType(scramType);
                 changeScramble();
+                if (
+                    scramType === "555" ||
+                    scramType === "666" ||
+                    scramType === "minx"
+                ) {
+                    smallFont.value = 1;
+                } else if (scramType === "777") {
+                    smallFont.value = 2;
+                } else {
+                    smallFont.value = 0;
+                }
             }
         );
 
@@ -82,6 +100,7 @@ export default defineComponent({
             scramble,
             scrambleType,
             selectItems,
+            smallFont,
             changeScramble,
         };
     },
@@ -89,12 +108,15 @@ export default defineComponent({
 </script>
 
 <style>
-.scrambles {
-    background-color: #2c2c2c;
+.scramble-text {
+    font-size: 48px;
 }
 
-.scrambles > h3 {
-    cursor: pointer;
-    color: white;
+.smallFont {
+    font-size: 32px !important;
+}
+
+.smallerFont {
+    font-size: 24px !important;
 }
 </style>
