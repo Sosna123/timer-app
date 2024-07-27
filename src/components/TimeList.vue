@@ -22,14 +22,14 @@
                     {{ time.str }}
                 </p>
                 <p class="d-inline-block me-3 timeListText">|</p>
-                <p class="d-inline-block me-3 timeListText">
+                <!-- <p class="d-inline-block me-3 timeListText">
                     a05:
                     {{
-                        timeArrayAvgs.length > 0 && time.id >= 4
+                        timeArrayAvgs.length > 0 && timeArray.
                             ? timeArrayAvgs.toReversed()[time.id - 4].str
                             : "0.00"
                     }}
-                </p>
+                </p> -->
                 <v-btn
                     @click="modifyTime('plus2', time)"
                     class="timeBtn mr-2"
@@ -108,7 +108,7 @@ export default defineComponent({
             const data = await fetched.json();
             return data;
         }
-        function getData() {
+        async function getData() {
             fetchData("get").then((e) => {
                 clearCookies();
                 e.forEach((i: any) => {
@@ -200,7 +200,13 @@ export default defineComponent({
                 //* remove the time
                 delData(time);
                 timeArray.value.forEach((e) => {
-                    if (e.id == time.id) {
+                    if (
+                        e.id == time.id ||
+                        e.str == time.str ||
+                        e.num == time.num ||
+                        e.added2 == time.added2 ||
+                        e.addedDnf == time.addedDnf
+                    ) {
                         timeArray.value = timeArray.value.filter((e) => {
                             if (e.id != time.id) {
                                 return true;
@@ -468,7 +474,15 @@ export default defineComponent({
             () => props.username,
             () => {
                 clearCookies();
-                getData();
+                getData().then(() => {
+                    if (timeArray.value.length > 0) {
+                        let timeId = timeArray.value[-1].id + 1;
+                        jscookie.set("timeId", timeId, { expires: 365 * 10 });
+                    } else {
+                        jscookie.set("timeId", 0, { expires: 365 * 10 });
+                    }
+                    emit("timeDeleted");
+                });
             }
         );
 
