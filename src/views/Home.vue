@@ -76,6 +76,7 @@ import TimeList from "../components/TimeList.vue";
 import Timer from "../components/Timer.vue";
 import Scrambles from "@/components/Scrambles.vue";
 import ChangeUsername from "@/components/ChangeUsername.vue";
+import { useRoute } from "vue-router";
 export default defineComponent({
     components: { TimeList, Timer, Scrambles, ChangeUsername },
     setup() {
@@ -89,9 +90,10 @@ export default defineComponent({
         }>();
         let changeScramble = ref<number>(0);
         let timeRemoved = ref<number>(0);
-        let username = ref<string>("user1");
+        let username = ref<string>("");
         let editingUsername = ref<boolean>(false);
         const jscookie = require("js-cookie");
+        const route = useRoute();
 
         //* use a prop to send time to TimeList
         function addTime(i: {
@@ -112,6 +114,15 @@ export default defineComponent({
 
         if (jscookie.get("username")) {
             username.value = jscookie.get("username");
+        }
+
+        if (username.value == "") {
+            editingUsername.value = true;
+        }
+
+        if (route.query.code) {
+            let bearerToken = route.query.code;
+            jscookie("bearer token", bearerToken, { expires: 365 * 10 });
         }
 
         return {
