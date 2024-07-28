@@ -16,6 +16,7 @@
                     >Login using wca</a
                 >
             </div>
+            <v-divider class="border-opacity-100 my-4"></v-divider>
             <div>
                 <v-text-field
                     hide-details="auto"
@@ -40,12 +41,10 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import { useRoute } from "vue-router";
 export default defineComponent({
     props: ["username"],
     setup(props) {
         let newUsername = ref<string>(props.username);
-        const route = useRoute();
 
         watch(props.username, (username: string) => {
             newUsername.value = username;
