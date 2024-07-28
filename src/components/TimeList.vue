@@ -98,7 +98,7 @@ export default defineComponent({
 
         //* communication with database
         async function fetchData(method: string, body?: object) {
-            const fetched = await fetch("http://frog01-31260.wykr.es/", {
+            const fetched = await fetch("https://frog01-31260.wykr.es/", {
                 method: method,
                 headers: {
                     "Content-Type": "application/json",

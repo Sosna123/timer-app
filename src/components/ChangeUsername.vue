@@ -12,7 +12,7 @@
             <div>
                 <a
                     class="v-btn v-btn--elevated v-theme--dark bg-primary v-btn--density-default v-btn--size-default v-btn--variant-elevated"
-                    href="https://www.worldcubeassociation.org/oauth/authorize?client_id=veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0&redirect_uri=https%3A%2F%2Flocalhost%3A8080&response_type=code&scope="
+                    href="https://www.worldcubeassociation.org/oauth/authorize?client_id=veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0&redirect_uri=https%3A%2F%2Fspeedcubing-timer.netlify.app%2F&response_type=code&scope="
                     >Login using wca</a
                 >
             </div>
