@@ -28,7 +28,8 @@
                     style="width: 400px"
                     color="primary"
                     @click="
-                        newUsername.length > 0 && !username.startsWith('wca-')
+                        newUsername.length > 0 &&
+                        !newUsername.startsWith('wca-')
                             ? $emit('username-changed', newUsername)
                             : null
                     "
