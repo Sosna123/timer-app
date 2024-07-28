@@ -207,10 +207,10 @@ export default defineComponent({
                 timeArray.value.forEach((e) => {
                     timeArray.value = timeArray.value.filter((e) => {
                         if (
-                            e.id == time.id ||
-                            e.str == time.str ||
-                            e.num == time.num ||
-                            e.added2 == time.added2 ||
+                            e.id == time.id &&
+                            e.str == time.str &&
+                            e.num == time.num &&
+                            e.added2 == time.added2 &&
                             e.addedDnf == time.addedDnf
                         ) {
                             return false;
