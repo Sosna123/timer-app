@@ -13,9 +13,14 @@
         <v-divider class="border-opacity-100 my-4"></v-divider>
         <v-btn
             @click="$emit('changeUsername', true)"
-            :disabled="$props.editingUsername">
+            :disabled="$props.editingUsername"
+            class="d-inline-block">
             <button>Change Username</button>
         </v-btn>
+        <p class="d-inline-block ml-3 ma-0 pa-0 md-fs-20">
+            {{ $props.username }}
+        </p>
+        <v-divider class="border-opacity-100 my-4"></v-divider>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
                 <p class="d-inline-block me-3 timeListText">
@@ -200,20 +205,18 @@ export default defineComponent({
                 //* remove the time
                 delData(time);
                 timeArray.value.forEach((e) => {
-                    if (
-                        e.id == time.id ||
-                        e.str == time.str ||
-                        e.num == time.num ||
-                        e.added2 == time.added2 ||
-                        e.addedDnf == time.addedDnf
-                    ) {
-                        timeArray.value = timeArray.value.filter((e) => {
-                            if (e.id != time.id) {
-                                return true;
-                            }
+                    timeArray.value = timeArray.value.filter((e) => {
+                        if (
+                            e.id == time.id ||
+                            e.str == time.str ||
+                            e.num == time.num ||
+                            e.added2 == time.added2 ||
+                            e.addedDnf == time.addedDnf
+                        ) {
                             return false;
-                        });
-                    }
+                        }
+                        return true;
+                    });
                 });
             }
 
@@ -513,5 +516,9 @@ export default defineComponent({
 
 .timeListText {
     font-size: 32px;
+}
+
+.fs-20 {
+    font-size: 20px;
 }
 </style>

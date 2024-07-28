@@ -5,7 +5,8 @@
         <p
             @click="manageTimer()"
             class="timerText cursor-pointer"
-            :class="{ 'text-amber': spaceDown }">
+            :class="{ 'text-amber': spaceDown }"
+            style="user-select: none">
             {{ currentTimeStr }}
         </p>
     </div>
