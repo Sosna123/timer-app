@@ -16,8 +16,9 @@
             class="fs-2 cursor-pointer ma-0 text-color-white scramble-text"
             style="user-select: none"
             :class="{
-                smallFont: smallFont === 1,
-                smallerFont: smallFont === 2,
+                smallFont555: smallFont === 1,
+                smallFont666: smallFont === 2,
+                smallerFont: smallFont === 3,
             }">
             {{ scramble[0].scramble_string }}
         </h2>
@@ -48,7 +49,7 @@ export default defineComponent({
 
         const Scrambow = require("scrambow").Scrambow;
         let scrambleGen = new Scrambow();
-        let smallFont = ref<0 | 1 | 2>(0);
+        let smallFont = ref<0 | 1 | 2 | 3>(0);
         let scramble = ref<{ scramble_string: string }[]>(scrambleGen.get(1));
         type ScrambleType =
             | "333"
@@ -71,14 +72,12 @@ export default defineComponent({
             (scramType) => {
                 scrambleGen = new Scrambow().setType(scramType);
                 changeScramble();
-                if (
-                    scramType === "555" ||
-                    scramType === "666" ||
-                    scramType === "minx"
-                ) {
+                if (scramType === "555") {
                     smallFont.value = 1;
-                } else if (scramType === "777") {
+                } else if (scramType === "666") {
                     smallFont.value = 2;
+                } else if (scramType === "777" || scramType === "minx") {
+                    smallFont.value = 3;
                 } else {
                     smallFont.value = 0;
                 }
@@ -154,10 +153,20 @@ export default defineComponent({
     }
 }
 
-.smallFont {
+.smallFont555 {
     font-size: 12px;
     @include breakpoint(lg) {
-        font-size: 24px;
+        font-size: 20px;
+    }
+    @include breakpoint(xl) {
+        font-size: 36px;
+    }
+}
+
+.smallFont666 {
+    font-size: 12px;
+    @include breakpoint(lg) {
+        font-size: 18px;
     }
     @include breakpoint(xl) {
         font-size: 32px;
@@ -167,7 +176,7 @@ export default defineComponent({
 .smallerFont {
     font-size: 10px;
     @include breakpoint(lg) {
-        font-size: 12px;
+        font-size: 16px;
     }
     @include breakpoint(xl) {
         font-size: 24px;
