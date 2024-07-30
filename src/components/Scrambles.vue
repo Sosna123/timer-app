@@ -13,13 +13,11 @@
         </v-select>
         <h2
             @click="changeScramble()"
-            class="fs-2 cursor-pointer ma-0 text-color-white lg-scramble-textLG xl-scramble-textXL"
+            class="fs-2 cursor-pointer ma-0 text-color-white scramble-text"
             style="user-select: none"
             :class="{
-                'lg-smallFontLG': smallFont === 1,
-                'xl-smallFontXL': smallFont === 1,
-                'lg-smallerFontLG': smallFont === 2,
-                'xl-smallerFontXL': smallFont === 2,
+                smallFont: smallFont === 1,
+                smallerFont: smallFont === 2,
             }">
             {{ scramble[0].scramble_string }}
         </h2>
@@ -117,28 +115,62 @@ export default defineComponent({
 });
 </script>
 
-<style>
-.scramble-textXL {
-    font-size: 48px;
+<style lang="scss">
+@mixin breakpoint($point) {
+    @if $point == xs {
+        @media (max-width: 600px) {
+            @content;
+        }
+    } @else if $point == sm {
+        @media (min-width: 600px) {
+            @content;
+        }
+    } @else if $point == md {
+        @media (min-width: 960px) {
+            @content;
+        }
+    } @else if $point == lg {
+        @media (min-width: 1280px) {
+            @content;
+        }
+    } @else if $point == xl {
+        @media (min-width: 1920px) {
+            @content;
+        }
+    } @else if $point == xxl {
+        @media (min-width: 2560px) {
+            @content;
+        }
+    }
 }
 
-.smallFontXL {
-    font-size: 32px !important;
+.scramble-text {
+    font-size: 16px;
+    @include breakpoint(lg) {
+        font-size: 32px;
+    }
+    @include breakpoint(xl) {
+        font-size: 64px;
+    }
 }
 
-.smallerFontXL {
-    font-size: 24px !important;
+.smallFont {
+    font-size: 12px;
+    @include breakpoint(lg) {
+        font-size: 24px;
+    }
+    @include breakpoint(xl) {
+        font-size: 32px;
+    }
 }
 
-.scramble-textL {
-    font-size: 64px;
-}
-
-.smallFontL {
-    font-size: 24px !important;
-}
-
-.smallerFontL {
-    font-size: 12px !important;
+.smallerFont {
+    font-size: 10px;
+    @include breakpoint(lg) {
+        font-size: 12px;
+    }
+    @include breakpoint(xl) {
+        font-size: 24px;
+    }
 }
 </style>
