@@ -115,33 +115,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@mixin breakpoint($point) {
-    @if $point == xs {
-        @media (max-width: 600px) {
-            @content;
-        }
-    } @else if $point == sm {
-        @media (min-width: 600px) {
-            @content;
-        }
-    } @else if $point == md {
-        @media (min-width: 960px) {
-            @content;
-        }
-    } @else if $point == lg {
-        @media (min-width: 1280px) {
-            @content;
-        }
-    } @else if $point == xl {
-        @media (min-width: 1920px) {
-            @content;
-        }
-    } @else if $point == xxl {
-        @media (min-width: 2560px) {
-            @content;
-        }
-    }
-}
+@use "../styles/main.scss" as *;
 
 .scramble-text {
     font-size: 16px;
@@ -149,7 +123,7 @@ export default defineComponent({
         font-size: 32px;
     }
     @include breakpoint(xl) {
-        font-size: 64px;
+        font-size: 48px;
     }
 }
 

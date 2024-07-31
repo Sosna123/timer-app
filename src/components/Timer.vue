@@ -4,9 +4,9 @@
         style="justify-content: center; align-items: center">
         <p
             @click="manageTimer()"
-            class="timerText cursor-pointer"
+            class="cursor-pointer"
             :class="{ 'text-amber': spaceDown }"
-            style="user-select: none">
+            style="user-select: none; font-size: 128px">
             {{ currentTimeStr }}
         </p>
     </div>
@@ -122,8 +122,4 @@ export default defineComponent({
 });
 </script>
 
-<style>
-.timerText {
-    font-size: 128px;
-}
-</style>
+<style></style>

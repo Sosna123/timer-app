@@ -165,8 +165,4 @@ export default defineComponent({
 });
 </script>
 
-<style>
-.headingTimeList {
-    display: sticky;
-}
-</style>
+<style></style>

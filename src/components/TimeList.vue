@@ -1,5 +1,5 @@
 <template>
-    <div class="timeList overflow-y-scroll overflow-x-hidden pa-5 bg-primary">
+    <div class="overflow-y-scroll overflow-x-hidden pa-5 bg-primary">
         <div class="d-inline-block">
             <TimeChart :timeList="timeArray" />
         </div>
@@ -17,7 +17,7 @@
             class="d-inline-block">
             <button>Change Username</button>
         </v-btn>
-        <p class="d-inline-block ml-3 ma-0 pa-0 md-fs-20">
+        <p class="d-inline-block ml-3 ma-0 pa-0">
             {{ $props.username }}
         </p>
         <v-divider class="border-opacity-100 my-4"></v-divider>
@@ -510,15 +510,7 @@ export default defineComponent({
 </script>
 
 <style>
-.timeList {
-    background-color: #242323;
-}
-
 .timeListText {
     font-size: 32px;
-}
-
-.fs-20 {
-    font-size: 20px;
 }
 </style>
