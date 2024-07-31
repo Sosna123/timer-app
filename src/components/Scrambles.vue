@@ -13,7 +13,7 @@
         </v-select>
         <h2
             @click="changeScramble()"
-            class="fs-2 cursor-pointer ma-0 text-color-white scramble-text"
+            class="cursor-pointer ma-0 text-color-white scramble-text"
             style="user-select: none"
             :class="{
                 smallFont555: smallFont === 1,

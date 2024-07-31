@@ -34,7 +34,7 @@
             " />
     </div>
 
-    <div style="height: 100vh; width: 35%" class="float-left">
+    <div class="left-panel">
         <TimeList
             style="height: 100vh"
             :time="time"
@@ -51,15 +51,15 @@
                 }
             " />
     </div>
-    <div style="height: 100vh; width: 65%" class="float-left">
+    <div class="right-panel">
         <Scrambles
             class="pa-0"
             :change-scramble="changeScramble"
             :disable-input="editingUsername"
-            style="height: 27vh" />
+            style="height: 27vh; width: 100%" />
         <Timer
             class="pa-0"
-            style="height: 73vh"
+            style="height: 73vh; width: 100%"
             :remove-time="timeRemoved"
             @time-done="
                 (i) => {
@@ -165,4 +165,30 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style lang="scss">
+@use "@/styles/main.scss" as *;
+
+.left-panel {
+    height: 100vh;
+    width: 35%;
+    float: left;
+    @include breakpoint(xs) {
+        display: none;
+    }
+    @include breakpoint(sm) {
+        display: none;
+    }
+}
+
+.right-panel {
+    width: 65%;
+    height: 100vh;
+    float: left;
+    @include breakpoint(xs) {
+        width: 100%;
+    }
+    @include breakpoint(sm) {
+        width: 100%;
+    }
+}
+</style>

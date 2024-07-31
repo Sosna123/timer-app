@@ -4,7 +4,7 @@
             <TimeChart :timeList="timeArray" />
         </div>
         <div class="d-inline-block">
-            <h1 class="headingTimeList">Your times:</h1>
+            <h1>Stats:</h1>
             <h2 class="ma-0">Solves: {{ timeArray.length }}</h2>
             <h2 class="ma-0">PB single: {{ pbTime.str }}</h2>
             <h2 class="ma-0">PB ao5: {{ pbAo5.str }}</h2>
@@ -21,6 +21,7 @@
             {{ $props.username }}
         </p>
         <v-divider class="border-opacity-100 my-4"></v-divider>
+        <h1>Times:</h1>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
                 <p class="d-inline-block me-3 timeListText">
