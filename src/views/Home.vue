@@ -34,7 +34,12 @@
             " />
     </div>
 
-    <div class="left-panel">
+    <div
+        class="left-panel"
+        v-show="
+            (showTimeList && $vuetify.display.smAndDown) ||
+            $vuetify.display.mdAndUp
+        ">
         <TimeList
             style="height: 100vh"
             :time="time"
@@ -53,6 +58,7 @@
     </div>
     <div class="right-panel">
         <Scrambles
+            @show-timelist="showTimeList = !showTimeList"
             class="pa-0"
             :change-scramble="changeScramble"
             :disable-input="editingUsername"
@@ -92,6 +98,7 @@ export default defineComponent({
         let timeRemoved = ref<number>(0);
         let username = ref<string>("");
         let editingUsername = ref<boolean>(false);
+        let showTimeList = ref<boolean>(false);
         const jscookie = require("js-cookie");
         const route = useRoute();
 
@@ -158,6 +165,7 @@ export default defineComponent({
             timeRemoved,
             username,
             editingUsername,
+            showTimeList,
             addTime,
             changeUsernameFunc,
         };
@@ -172,11 +180,16 @@ export default defineComponent({
     height: 100vh;
     width: 35%;
     float: left;
+    transition: 0.5s;
     @include breakpoint(xs) {
-        display: none;
+        width: 90%;
+        position: absolute;
+        opacity: 100%;
     }
     @include breakpoint(sm) {
-        display: none;
+        width: 90%;
+        position: absolute;
+        opacity: 100%;
     }
 }
 

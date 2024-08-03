@@ -1,5 +1,10 @@
 <template>
     <div class="text-center pa-5 bg-secondary">
+        <div class="timeListBtn" id="timeListBtn">
+            <v-btn class="timeListBtn" @click="showTimeList()">
+                <button>Show stats and times</button>
+            </v-btn>
+        </div>
         <v-select
             label="Scramble Type"
             :items="selectItems"
@@ -9,7 +14,7 @@
             density="compact"
             hide-details
             class="mb-1"
-            :disabled="disableInput">
+            :disabled="disableInput || disableInput2">
         </v-select>
         <h2
             @click="changeScramble()"
@@ -31,7 +36,7 @@ import { ref } from "vue";
 import { watch } from "vue";
 export default defineComponent({
     props: ["changeScramble", "disableInput"],
-    setup(props) {
+    setup(props, { emit }) {
         //* vars
         const selectItems = [
             { value: "333", name: "3x3" },
@@ -65,6 +70,7 @@ export default defineComponent({
             | "sq1";
         let scrambleType = ref<ScrambleType>("333");
         let disableInput = ref<boolean>(false);
+        let disableInput2 = ref<boolean>(false);
 
         //* watch if scramble type changes
         watch(
@@ -103,12 +109,21 @@ export default defineComponent({
             }
         );
 
+        function showTimeList() {
+            const button = document.getElementById("timeListBtn");
+            button!.blur();
+            emit("show-timelist");
+            disableInput2.value = !disableInput2.value;
+        }
+
         return {
             scramble,
             scrambleType,
             selectItems,
             smallFont,
+            disableInput2,
             changeScramble,
+            showTimeList,
         };
     },
 });
@@ -116,6 +131,20 @@ export default defineComponent({
 
 <style lang="scss">
 @use "../styles/main.scss" as *;
+
+.timeListBtn {
+    display: none;
+    @include breakpoint(xs) {
+        display: inline-block;
+        width: 100%;
+        margin: 0 0 10px 0;
+    }
+    @include breakpoint(sm) {
+        display: inline-block;
+        width: 100%;
+        margin: 0 0 10px 0;
+    }
+}
 
 .scramble-text {
     font-size: 16px;
