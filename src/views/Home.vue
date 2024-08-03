@@ -114,7 +114,7 @@ export default defineComponent({
         }
 
         function changeUsernameFunc(newUsername: string) {
-            username.value = newUsername;
+            username.value = newUsername.toLowerCase();
             editingUsername.value = false;
             jscookie.set("username", newUsername, { expires: 365 * 10 });
         }

@@ -48,7 +48,7 @@ export default defineComponent({
         let newUsername = ref<string>(props.username);
 
         watch(props.username, (username: string) => {
-            newUsername.value = username;
+            newUsername.value = username.toLowerCase();
         });
 
         return {
