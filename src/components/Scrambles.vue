@@ -17,7 +17,11 @@
             density="compact"
             hide-details
             class="mb-1"
-            :disabled="disableInput || disableInput2">
+            :disabled="
+                $props.disableInput ||
+                $props.disableInput2 ||
+                $props.disableInput3
+            ">
         </v-select>
         <h2
             @click="changeScramble()"
@@ -38,7 +42,7 @@ import { defineComponent } from "vue";
 import { ref } from "vue";
 import { watch } from "vue";
 export default defineComponent({
-    props: ["changeScramble", "disableInput", "disableInput2"],
+    props: ["changeScramble", "disableInput", "disableInput2", "disableInput3"],
     setup(props, { emit }) {
         //* vars
         const selectItems = [
@@ -103,18 +107,6 @@ export default defineComponent({
             () => props.changeScramble,
             () => {
                 changeScramble();
-            }
-        );
-        watch(
-            () => props.disableInput,
-            (disableInputProp) => {
-                disableInput.value = disableInputProp;
-            }
-        );
-        watch(
-            () => props.disableInput2,
-            (disableInputProp) => {
-                disableInput2.value = disableInputProp;
             }
         );
 

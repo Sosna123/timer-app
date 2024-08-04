@@ -5,7 +5,10 @@
         <p
             @click="manageTimer()"
             class="cursor-pointer"
-            :class="{ 'text-amber': spaceDown }"
+            :class="{
+                'text-amber': spaceDown,
+                'text-black': $props.currTheme === 'light',
+            }"
             style="user-select: none; font-size: 128px">
             {{ currentTimeStr }}
         </p>
@@ -17,6 +20,8 @@ import { defineComponent, ref, watch } from "vue";
 import formatNormal from "@/js/timeFormat";
 import Scrambles from "@/components/Scrambles.vue";
 export default defineComponent({
+    components: { Scrambles },
+    props: ["removeTime", "currTheme"],
     setup(props, { emit }) {
         //* vars
         const jscookie = require("js-cookie");
@@ -27,6 +32,7 @@ export default defineComponent({
         let intervalTimer: undefined | number;
         let timeId: number = 0;
         let spaceDown = ref<boolean>(false);
+        let lightTheme = ref<boolean>(false);
 
         //* change state of timer
         function manageTimer() {
@@ -113,12 +119,11 @@ export default defineComponent({
 
         return {
             currentTimeStr,
+            lightTheme,
             spaceDown,
             manageTimer,
         };
     },
-    components: { Scrambles },
-    props: { removeTime: Number },
 });
 </script>
 

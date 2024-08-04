@@ -13,15 +13,30 @@
             <h2 class="ma-0">Mean: {{ meanOfArr(timeArray) }}</h2>
         </div>
         <v-divider class="border-opacity-100 my-4"></v-divider>
-        <v-btn
-            @click="$emit('changeUsername', true)"
-            :disabled="$props.editingUsername"
-            class="d-inline-block">
-            <button>Change Username</button>
-        </v-btn>
-        <p class="d-inline-block ml-3 ma-0 pa-0">
-            {{ $props.username }}
-        </p>
+        <!--* username changer -->
+        <div class="d-block">
+            <v-btn
+                @click="$emit('changeUsername', true)"
+                :disabled="$props.editingUsername || $props.editingTheme"
+                class="d-inline-block">
+                <button>Change Username</button>
+            </v-btn>
+            <p class="d-inline-block ml-3 ma-0 pa-0">
+                {{ $props.username }}
+            </p>
+        </div>
+        <!--* theme changer -->
+        <div class="d-block">
+            <v-btn
+                @click="$emit('changeTheme', true)"
+                :disabled="$props.editingUsername || $props.editingTheme"
+                class="d-inline-block">
+                <button>Change Theme</button>
+            </v-btn>
+            <p class="d-inline-block ml-3 ma-0 pa-0">
+                {{ jscookie.get("theme") ? jscookie.get("theme") : "dark" }}
+            </p>
+        </div>
         <v-divider class="border-opacity-100 my-4"></v-divider>
         <h1>Times:</h1>
         <ul>
@@ -41,19 +56,19 @@
                 <v-btn
                     @click="modifyTime('plus2', time)"
                     class="timeBtn mr-2"
-                    :disabled="$props.editingUsername">
+                    :disabled="$props.editingUsername || $props.editingTheme">
                     <button>+2</button>
                 </v-btn>
                 <v-btn
                     @click="modifyTime('dnf', time)"
                     class="timeBtn mr-2"
-                    :disabled="$props.editingUsername">
+                    :disabled="$props.editingUsername || $props.editingTheme">
                     <button>dnf</button>
                 </v-btn>
                 <v-btn
                     @click="modifyTime('remove', time)"
                     class="timeBtn mr-2"
-                    :disabled="$props.editingUsername">
+                    :disabled="$props.editingUsername || $props.editingTheme">
                     <button>-</button>
                 </v-btn>
             </li>
@@ -67,7 +82,13 @@ import formatNormal from "@/js/timeFormat";
 import TimeChart from "@/components/TimeChart.vue";
 import ChangeUsername from "@/components/ChangeUsername.vue";
 export default defineComponent({
-    props: ["time", "username", "editingUsername", "updateChart"],
+    props: [
+        "time",
+        "username",
+        "editingUsername",
+        "editingTheme",
+        "updateChart",
+    ],
     components: { TimeChart, ChangeUsername },
     setup(props, { emit }) {
         //* types
@@ -497,6 +518,7 @@ export default defineComponent({
 
         return {
             //* vars
+            jscookie,
             timeArray,
             timeArrayAvgs,
             changeScramble,

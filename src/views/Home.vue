@@ -33,6 +33,15 @@
                 }
             " />
     </div>
+    <div v-if="editingTheme">
+        <ChangeTheme
+            @changed-theme="
+                (i) => {
+                    editingTheme = !editingTheme;
+                    currTheme = i;
+                }
+            " />
+    </div>
 
     <div
         class="left-panel"
@@ -45,6 +54,7 @@
             :time="time"
             :username="username"
             :editing-username="editingUsername"
+            :editing-theme="editingTheme"
             :update-chart="updateChartNum"
             @time-deleted="
                 (i) => {
@@ -54,6 +64,11 @@
             @changeUsername="
                 (i) => {
                     editingUsername = i;
+                }
+            "
+            @changeTheme="
+                (i) => {
+                    editingTheme = i;
                 }
             " />
     </div>
@@ -67,12 +82,14 @@
             :change-scramble="changeScramble"
             :disable-input="editingUsername"
             :disable-input2="showTimeList"
+            :disable-input3="editingTheme"
             style="height: 27vh; width: 100%" />
         <Timer
             @click="showTimeList ? (showTimeList = false) : null"
             class="pa-0"
             style="height: 73vh; width: 100%"
             :remove-time="timeRemoved"
+            :curr-theme="currTheme"
             @time-done="
                 (i) => {
                     addTime(i);
@@ -88,11 +105,15 @@ import TimeList from "../components/TimeList.vue";
 import Timer from "../components/Timer.vue";
 import Scrambles from "@/components/Scrambles.vue";
 import ChangeUsername from "@/components/ChangeUsername.vue";
+import ChangeTheme from "@/components/ChangeTheme.vue";
 import { useRoute } from "vue-router";
+import { useTheme } from "vuetify";
 export default defineComponent({
-    components: { TimeList, Timer, Scrambles, ChangeUsername },
+    components: { TimeList, Timer, Scrambles, ChangeUsername, ChangeTheme },
     setup() {
         //* vars
+        const jscookie = require("js-cookie");
+        const route = useRoute();
         let time = ref<{
             id: number;
             str: string;
@@ -104,10 +125,12 @@ export default defineComponent({
         let timeRemoved = ref<number>(0);
         let username = ref<string>("");
         let editingUsername = ref<boolean>(false);
+        let editingTheme = ref<boolean>(false);
         let showTimeList = ref<boolean>(false);
         let updateChartNum = ref<number>(0);
-        const jscookie = require("js-cookie");
-        const route = useRoute();
+        let currTheme = jscookie.get("theme")
+            ? ref<string>(jscookie.get("theme"))
+            : ref<string>("dark");
 
         //* use a prop to send time to TimeList
         function addTime(i: {
@@ -166,14 +189,21 @@ export default defineComponent({
             });
         }
 
+        if (jscookie.get("theme")) {
+            let theme = useTheme();
+            theme.global.name.value = jscookie.get("theme");
+        }
+
         return {
             time,
             changeScramble,
             timeRemoved,
             username,
             editingUsername,
+            editingTheme,
             showTimeList,
             updateChartNum,
+            currTheme,
             addTime,
             changeUsernameFunc,
         };
