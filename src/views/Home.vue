@@ -190,14 +190,14 @@ export default defineComponent({
     float: left;
     transition: 0.5s;
     @include breakpoint(xs) {
-        width: 90%;
+        width: 95%;
         position: absolute;
-        opacity: 100%;
+        z-index: 1;
     }
     @include breakpoint(sm) {
-        width: 90%;
+        width: 95%;
         position: absolute;
-        opacity: 100%;
+        z-index: 1;
     }
 }
 

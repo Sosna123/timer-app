@@ -6,7 +6,8 @@
             align-items: center;
             height: 100vh;
             width: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2;
         ">
         <div>
             <div>
