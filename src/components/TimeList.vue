@@ -1,7 +1,9 @@
 <template>
     <div class="overflow-y-scroll overflow-x-hidden pa-5 bg-primary">
         <div class="d-inline-block">
-            <TimeChart :timeList="timeArray" />
+            <TimeChart
+                :timeList="timeArray"
+                :update-chart-num="$props.updateChart" />
         </div>
         <div class="d-inline-block">
             <h1>Stats:</h1>
@@ -65,7 +67,7 @@ import formatNormal from "@/js/timeFormat";
 import TimeChart from "@/components/TimeChart.vue";
 import ChangeUsername from "@/components/ChangeUsername.vue";
 export default defineComponent({
-    props: ["time", "username", "editingUsername"],
+    props: ["time", "username", "editingUsername", "updateChart"],
     components: { TimeChart, ChangeUsername },
     setup(props, { emit }) {
         //* types

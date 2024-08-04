@@ -45,6 +45,7 @@
             :time="time"
             :username="username"
             :editing-username="editingUsername"
+            :update-chart="updateChartNum"
             @time-deleted="
                 (i) => {
                     timeRemoved++;
@@ -58,7 +59,10 @@
     </div>
     <div class="right-panel">
         <Scrambles
-            @show-timelist="showTimeList = !showTimeList"
+            @show-timelist="
+                showTimeList = !showTimeList;
+                updateChartNum++;
+            "
             class="pa-0"
             :change-scramble="changeScramble"
             :disable-input="editingUsername"
@@ -99,6 +103,7 @@ export default defineComponent({
         let username = ref<string>("");
         let editingUsername = ref<boolean>(false);
         let showTimeList = ref<boolean>(false);
+        let updateChartNum = ref<number>(0);
         const jscookie = require("js-cookie");
         const route = useRoute();
 
@@ -166,6 +171,7 @@ export default defineComponent({
             username,
             editingUsername,
             showTimeList,
+            updateChartNum,
             addTime,
             changeUsernameFunc,
         };
