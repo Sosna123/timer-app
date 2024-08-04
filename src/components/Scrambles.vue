@@ -1,7 +1,10 @@
 <template>
     <div class="text-center pa-5 bg-secondary">
         <div class="timeListBtn" id="timeListBtn">
-            <v-btn class="timeListBtn" @click="showTimeList()">
+            <v-btn
+                class="timeListBtn"
+                @click="showTimeList()"
+                v-if="!disableInput2">
                 <button>Show stats and times</button>
             </v-btn>
         </div>
@@ -35,7 +38,7 @@ import { defineComponent } from "vue";
 import { ref } from "vue";
 import { watch } from "vue";
 export default defineComponent({
-    props: ["changeScramble", "disableInput"],
+    props: ["changeScramble", "disableInput", "disableInput2"],
     setup(props, { emit }) {
         //* vars
         const selectItems = [
@@ -106,6 +109,12 @@ export default defineComponent({
             () => props.disableInput,
             (disableInputProp) => {
                 disableInput.value = disableInputProp;
+            }
+        );
+        watch(
+            () => props.disableInput2,
+            (disableInputProp) => {
+                disableInput2.value = disableInputProp;
             }
         );
 

@@ -66,8 +66,10 @@
             class="pa-0"
             :change-scramble="changeScramble"
             :disable-input="editingUsername"
+            :disable-input2="showTimeList"
             style="height: 27vh; width: 100%" />
         <Timer
+            @click="showTimeList ? (showTimeList = false) : null"
             class="pa-0"
             style="height: 73vh; width: 100%"
             :remove-time="timeRemoved"
