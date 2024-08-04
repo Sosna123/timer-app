@@ -156,7 +156,7 @@ export default defineComponent({
 }
 
 .scramble-text {
-    font-size: 16px;
+    font-size: 20px;
     @include breakpoint(lg) {
         font-size: 32px;
     }
@@ -166,7 +166,7 @@ export default defineComponent({
 }
 
 .smallFont555 {
-    font-size: 12px;
+    font-size: 16px;
     @include breakpoint(lg) {
         font-size: 20px;
     }
@@ -176,7 +176,7 @@ export default defineComponent({
 }
 
 .smallFont666 {
-    font-size: 12px;
+    font-size: 14px;
     @include breakpoint(lg) {
         font-size: 18px;
     }
