@@ -83,9 +83,9 @@ export default defineComponent({
                 changeScramble();
                 if (scramType === "555") {
                     smallFont.value = 1;
-                } else if (scramType === "666") {
+                } else if (scramType === "666" || scramType === "minx") {
                     smallFont.value = 2;
-                } else if (scramType === "777" || scramType === "minx") {
+                } else if (scramType === "777") {
                     smallFont.value = 3;
                 } else {
                     smallFont.value = 0;
@@ -176,12 +176,12 @@ export default defineComponent({
 }
 
 .smallFont666 {
-    font-size: 14px;
+    font-size: 12px;
     @include breakpoint(lg) {
-        font-size: 18px;
+        font-size: 16px;
     }
     @include breakpoint(xl) {
-        font-size: 32px;
+        font-size: 30px;
     }
 }
 
