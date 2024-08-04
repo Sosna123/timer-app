@@ -24,7 +24,7 @@
         </v-col>
     </v-row> -->
 
-    <div v-if="editingUsername">
+    <div v-show="editingUsername">
         <ChangeUsername
             :username="username"
             @username-changed="
@@ -33,7 +33,7 @@
                 }
             " />
     </div>
-    <div v-if="editingTheme">
+    <div v-show="editingTheme">
         <ChangeTheme
             @changed-theme="
                 (i) => {

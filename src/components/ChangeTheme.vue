@@ -15,7 +15,6 @@
                 :items="selectItems"
                 v-model="newTheme"
                 hide-details
-                theme="dark"
                 class="mb-1">
             </v-select>
             <v-btn style="width: 400px" color="primary" @click="changeTheme()"
