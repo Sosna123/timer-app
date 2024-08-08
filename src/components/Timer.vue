@@ -2,16 +2,25 @@
     <div
         class="timerDiv pa-5 bg-tertiary d-flex"
         style="justify-content: center; align-items: center">
-        <p
-            @click="manageTimer()"
-            class="cursor-pointer"
-            :class="{
-                'text-amber': spaceDown,
-                'text-black': $props.currTheme === 'light',
-            }"
-            style="user-select: none; font-size: 128px">
-            {{ currentTimeStr }}
-        </p>
+        <div v-if="timerMode == 'normal'">
+            <p
+                @click="manageTimer()"
+                class="cursor-pointer"
+                :class="{
+                    'text-amber': spaceDown,
+                    'text-black': $props.currTheme === 'light',
+                }"
+                style="user-select: none; font-size: 128px">
+                {{ currentTimeStr }}
+            </p>
+        </div>
+        <div v-else-if="timerMode == 'input'" style="width: 60%">
+            <v-text-field
+                class="timeInput"
+                hide-details="auto"
+                label="Input your time"
+                v-model="timeInInput"></v-text-field>
+        </div>
     </div>
 </template>
 
@@ -33,6 +42,8 @@ export default defineComponent({
         let timeId: number = 0;
         let spaceDown = ref<boolean>(false);
         let lightTheme = ref<boolean>(false);
+        let timerMode = ref<"normal" | "input">("input");
+        let timeInInput = ref<string>("");
 
         //* change state of timer
         function manageTimer() {
@@ -46,7 +57,7 @@ export default defineComponent({
                     );
                 }, 10);
                 timerRunning = true;
-            } else {
+            } else if (timerRunning) {
                 //* stop timer if its running
                 clearInterval(intervalTimer);
                 currentTime.value = Math.trunc(
@@ -66,8 +77,8 @@ export default defineComponent({
                     added2: false,
                     addedDnf: false,
                 };
-                timeId++;
 
+                timeId++;
                 jscookie.set("timeId", timeId, { expires: 365 * 10 });
 
                 //* send the time to TimeList
@@ -97,17 +108,36 @@ export default defineComponent({
         //* turn on the timer when space is pressed
         document.body.addEventListener("keyup", (e) => {
             spaceDown.value = false;
-            if (timerRunning && e.code != "Space" && e.code != "Escape") {
-                manageTimer();
-            }
-            if (e.code == "Space") {
-                manageTimer();
-            }
-            if (e.code == "Escape" && timerRunning) {
-                clearInterval(intervalTimer);
-                timerRunning = false;
-                currentTime.value = 0;
-                currentTimeStr.value = "0.00";
+            if (timerMode.value == "normal") {
+                if (timerRunning && e.code != "Space" && e.code != "Escape") {
+                    manageTimer();
+                }
+                if (e.code == "Space") {
+                    manageTimer();
+                }
+                if (e.code == "Escape" && timerRunning) {
+                    clearInterval(intervalTimer);
+                    timerRunning = false;
+                    currentTime.value = 0;
+                    currentTimeStr.value = "0.00";
+                }
+            } else if (timerMode.value == "input") {
+                if (e.code == "Enter") {
+                    let value: string = timeInInput.value.replace(/\D/g, "");
+                    if (value.length) {
+                        const time = {
+                            id: Number(timeId),
+                            str: formatNormal(value, "addDots"),
+                            num: Number(value),
+                            added2: false,
+                            addedDnf: false,
+                        };
+                        timeId++;
+                        jscookie.set("timeId", timeId, { expires: 365 * 10 });
+                        emit("time-done", time);
+                    }
+                    timeInInput.value = "";
+                }
             }
         });
 
@@ -121,10 +151,17 @@ export default defineComponent({
             currentTimeStr,
             lightTheme,
             spaceDown,
+            timerMode,
+            timeInInput,
             manageTimer,
         };
     },
 });
 </script>
 
-<style></style>
+<style>
+.timeInput {
+    width: 100%;
+    color: #000;
+}
+</style>
