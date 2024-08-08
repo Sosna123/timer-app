@@ -21,6 +21,15 @@
                 label="Input your time"
                 v-model="timeInInput"></v-text-field>
         </div>
+        <v-btn
+            style="position: absolute; bottom: 0; right: 0"
+            @click="
+                timerMode == 'input'
+                    ? (timerMode = 'normal')
+                    : (timerMode = 'input')
+            "
+            ><button>Change button mode</button></v-btn
+        >
     </div>
 </template>
 
@@ -42,7 +51,7 @@ export default defineComponent({
         let timeId: number = 0;
         let spaceDown = ref<boolean>(false);
         let lightTheme = ref<boolean>(false);
-        let timerMode = ref<"normal" | "input">("input");
+        let timerMode = ref<"normal" | "input">("normal");
         let timeInInput = ref<string>("");
 
         //* change state of timer
@@ -124,6 +133,7 @@ export default defineComponent({
             } else if (timerMode.value == "input") {
                 if (e.code == "Enter") {
                     let value: string = timeInInput.value.replace(/\D/g, "");
+                    value = value.length <= 6 ? value : value.slice(0, 6);
                     if (value.length) {
                         const time = {
                             id: Number(timeId),
