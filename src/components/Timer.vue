@@ -20,6 +20,9 @@
                 hide-details="auto"
                 label="Input your time"
                 v-model="timeInInput"></v-text-field>
+            <v-btn style="width: 100%" @click="submitInputTime()"
+                ><button>Submit</button></v-btn
+            >
         </div>
         <v-btn
             style="position: absolute; bottom: 0; right: 0"
@@ -115,7 +118,7 @@ export default defineComponent({
         }
 
         //* turn on the timer when space is pressed
-        document.body.addEventListener("keyup", (e) => {
+        document.body.addEventListener("keypress", (e) => {
             spaceDown.value = false;
             if (timerMode.value == "normal") {
                 if (timerRunning && e.code != "Space" && e.code != "Escape") {
@@ -131,25 +134,29 @@ export default defineComponent({
                     currentTimeStr.value = "0.00";
                 }
             } else if (timerMode.value == "input") {
-                if (e.code == "Enter") {
-                    let value: string = timeInInput.value.replace(/\D/g, "");
-                    value = value.length <= 6 ? value : value.slice(0, 6);
-                    if (value.length) {
-                        const time = {
-                            id: Number(timeId),
-                            str: formatNormal(value, "addDots"),
-                            num: Number(value),
-                            added2: false,
-                            addedDnf: false,
-                        };
-                        timeId++;
-                        jscookie.set("timeId", timeId, { expires: 365 * 10 });
-                        emit("time-done", time);
-                    }
-                    timeInInput.value = "";
+                if (e.key == "Enter") {
+                    submitInputTime();
                 }
             }
         });
+
+        function submitInputTime() {
+            let value: string = timeInInput.value.replace(/\D/g, "");
+            value = value.length <= 6 ? value : value.slice(0, 6);
+            if (value.length) {
+                const time = {
+                    id: Number(timeId),
+                    str: formatNormal(value, "addDots"),
+                    num: Number(value),
+                    added2: false,
+                    addedDnf: false,
+                };
+                timeId++;
+                jscookie.set("timeId", timeId, { expires: 365 * 10 });
+                emit("time-done", time);
+            }
+            timeInInput.value = "";
+        }
 
         document.body.addEventListener("keydown", (e) => {
             if (e.code == "Space" && !timerRunning) {
@@ -164,6 +171,7 @@ export default defineComponent({
             timerMode,
             timeInInput,
             manageTimer,
+            submitInputTime,
         };
     },
 });
