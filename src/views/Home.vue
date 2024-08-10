@@ -90,6 +90,8 @@
             style="height: 73vh; width: 100%"
             :remove-time="timeRemoved"
             :curr-theme="currTheme"
+            :editing-username="editingUsername"
+            :editing-theme="editingTheme"
             @time-done="
                 (i) => {
                     addTime(i);

@@ -18,6 +18,7 @@
                 >
             </div>
             <v-divider class="border-opacity-100 my-4"></v-divider>
+
             <div>
                 <v-text-field
                     hide-details="auto"
@@ -29,10 +30,12 @@
                     style="width: 400px"
                     color="primary"
                     @click="
+                        newUsername = newUsername.replaceAll(/\s/g, '');
                         newUsername.length > 0 &&
-                        !newUsername.startsWith('wca-')
+                        !newUsername.startsWith('wca-') &&
+                        !(newUsername.length > 28)
                             ? $emit('username-changed', newUsername)
-                            : null
+                            : null;
                     "
                     >Submit</v-btn
                 >

@@ -42,7 +42,7 @@ import formatNormal from "@/js/timeFormat";
 import Scrambles from "@/components/Scrambles.vue";
 export default defineComponent({
     components: { Scrambles },
-    props: ["removeTime", "currTheme"],
+    props: ["removeTime", "currTheme", "editingUsername", "editingTheme"],
     setup(props, { emit }) {
         //* vars
         const jscookie = require("js-cookie");
@@ -59,7 +59,11 @@ export default defineComponent({
 
         //* change state of timer
         function manageTimer() {
-            if (!timerRunning) {
+            if (
+                !timerRunning &&
+                !props.editingTheme &&
+                !props.editingUsername
+            ) {
                 //* start timer if its not running
                 startOfTimer = new Date().getTime();
                 intervalTimer = setInterval(() => {
@@ -69,7 +73,11 @@ export default defineComponent({
                     );
                 }, 10);
                 timerRunning = true;
-            } else if (timerRunning) {
+            } else if (
+                timerRunning &&
+                !props.editingTheme &&
+                !props.editingUsername
+            ) {
                 //* stop timer if its running
                 clearInterval(intervalTimer);
                 currentTime.value = Math.trunc(
