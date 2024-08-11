@@ -18,13 +18,13 @@
                 >
             </div>
             <v-divider class="border-opacity-100 my-4"></v-divider>
-
             <div>
                 <v-text-field
                     hide-details="auto"
                     label="Type in your username"
                     style="width: 400px"
-                    v-model="newUsername">
+                    v-model="newUsername"
+                    prepend-inner-icon="mdi-account-circle">
                 </v-text-field>
                 <v-btn
                     style="width: 400px"

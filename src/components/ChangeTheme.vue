@@ -14,6 +14,7 @@
                 label="Change Theme"
                 :items="selectItems"
                 v-model="newTheme"
+                prepend-inner-icon="mdi-palette"
                 hide-details
                 class="mb-1">
             </v-select>
