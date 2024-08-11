@@ -18,7 +18,8 @@
             <v-btn
                 @click="$emit('changeUsername', true)"
                 :disabled="$props.editingUsername || $props.editingTheme"
-                class="d-inline-block">
+                class="d-inline-block"
+                color="background">
                 <button>Change Username</button>
             </v-btn>
             <p class="d-inline-block ml-3 ma-0 pa-0">
@@ -30,7 +31,8 @@
             <v-btn
                 @click="$emit('changeTheme', true)"
                 :disabled="$props.editingUsername || $props.editingTheme"
-                class="d-inline-block">
+                class="d-inline-block"
+                color="background">
                 <button>Change Theme</button>
             </v-btn>
             <p class="d-inline-block ml-3 ma-0 pa-0">
@@ -56,19 +58,22 @@
                 <v-btn
                     @click="modifyTime('plus2', time)"
                     class="timeBtn mr-2"
-                    :disabled="$props.editingUsername || $props.editingTheme">
+                    :disabled="$props.editingUsername || $props.editingTheme"
+                    color="background">
                     <button>+2</button>
                 </v-btn>
                 <v-btn
                     @click="modifyTime('dnf', time)"
                     class="timeBtn mr-2"
-                    :disabled="$props.editingUsername || $props.editingTheme">
+                    :disabled="$props.editingUsername || $props.editingTheme"
+                    color="background">
                     <button>dnf</button>
                 </v-btn>
                 <v-btn
                     @click="modifyTime('remove', time)"
                     class="timeBtn mr-2"
-                    :disabled="$props.editingUsername || $props.editingTheme">
+                    :disabled="$props.editingUsername || $props.editingTheme"
+                    color="background">
                     <button>-</button>
                 </v-btn>
             </li>

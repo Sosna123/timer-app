@@ -31,7 +31,6 @@ const vuetify = createVuetify({
                     primary: colors.grey.darken3,
                     secondary: colors.grey.darken2,
                     tertiary: colors.grey.darken1,
-                    background: "rgb(0, 0, 0)",
                 },
             },
             red: {
@@ -40,7 +39,7 @@ const vuetify = createVuetify({
                     primary: colors.red.darken3,
                     secondary: colors.red.darken2,
                     tertiary: colors.red.darken1,
-                    background: "rgb(0, 0, 0)",
+                    background: colors.red.darken4,
                 },
             },
             pink: {
@@ -49,7 +48,7 @@ const vuetify = createVuetify({
                     primary: colors.pink.darken3,
                     secondary: colors.pink.darken2,
                     tertiary: colors.pink.darken1,
-                    background: "rgb(0, 0, 0)",
+                    background: colors.pink.darken4,
                 },
             },
             purple: {
@@ -58,6 +57,7 @@ const vuetify = createVuetify({
                     primary: colors.purple.darken3,
                     secondary: colors.purple.darken2,
                     tertiary: colors.purple.darken1,
+                    background: colors.purple.darken4,
                 },
             },
             "deep-purple": {
@@ -66,6 +66,7 @@ const vuetify = createVuetify({
                     primary: colors.deepPurple.darken3,
                     secondary: colors.deepPurple.darken2,
                     tertiary: colors.deepPurple.darken1,
+                    background: colors.deepPurple.darken4,
                 },
             },
             indigo: {
@@ -74,6 +75,7 @@ const vuetify = createVuetify({
                     primary: colors.indigo.darken3,
                     secondary: colors.indigo.darken2,
                     tertiary: colors.indigo.darken1,
+                    background: colors.indigo.darken4,
                 },
             },
             blue: {
@@ -82,6 +84,7 @@ const vuetify = createVuetify({
                     primary: colors.blue.darken3,
                     secondary: colors.blue.darken2,
                     tertiary: colors.blue.darken1,
+                    background: colors.blue.darken4,
                 },
             },
             "light-blue": {
@@ -90,6 +93,7 @@ const vuetify = createVuetify({
                     primary: colors.lightBlue.darken3,
                     secondary: colors.lightBlue.darken2,
                     tertiary: colors.lightBlue.darken1,
+                    background: colors.lightBlue.darken4,
                 },
             },
             cyan: {
@@ -98,6 +102,7 @@ const vuetify = createVuetify({
                     primary: colors.cyan.darken3,
                     secondary: colors.cyan.darken2,
                     tertiary: colors.cyan.darken1,
+                    background: colors.cyan.darken4,
                 },
             },
             teal: {
@@ -106,6 +111,7 @@ const vuetify = createVuetify({
                     primary: colors.teal.darken3,
                     secondary: colors.teal.darken2,
                     tertiary: colors.teal.darken1,
+                    background: colors.teal.darken4,
                 },
             },
             green: {
@@ -114,6 +120,7 @@ const vuetify = createVuetify({
                     primary: colors.green.darken3,
                     secondary: colors.green.darken2,
                     tertiary: colors.green.darken1,
+                    background: colors.green.darken4,
                 },
             },
             "light-green": {
@@ -122,6 +129,7 @@ const vuetify = createVuetify({
                     primary: colors.lightGreen.darken3,
                     secondary: colors.lightGreen.darken2,
                     tertiary: colors.lightGreen.darken1,
+                    background: colors.lightGreen.darken4,
                 },
             },
             lime: {
@@ -130,6 +138,7 @@ const vuetify = createVuetify({
                     primary: colors.lime.darken3,
                     secondary: colors.lime.darken2,
                     tertiary: colors.lime.darken1,
+                    background: colors.lime.darken4,
                 },
             },
             yellow: {
@@ -138,6 +147,7 @@ const vuetify = createVuetify({
                     primary: colors.yellow.darken3,
                     secondary: colors.yellow.darken2,
                     tertiary: colors.yellow.darken1,
+                    background: colors.yellow.darken4,
                 },
             },
             amber: {
@@ -146,6 +156,7 @@ const vuetify = createVuetify({
                     primary: colors.amber.darken3,
                     secondary: colors.amber.darken2,
                     tertiary: colors.amber.darken1,
+                    background: colors.amber.darken4,
                 },
             },
             orange: {
@@ -154,6 +165,7 @@ const vuetify = createVuetify({
                     primary: colors.orange.darken3,
                     secondary: colors.orange.darken2,
                     tertiary: colors.orange.darken1,
+                    background: colors.orange.darken4,
                 },
             },
             "deep-orange": {
@@ -162,6 +174,7 @@ const vuetify = createVuetify({
                     primary: colors.deepOrange.darken3,
                     secondary: colors.deepOrange.darken2,
                     tertiary: colors.deepOrange.darken1,
+                    background: colors.deepOrange.darken4,
                 },
             },
             brown: {
@@ -170,6 +183,7 @@ const vuetify = createVuetify({
                     primary: colors.brown.darken3,
                     secondary: colors.brown.darken2,
                     tertiary: colors.brown.darken1,
+                    background: colors.brown.darken4,
                 },
             },
             "blue-grey": {
@@ -178,6 +192,7 @@ const vuetify = createVuetify({
                     primary: colors.blueGrey.darken3,
                     secondary: colors.blueGrey.darken2,
                     tertiary: colors.blueGrey.darken1,
+                    background: colors.blueGrey.darken4,
                 },
             },
         },

@@ -4,7 +4,8 @@
             <v-btn
                 class="timeListBtn"
                 @click="showTimeList()"
-                v-if="disableInput2 === false">
+                v-if="disableInput2 === false"
+                color="background">
                 <button>Show stats and times</button>
             </v-btn>
         </div>

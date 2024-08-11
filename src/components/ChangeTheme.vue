@@ -18,8 +18,11 @@
                 hide-details
                 class="mb-1">
             </v-select>
-            <v-btn style="width: 400px" color="primary" @click="changeTheme()"
-                >Submit</v-btn
+            <v-btn
+                style="width: 400px"
+                color="background"
+                @click="changeTheme()"
+                ><button>Submit</button></v-btn
             >
         </div>
     </div>

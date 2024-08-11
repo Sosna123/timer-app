@@ -28,7 +28,7 @@
                 </v-text-field>
                 <v-btn
                     style="width: 400px"
-                    color="primary"
+                    color="background"
                     @click="
                         newUsername = newUsername.replaceAll(/\s/g, '');
                         newUsername.length > 0 &&
@@ -37,7 +37,7 @@
                             ? $emit('username-changed', newUsername)
                             : null;
                     "
-                    >Submit</v-btn
+                    ><button>Submit</button></v-btn
                 >
             </div>
         </div>

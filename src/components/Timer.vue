@@ -9,6 +9,8 @@
                 :class="{
                     'text-amber': spaceDown,
                     'text-black': $props.currTheme === 'light',
+                    'text-amber-lighten-1':
+                        spaceDown && $props.currTheme === 'amber',
                 }"
                 style="user-select: none; font-size: 128px">
                 {{ currentTimeStr }}
@@ -20,7 +22,10 @@
                 hide-details="auto"
                 label="Input your time"
                 v-model="timeInInput"></v-text-field>
-            <v-btn style="width: 100%" @click="submitInputTime()"
+            <v-btn
+                style="width: 100%"
+                @click="submitInputTime()"
+                color="background"
                 ><button>Submit</button></v-btn
             >
         </div>
@@ -31,6 +36,7 @@
                     ? (timerMode = 'normal')
                     : (timerMode = 'input')
             "
+            color="background"
             ><button>Change button mode</button></v-btn
         >
     </div>
@@ -126,7 +132,7 @@ export default defineComponent({
         }
 
         //* turn on the timer when space is pressed
-        document.body.addEventListener("keypress", (e) => {
+        document.body.addEventListener("keyup", (e) => {
             spaceDown.value = false;
             if (timerMode.value == "normal") {
                 if (timerRunning && e.code != "Space" && e.code != "Escape") {
