@@ -4,7 +4,7 @@
             <v-btn
                 class="timeListBtn"
                 @click="showTimeList()"
-                v-if="!disableInput2">
+                v-if="disableInput2 === false">
                 <button>Show stats and times</button>
             </v-btn>
         </div>
@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, watchEffect } from "vue";
 import { ref } from "vue";
 import { watch } from "vue";
 export default defineComponent({
@@ -114,7 +114,7 @@ export default defineComponent({
             const button = document.getElementById("timeListBtn");
             button!.blur();
             emit("show-timelist");
-            disableInput2.value = !disableInput2.value;
+            disableInput2.value = false;
         }
 
         return {

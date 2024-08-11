@@ -75,7 +75,7 @@
     <div class="right-panel">
         <Scrambles
             @show-timelist="
-                showTimeList = !showTimeList;
+                showTimeList = true;
                 updateChartNum++;
             "
             class="pa-0"
