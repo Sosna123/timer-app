@@ -2,7 +2,7 @@
     <div
         class="timerDiv pa-5 bg-tertiary d-flex"
         style="justify-content: center; align-items: center"
-        @click="screenWidth <= 600 ? manageTimer() : null">
+        @touchend="screenWidth <= 600 ? manageTimer() : null">
         <div v-if="timerMode == 'normal'">
             <p
                 :class="{
