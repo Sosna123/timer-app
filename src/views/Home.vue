@@ -92,6 +92,7 @@
             :curr-theme="currTheme"
             :editing-username="editingUsername"
             :editing-theme="editingTheme"
+            :showTimeList="showTimeList"
             @time-done="
                 (i) => {
                     addTime(i);

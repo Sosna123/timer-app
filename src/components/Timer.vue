@@ -1,11 +1,10 @@
 <template>
     <div
         class="timerDiv pa-5 bg-tertiary d-flex"
-        style="justify-content: center; align-items: center">
+        style="justify-content: center; align-items: center"
+        @click="screenWidth <= 600 ? manageTimer() : null">
         <div v-if="timerMode == 'normal'">
             <p
-                @click="manageTimer()"
-                class="cursor-pointer"
                 :class="{
                     'text-amber': spaceDown,
                     'text-black': $props.currTheme === 'light',
@@ -18,6 +17,8 @@
         </div>
         <div v-else-if="timerMode == 'input'" style="width: 60%">
             <v-text-field
+                &&
+                !showTimeList
                 class="timeInput"
                 hide-details="auto"
                 label="Input your time"
@@ -48,7 +49,13 @@ import formatNormal from "@/js/timeFormat";
 import Scrambles from "@/components/Scrambles.vue";
 export default defineComponent({
     components: { Scrambles },
-    props: ["removeTime", "currTheme", "editingUsername", "editingTheme"],
+    props: [
+        "removeTime",
+        "currTheme",
+        "editingUsername",
+        "editingTheme",
+        "showTimeList",
+    ],
     setup(props, { emit }) {
         //* vars
         const jscookie = require("js-cookie");
@@ -62,13 +69,16 @@ export default defineComponent({
         let lightTheme = ref<boolean>(false);
         let timerMode = ref<"normal" | "input">("normal");
         let timeInInput = ref<string>("");
+        let screenWidth = ref<number>(window.screen.width);
 
         //* change state of timer
         function manageTimer() {
             if (
                 !timerRunning &&
                 !props.editingTheme &&
-                !props.editingUsername
+                !props.editingUsername &&
+                timerMode.value == "normal" &&
+                !props.showTimeList
             ) {
                 //* start timer if its not running
                 startOfTimer = new Date().getTime();
@@ -82,7 +92,9 @@ export default defineComponent({
             } else if (
                 timerRunning &&
                 !props.editingTheme &&
-                !props.editingUsername
+                !props.editingUsername &&
+                timerMode.value == "normal" &&
+                !props.showTimeList
             ) {
                 //* stop timer if its running
                 clearInterval(intervalTimer);
@@ -184,6 +196,7 @@ export default defineComponent({
             spaceDown,
             timerMode,
             timeInInput,
+            screenWidth,
             manageTimer,
             submitInputTime,
         };
