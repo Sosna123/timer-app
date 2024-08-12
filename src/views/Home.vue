@@ -232,6 +232,11 @@ export default defineComponent({
         position: absolute;
         z-index: 1;
     }
+    @include breakpoint(md) {
+        width: 95%;
+        position: absolute;
+        z-index: 1;
+    }
 }
 
 .right-panel {
@@ -242,6 +247,9 @@ export default defineComponent({
         width: 100%;
     }
     @include breakpoint(sm) {
+        width: 100%;
+    }
+    @include breakpoint(md) {
         width: 100%;
     }
 }

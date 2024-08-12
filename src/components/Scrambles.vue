@@ -146,6 +146,11 @@ export default defineComponent({
         width: 100%;
         margin: 0 0 10px 0;
     }
+    @include breakpoint(md) {
+        display: inline-block;
+        width: 100%;
+        margin: 0 0 10px 0;
+    }
 }
 
 .scramble-text {
