@@ -27,6 +27,7 @@
     <div v-show="editingUsername">
         <ChangeUsername
             :username="username"
+            @log-wca="redirect()"
             @username-changed="
                 (i) => {
                     changeUsernameFunc(i);
@@ -111,6 +112,11 @@ import ChangeUsername from "@/components/ChangeUsername.vue";
 import ChangeTheme from "@/components/ChangeTheme.vue";
 import { useRoute } from "vue-router";
 import { useTheme } from "vuetify";
+import {
+    generateCodeVerifier,
+    OAuth2Client,
+    OAuth2Fetch,
+} from "@badgateway/oauth2-client";
 export default defineComponent({
     components: { TimeList, Timer, Scrambles, ChangeUsername, ChangeTheme },
     setup() {
@@ -134,6 +140,8 @@ export default defineComponent({
         let currTheme = jscookie.get("theme")
             ? ref<string>(jscookie.get("theme"))
             : ref<string>("dark");
+        const docLocation = document.location;
+        let codeVerifier: any;
 
         //* use a prop to send time to TimeList
         function addTime(i: {
@@ -197,6 +205,62 @@ export default defineComponent({
             theme.global.name.value = jscookie.get("theme");
         }
 
+        const client = new OAuth2Client({
+            server: "https://worldcubeassociation.org/oauth",
+            clientId: "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0",
+            clientSecret: process.env.VUE_APP_WCA_SECRET,
+        });
+
+        async function redirect() {
+            codeVerifier = await generateCodeVerifier();
+
+            document.location = await client.authorizationCode.getAuthorizeUri({
+                redirectUri: "https://speedcubing-timer.netlify.app",
+
+                codeVerifier,
+
+                scope: ["public"],
+            });
+        }
+
+        async function redirectBack() {
+            const oauth2Token =
+                await client.authorizationCode.getTokenFromCodeRedirect(
+                    docLocation.toString(),
+                    {
+                        redirectUri: "https://speedcubing-timer.netlify.app",
+
+                        codeVerifier,
+                    }
+                );
+
+            const fetchWrapper = new OAuth2Fetch({
+                client: client,
+
+                getNewToken: async () => {
+                    return client.clientCredentials();
+                },
+            });
+
+            const response = fetchWrapper.fetch(
+                "https://www.worldcubeassociation.org/api/v0/me"
+            );
+            (await response).json().then((data) => {
+                try {
+                    username.value = "wca-" + data.me.id;
+                    jscookie.set("username", username.value, {
+                        expires: 365 * 10,
+                    });
+                } catch (e) {
+                    console.log(e);
+                }
+            });
+        }
+
+        if (route.query.code) {
+            redirectBack();
+        }
+
         return {
             time,
             changeScramble,
@@ -209,6 +273,7 @@ export default defineComponent({
             currTheme,
             addTime,
             changeUsernameFunc,
+            redirect,
         };
     },
 });
