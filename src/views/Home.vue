@@ -170,54 +170,69 @@ export default defineComponent({
 
         // wca authorization
         async function fetchToken() {
-            const fetchedData = await fetch(
-                "https://www.worldcubeassociation.org/oauth/token",
-                {
-                    method: "POST",
-                    headers: {
-                        grant_type: "authorization_code",
-                        client_id:
-                            "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0",
-                        client_secret: process.env.VUE_APP_WCA_SECRET,
-                        code: jscookie.get("authorCode"),
-                        redirect_uri: "https://speedcubing-timer.netlify.app/",
-                    },
-                }
-            );
-            const data = await fetchedData.json();
-            return data;
+            try {
+                const fetchedData = await fetch(
+                    "https://www.worldcubeassociation.org/oauth/token",
+                    {
+                        method: "POST",
+                        headers: {
+                            grant_type: "authorization_code",
+                            client_id:
+                                "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0",
+                            client_secret: process.env.VUE_APP_WCA_SECRET,
+                            code: jscookie.get("authorCode"),
+                            redirect_uri:
+                                "https://speedcubing-timer.netlify.app/",
+                        },
+                    }
+                );
+                const data = await fetchedData.json();
+                return data;
+            } catch (e) {
+                console.log("fetchToken: " + e);
+            }
         }
 
         async function refreshToken() {
-            const fetchedData = await fetch(
-                "https://www.worldcubeassociation.org/oauth/token",
-                {
-                    method: "POST",
-                    headers: {
-                        grant_type: "refresh_token",
-                        client_id:
-                            "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0",
-                        client_secret: process.env.VUE_APP_WCA_SECRET,
-                        refresh_token: jscookie.get("refreshToken"),
-                        redirect_uri: "https://speedcubing-timer.netlify.app/",
-                    },
-                }
-            );
-            const data = await fetchedData.json();
-            return data;
+            try {
+                const fetchedData = await fetch(
+                    "https://www.worldcubeassociation.org/oauth/token",
+                    {
+                        method: "POST",
+                        headers: {
+                            grant_type: "refresh_token",
+                            client_id:
+                                "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0",
+                            client_secret: process.env.VUE_APP_WCA_SECRET,
+                            refresh_token: jscookie.get("refreshToken"),
+                            redirect_uri:
+                                "https://speedcubing-timer.netlify.app/",
+                        },
+                    }
+                );
+                const data = await fetchedData.json();
+                return data;
+            } catch (e) {
+                console.log("refreshToken: " + e);
+            }
         }
 
         async function fetchData() {
-            const fetchedData = await fetch(
-                "https://www.worldcubeassociation.org/api/v0/me",
-                {
-                    headers: {
-                        Authorization: "Bearer " + jscookie.get("bearerToken"),
-                    },
-                }
-            );
-            const data = await fetchedData.json();
-            return data;
+            try {
+                const fetchedData = await fetch(
+                    "https://www.worldcubeassociation.org/api/v0/me",
+                    {
+                        headers: {
+                            Authorization:
+                                "Bearer " + jscookie.get("bearerToken"),
+                        },
+                    }
+                );
+                const data = await fetchedData.json();
+                return data;
+            } catch (e) {
+                console.log("fetchData: " + e);
+            }
         }
 
         if (route.query.code) {
