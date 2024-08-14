@@ -161,8 +161,40 @@ export default defineComponent({
         }
 
         if (route.query.code) {
-            let bearerToken = route.query.code;
-            jscookie.set("bearer_token", bearerToken, { expires: 365 * 10 });
+            let authorCode = route.query.code;
+            jscookie.set("authorCode", authorCode, { expires: 365 * 10 });
+        }
+
+        async function fetchToken() {
+            const fetchedData = await fetch(
+                "https://www.worldcubeassociation.org/oauth/token",
+                {
+                    method: "POST",
+                    headers: {
+                        grant_type: "authorization_code",
+                        client_id:
+                            "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0",
+                        client_secret: process.env.VUE_APP_WCA_SECRET,
+                        code: jscookie.get("authorCode"),
+                    },
+                }
+            );
+            const data = await fetchedData.json();
+            return data;
+        }
+
+        if (jscookie.get("authorCode")) {
+            fetchToken().then((data) => {
+                try {
+                    jscookie.set("bearerToken", data.access_token, {
+                        expires: data.access_token / 60 / 60 / 24,
+                    });
+                    jscookie.remove("authorCode");
+                    document.location = "/";
+                } catch (e) {
+                    console.log(e);
+                }
+            });
         }
 
         async function fetchData() {
@@ -170,7 +202,7 @@ export default defineComponent({
                 "https://www.worldcubeassociation.org/api/v0/me",
                 {
                     headers: {
-                        Authorization: "Bearer " + jscookie.get("bearer_token"),
+                        Authorization: "Bearer " + jscookie.get("bearerToken"),
                     },
                 }
             );
