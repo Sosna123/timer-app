@@ -169,6 +169,11 @@ export default defineComponent({
         }
 
         // wca authorization
+        if (route.query.code) {
+            let authorCode = route.query.code;
+            jscookie.set("authorCode", authorCode, { expires: 365 * 10 });
+        }
+
         async function fetchToken() {
             const fetchedData = await fetch(
                 "https://www.worldcubeassociation.org/oauth/token",
@@ -207,6 +212,23 @@ export default defineComponent({
             return data;
         }
 
+        if (jscookie.get("authorCode")) {
+            fetchToken().then((data) => {
+                jscookie.set("bearerToken", data.access_token, {
+                    expires: data.access_token / 60 / 60 / 24,
+                });
+                jscookie.set("refreshToken", data.access_token, {
+                    expires: data.access_token / 60 / 60 / 24,
+                });
+                jscookie.remove("authorCode");
+                try {
+                    document.location = "/";
+                } catch (e) {
+                    console.log(e);
+                }
+            });
+        }
+
         async function fetchData() {
             const fetchedData = await fetch(
                 "https://www.worldcubeassociation.org/api/v0/me",
@@ -220,33 +242,17 @@ export default defineComponent({
             return data;
         }
 
-        if (route.query.code) {
-            console.log("authorization code found");
-            let authorCode = route.query.code;
-            jscookie.set("authorCode", authorCode, { expires: 365 * 10 });
-
-            console.log("fetching token");
-            fetchToken().then((data) => {
-                console.log("token fetched");
-                jscookie.set("bearerToken", data.access_token, {
-                    expires: data.access_token / 60 / 60 / 24,
-                });
-                jscookie.set("refreshToken", data.access_token, {
-                    expires: data.access_token / 60 / 60 / 24,
-                });
-                jscookie.remove("authorCode");
-            });
-        }
-
         if (jscookie.get("bearerToken")) {
-            console.log("fetching data");
             fetchData().then((data) => {
-                console.log("data fetched");
-                console.log(data);
-                username.value = "wca-" + data.me.id;
-                jscookie.set("username", username.value, {
-                    expires: 365 * 10,
-                });
+                try {
+                    username.value = "wca-" + data.me.id;
+                    jscookie.set("username", username.value, {
+                        expires: 365 * 10,
+                    });
+                    console.log(data);
+                } catch (e) {
+                    console.log(e);
+                }
             });
         }
 
@@ -261,7 +267,6 @@ export default defineComponent({
             });
         }
 
-        // change theme
         if (jscookie.get("theme")) {
             let theme = useTheme();
             theme.global.name.value = jscookie.get("theme");
