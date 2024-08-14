@@ -180,8 +180,7 @@ export default defineComponent({
                     {
                         method: "POST",
                         headers: {
-                            "Access-Control-Allow-Origin":
-                                window.location.origin,
+                            "Access-Control-Allow-Origin": "*",
                         },
                     }
                 );
@@ -203,8 +202,7 @@ export default defineComponent({
                     {
                         method: "POST",
                         headers: {
-                            "Access-Control-Allow-Origin":
-                                window.location.origin,
+                            "Access-Control-Allow-Origin": "*",
                         },
                     }
                 );
@@ -223,8 +221,7 @@ export default defineComponent({
                         headers: {
                             Authorization:
                                 "Bearer " + jscookie.get("bearerToken"),
-                            "Access-Control-Allow-Origin":
-                                window.location.origin,
+                            "Access-Control-Allow-Origin": "*",
                         },
                     }
                 );
