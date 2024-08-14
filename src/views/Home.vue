@@ -179,6 +179,10 @@ export default defineComponent({
                     )}&redirect_uri=https://speedcubing-timer.netlify.app`,
                     {
                         method: "POST",
+                        headers: {
+                            "Access-Control-Allow-Origin":
+                                window.location.origin,
+                        },
                     }
                 );
                 const data = await fetchedData.json();
@@ -198,6 +202,10 @@ export default defineComponent({
                     )}&redirect_uri=https://speedcubing-timer.netlify.app`,
                     {
                         method: "POST",
+                        headers: {
+                            "Access-Control-Allow-Origin":
+                                window.location.origin,
+                        },
                     }
                 );
                 const data = await fetchedData.json();
@@ -215,6 +223,8 @@ export default defineComponent({
                         headers: {
                             Authorization:
                                 "Bearer " + jscookie.get("bearerToken"),
+                            "Access-Control-Allow-Origin":
+                                window.location.origin,
                         },
                     }
                 );
