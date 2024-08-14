@@ -47,8 +47,8 @@
     <div
         class="left-panel"
         v-show="
-            (showTimeList && $vuetify.display.smAndDown) ||
-            $vuetify.display.mdAndUp
+            (showTimeList && $vuetify.display.mdAndDown) ||
+            $vuetify.display.lgAndUp
         ">
         <TimeList
             style="height: 100vh"
@@ -168,17 +168,19 @@ export default defineComponent({
             editingUsername.value = true;
         }
 
-        if (route.query.code) {
-            let bearerToken = route.query.code;
-            jscookie.set("bearer_token", bearerToken, { expires: 365 * 10 });
-        }
-
-        async function fetchData() {
+        // wca authorization
+        async function fetchToken() {
             const fetchedData = await fetch(
-                "https://www.worldcubeassociation.org/api/v0/me",
+                "https://www.worldcubeassociation.org/oauth/token",
                 {
+                    method: "POST",
                     headers: {
-                        Authorization: "Bearer " + jscookie.get("bearer_token"),
+                        grant_type: "authorization_code",
+                        client_id:
+                            "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0",
+                        client_secret: process.env.VUE_APP_WCA_SECRET,
+                        code: jscookie.get("authorCode"),
+                        redirect_uri: "https://speedcubing-timer.netlify.app/",
                     },
                 }
             );
@@ -186,20 +188,80 @@ export default defineComponent({
             return data;
         }
 
-        if (jscookie.get("bearer_token")) {
-            fetchData().then((data) => {
-                try {
-                    // username.value = "wca-" + data.me.id;
-                    // jscookie.set("username", username.value, {
-                    //     expires: 365 * 10,
-                    // });
-                    console.log(data);
-                } catch (e) {
-                    console.log(e);
+        async function refreshToken() {
+            const fetchedData = await fetch(
+                "https://www.worldcubeassociation.org/oauth/token",
+                {
+                    method: "POST",
+                    headers: {
+                        grant_type: "refresh_token",
+                        client_id:
+                            "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0",
+                        client_secret: process.env.VUE_APP_WCA_SECRET,
+                        refresh_token: jscookie.get("refreshToken"),
+                        redirect_uri: "https://speedcubing-timer.netlify.app/",
+                    },
                 }
+            );
+            const data = await fetchedData.json();
+            return data;
+        }
+
+        async function fetchData() {
+            const fetchedData = await fetch(
+                "https://www.worldcubeassociation.org/api/v0/me",
+                {
+                    headers: {
+                        Authorization: "Bearer " + jscookie.get("bearerToken"),
+                    },
+                }
+            );
+            const data = await fetchedData.json();
+            return data;
+        }
+
+        if (route.query.code) {
+            console.log("authorization code found");
+            let authorCode = route.query.code;
+            jscookie.set("authorCode", authorCode, { expires: 365 * 10 });
+
+            console.log("fetching token");
+            fetchToken().then((data) => {
+                console.log("token fetched");
+                jscookie.set("bearerToken", data.access_token, {
+                    expires: data.access_token / 60 / 60 / 24,
+                });
+                jscookie.set("refreshToken", data.access_token, {
+                    expires: data.access_token / 60 / 60 / 24,
+                });
+                jscookie.remove("authorCode");
             });
         }
 
+        if (jscookie.get("bearerToken")) {
+            console.log("fetching data");
+            fetchData().then((data) => {
+                console.log("data fetched");
+                console.log(data);
+                username.value = "wca-" + data.me.id;
+                jscookie.set("username", username.value, {
+                    expires: 365 * 10,
+                });
+            });
+        }
+
+        if (jscookie.get("refreshToken")) {
+            refreshToken().then((e) => {
+                jscookie.set("bearerToken", e.access_token, {
+                    expires: e.access_token / 60 / 60 / 24,
+                });
+                jscookie.set("refreshToken", e.access_token, {
+                    expires: e.access_token / 60 / 60 / 24,
+                });
+            });
+        }
+
+        // change theme
         if (jscookie.get("theme")) {
             let theme = useTheme();
             theme.global.name.value = jscookie.get("theme");
