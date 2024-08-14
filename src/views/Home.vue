@@ -170,20 +170,24 @@ export default defineComponent({
 
         // wca authorization
         async function fetchToken() {
+            const body = new URLSearchParams();
+            body.append("grant_type", "authorization_code");
+            body.append(
+                "client_id",
+                "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0"
+            );
+            body.append("client_secret", process.env.VUE_APP_WCA_SECRET);
+            body.append("code", jscookie.get("authorCode"));
+            body.append(
+                "redirect_uri",
+                "https://speedcubing-timer.netlify.app/"
+            );
             try {
                 const fetchedData = await fetch(
                     "https://www.worldcubeassociation.org/oauth/token",
                     {
                         method: "POST",
-                        body: JSON.stringify({
-                            grant_type: "authorization_code",
-                            client_id:
-                                "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0",
-                            client_secret: process.env.VUE_APP_WCA_SECRET,
-                            code: jscookie.get("authorCode"),
-                            redirect_uri:
-                                "https://speedcubing-timer.netlify.app/",
-                        }),
+                        body: body,
                     }
                 );
                 const data = await fetchedData.json();
@@ -194,20 +198,24 @@ export default defineComponent({
         }
 
         async function refreshToken() {
+            const body = new URLSearchParams();
+            body.append("grant_type", "refresh_token");
+            body.append(
+                "client_id",
+                "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0"
+            );
+            body.append("client_secret", process.env.VUE_APP_WCA_SECRET);
+            body.append("refresh_token", jscookie.get("refreshToken"));
+            body.append(
+                "redirect_uri",
+                "https://speedcubing-timer.netlify.app/"
+            );
             try {
                 const fetchedData = await fetch(
                     "https://www.worldcubeassociation.org/oauth/token",
                     {
                         method: "POST",
-                        body: JSON.stringify({
-                            grant_type: "refresh_token",
-                            client_id:
-                                "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0",
-                            client_secret: process.env.VUE_APP_WCA_SECRET,
-                            refresh_token: jscookie.get("refreshToken"),
-                            redirect_uri:
-                                "https://speedcubing-timer.netlify.app/",
-                        }),
+                        body: body,
                     }
                 );
                 const data = await fetchedData.json();
