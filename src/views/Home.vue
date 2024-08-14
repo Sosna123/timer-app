@@ -175,7 +175,7 @@ export default defineComponent({
                     "https://www.worldcubeassociation.org/oauth/token",
                     {
                         method: "POST",
-                        headers: {
+                        body: JSON.stringify({
                             grant_type: "authorization_code",
                             client_id:
                                 "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0",
@@ -183,7 +183,7 @@ export default defineComponent({
                             code: jscookie.get("authorCode"),
                             redirect_uri:
                                 "https://speedcubing-timer.netlify.app/",
-                        },
+                        }),
                     }
                 );
                 const data = await fetchedData.json();
@@ -199,7 +199,7 @@ export default defineComponent({
                     "https://www.worldcubeassociation.org/oauth/token",
                     {
                         method: "POST",
-                        headers: {
+                        body: JSON.stringify({
                             grant_type: "refresh_token",
                             client_id:
                                 "veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0",
@@ -207,7 +207,7 @@ export default defineComponent({
                             refresh_token: jscookie.get("refreshToken"),
                             redirect_uri:
                                 "https://speedcubing-timer.netlify.app/",
-                        },
+                        }),
                     }
                 );
                 const data = await fetchedData.json();
