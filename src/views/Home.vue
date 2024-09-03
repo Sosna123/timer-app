@@ -17,6 +17,21 @@
                 }
             " />
     </div>
+    <div v-show="false">
+        <Options
+            :username="username"
+            @username-changed="
+                (i) => {
+                    changeUsernameFunc(i);
+                }
+            "
+            @changed-theme="
+                (i) => {
+                    editingTheme = !editingTheme;
+                    currTheme = i;
+                }
+            " />
+    </div>
 
     <div
         class="left-panel"
@@ -84,10 +99,18 @@ import Timer from "../components/Timer.vue";
 import Scrambles from "@/components/Scrambles.vue";
 import ChangeUsername from "@/components/ChangeUsername.vue";
 import ChangeTheme from "@/components/ChangeTheme.vue";
+import Options from "@/components/Options.vue";
 import { useRoute } from "vue-router";
 import { useTheme } from "vuetify";
 export default defineComponent({
-    components: { TimeList, Timer, Scrambles, ChangeUsername, ChangeTheme },
+    components: {
+        TimeList,
+        Timer,
+        Scrambles,
+        ChangeUsername,
+        ChangeTheme,
+        Options,
+    },
     setup() {
         //* vars
         const jscookie = require("js-cookie");
