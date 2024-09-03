@@ -21,8 +21,8 @@
     <div
         class="left-panel"
         v-show="
-            (showTimeList && $vuetify.display.lgAndDown) ||
-            $vuetify.display.xlAndUp
+            (showTimeList && $vuetify.display.mdAndDown) ||
+            $vuetify.display.lgAndUp
         ">
         <TimeList
             style="height: 100vh"
