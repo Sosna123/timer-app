@@ -17,8 +17,7 @@
         </div>
         <div v-else-if="timerMode == 'input'" style="width: 60%">
             <v-text-field
-                &&
-                !showTimeList
+                :disabled="!editingOptions"
                 class="timeInput"
                 hide-details="auto"
                 label="Input your time"
@@ -49,13 +48,7 @@ import formatNormal from "@/js/timeFormat";
 import Scrambles from "@/components/Scrambles.vue";
 export default defineComponent({
     components: { Scrambles },
-    props: [
-        "removeTime",
-        "currTheme",
-        "editingUsername",
-        "editingTheme",
-        "showTimeList",
-    ],
+    props: ["removeTime", "currTheme", "editingOptions", "showTimeList"],
     setup(props, { emit }) {
         //* vars
         const jscookie = require("js-cookie");
@@ -75,8 +68,7 @@ export default defineComponent({
         function manageTimer() {
             if (
                 !timerRunning &&
-                !props.editingTheme &&
-                !props.editingUsername &&
+                !props.editingOptions &&
                 timerMode.value == "normal" &&
                 !props.showTimeList
             ) {
@@ -91,8 +83,7 @@ export default defineComponent({
                 timerRunning = true;
             } else if (
                 timerRunning &&
-                !props.editingTheme &&
-                !props.editingUsername &&
+                !props.editingOptions &&
                 timerMode.value == "normal" &&
                 !props.showTimeList
             ) {

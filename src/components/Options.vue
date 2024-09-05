@@ -41,7 +41,7 @@
                         ><button>Login using a username</button></v-btn
                     >
                 </div>
-                <v-divider class="my-3" :thickness="5" length="90%"></v-divider>
+                <v-divider class="my-3" :thickness="3" length="90%"></v-divider>
                 <div>
                     <v-select
                         label="Change Theme"
@@ -58,6 +58,13 @@
                         ><button>Submit</button></v-btn
                     >
                 </div>
+                <v-divider class="my-3" :thickness="3" length="90%"></v-divider>
+                <v-btn
+                    style="width: 400px"
+                    color="background"
+                    @click="$emit('hideOptions')">
+                    <button>Exit Options</button>
+                </v-btn>
             </div>
         </div>
     </div>

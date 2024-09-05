@@ -1,24 +1,7 @@
 <template>
-    <div v-show="editingUsername">
-        <ChangeUsername
-            :username="username"
-            @username-changed="
-                (i) => {
-                    changeUsernameFunc(i);
-                }
-            " />
-    </div>
-    <div v-show="editingTheme">
-        <ChangeTheme
-            @changed-theme="
-                (i) => {
-                    editingTheme = !editingTheme;
-                    currTheme = i;
-                }
-            " />
-    </div>
-    <div v-show="false">
+    <div v-show="editingOptions">
         <Options
+            @hide-options="editingOptions = false"
             :username="username"
             @username-changed="
                 (i) => {
@@ -27,7 +10,6 @@
             "
             @changed-theme="
                 (i) => {
-                    editingTheme = !editingTheme;
                     currTheme = i;
                 }
             " />
@@ -43,22 +25,16 @@
             style="height: 100vh"
             :time="time"
             :username="username"
-            :editing-username="editingUsername"
-            :editing-theme="editingTheme"
+            :editing-options="editingOptions"
             :update-chart="updateChartNum"
             @time-deleted="
                 (i) => {
                     timeRemoved++;
                 }
             "
-            @changeUsername="
+            @change-options="
                 (i) => {
-                    editingUsername = i;
-                }
-            "
-            @changeTheme="
-                (i) => {
-                    editingTheme = i;
+                    editingOptions = i;
                 }
             " />
     </div>
@@ -70,9 +46,8 @@
             "
             class="pa-0"
             :change-scramble="changeScramble"
-            :disable-input="editingUsername"
+            :disable-input="editingOptions"
             :disable-input2="showTimeList"
-            :disable-input3="editingTheme"
             style="height: 27vh; width: 100%" />
         <Timer
             @click="showTimeList ? (showTimeList = false) : null"
@@ -80,8 +55,7 @@
             style="height: 73vh; width: 100%"
             :remove-time="timeRemoved"
             :curr-theme="currTheme"
-            :editing-username="editingUsername"
-            :editing-theme="editingTheme"
+            :editing-options="editingOptions"
             :showTimeList="showTimeList"
             @time-done="
                 (i) => {
@@ -125,8 +99,7 @@ export default defineComponent({
         let changeScramble = ref<number>(0);
         let timeRemoved = ref<number>(0);
         let username = ref<string>("");
-        let editingUsername = ref<boolean>(false);
-        let editingTheme = ref<boolean>(false);
+        let editingOptions = ref<boolean>(false);
         let showTimeList = ref<boolean>(false);
         let updateChartNum = ref<number>(0);
         let currTheme = jscookie.get("theme")
@@ -146,7 +119,6 @@ export default defineComponent({
 
         function changeUsernameFunc(newUsername: string) {
             username.value = newUsername.toLowerCase();
-            editingUsername.value = false;
             jscookie.set("username", newUsername, { expires: 365 * 10 });
         }
 
@@ -155,7 +127,7 @@ export default defineComponent({
         }
 
         if (username.value == "") {
-            editingUsername.value = true;
+            editingOptions.value = true;
         }
 
         // wca authorization
@@ -225,8 +197,7 @@ export default defineComponent({
             changeScramble,
             timeRemoved,
             username,
-            editingUsername,
-            editingTheme,
+            editingOptions,
             showTimeList,
             updateChartNum,
             currTheme,
