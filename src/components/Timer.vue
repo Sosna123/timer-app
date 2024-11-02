@@ -1,9 +1,10 @@
 <template>
     <div
         class="timerDiv pa-5 bg-tertiary d-flex"
-        style="justify-content: center; align-items: center"
-        @touchend="screenWidth <= 600 ? manageTimer() : null">
-        <div v-if="timerMode == 'normal'">
+        style="justify-content: center; align-items: center">
+        <div
+            v-if="timerMode == 'normal'"
+            @touchend="screenWidth <= 600 ? manageTimer() : null">
             <p
                 :class="{
                     'text-amber': spaceDown,
@@ -17,7 +18,6 @@
         </div>
         <div v-else-if="timerMode == 'input'" style="width: 60%">
             <v-text-field
-                :disabled="!editingOptions"
                 class="timeInput"
                 hide-details="auto"
                 label="Input your time"

@@ -62,7 +62,17 @@
                 <v-btn
                     style="width: 400px"
                     color="background"
-                    @click="$emit('hideOptions')">
+                    @click="
+                        $emit('hideOptions'); /* schowaj opcje */
+                        changeTheme(); /* zmień motyw */
+                        /* zmień nick */
+                        newUsername = newUsername.replaceAll(/\s/g, '');
+                        newUsername.length > 0 &&
+                        !newUsername.startsWith('wca-') &&
+                        !(newUsername.length > 28)
+                            ? $emit('username-changed', newUsername)
+                            : null;
+                    ">
                     <button>Exit Options</button>
                 </v-btn>
             </div>
