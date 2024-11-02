@@ -27,19 +27,6 @@
                         v-model="newUsername"
                         prepend-inner-icon="mdi-account-circle">
                     </v-text-field>
-                    <v-btn
-                        style="width: 400px"
-                        color="background"
-                        @click="
-                            newUsername = newUsername.replaceAll(/\s/g, '');
-                            newUsername.length > 0 &&
-                            !newUsername.startsWith('wca-') &&
-                            !(newUsername.length > 28)
-                                ? $emit('username-changed', newUsername)
-                                : null;
-                        "
-                        ><button>Login using a username</button></v-btn
-                    >
                 </div>
                 <v-divider class="my-3" :thickness="3" length="90%"></v-divider>
                 <div>
@@ -49,32 +36,38 @@
                         v-model="newTheme"
                         prepend-inner-icon="mdi-palette"
                         hide-details
+                        style="width: 400px"
                         class="mb-1">
                     </v-select>
-                    <v-btn
-                        style="width: 400px"
-                        color="background"
-                        @click="changeTheme()"
-                        ><button>Submit</button></v-btn
-                    >
                 </div>
                 <v-divider class="my-3" :thickness="3" length="90%"></v-divider>
-                <v-btn
-                    style="width: 400px"
-                    color="background"
-                    @click="
-                        $emit('hideOptions'); /* schowaj opcje */
-                        changeTheme(); /* zmień motyw */
-                        /* zmień nick */
-                        newUsername = newUsername.replaceAll(/\s/g, '');
-                        newUsername.length > 0 &&
-                        !newUsername.startsWith('wca-') &&
-                        !(newUsername.length > 28)
-                            ? $emit('username-changed', newUsername)
-                            : null;
-                    ">
-                    <button>Exit Options</button>
-                </v-btn>
+                <div>
+                    <v-btn
+                        style="width: 200px; margin-right: 10px"
+                        color="background"
+                        @click="
+                            $emit('hideOptions'); /* schowaj opcje */
+                            changeTheme(); /* zmień motyw */
+                            /* zmień nick */
+                            newUsername = newUsername.replaceAll(/\s/g, '');
+                            newUsername.length > 0 &&
+                            !newUsername.startsWith('wca-') &&
+                            !(newUsername.length > 28)
+                                ? $emit('username-changed', newUsername)
+                                : null;
+                        ">
+                        <button>Save Changes</button>
+                    </v-btn>
+                    <v-btn
+                        style="width: 200px"
+                        color="background"
+                        @click="
+                            revertChanges(); /* cofnij opcje do poprzednich */
+                            $emit('hideOptions'); /* schowaj opcje */
+                        ">
+                        <button>Revert Changes</button>
+                    </v-btn>
+                </div>
             </div>
         </div>
     </div>
@@ -117,7 +110,7 @@ export default defineComponent({
             "blue-grey",
         ];
         let theme = ref<string>("dark");
-        let newTheme = theme;
+        let newTheme = ref(theme.value);
 
         function changeTheme() {
             theme.value = newTheme.value;
@@ -133,12 +126,18 @@ export default defineComponent({
                 "https://www.worldcubeassociation.org/oauth/authorize?client_id=veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0&client_secret=1aGASn8lsLAVHWz8tUlremODceIazL6CPwUTUH9iu-Y&redirect_uri=https%3A%2F%2Fspeedcubing-timer.netlify.app%2F&response_type=code&scope=";
         }
 
+        function revertChanges() {
+            newUsername.value = props.username;
+            newTheme.value = theme.value;
+        }
+
         return {
             selectItems,
             newTheme,
             newUsername,
             changeTheme,
             redirectToWca,
+            revertChanges,
         };
     },
 });
