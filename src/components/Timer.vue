@@ -3,31 +3,34 @@
         class="timerDiv pa-5 bg-tertiary d-flex"
         style="justify-content: center; align-items: center">
         <div
-            v-if="timerMode == 'normal'"
+            style=""
+            class="d-flex timerContainer"
             @touchend="screenWidth <= 600 ? manageTimer() : null">
-            <p
-                :class="{
-                    'text-amber': spaceDown,
-                    'text-black': $props.currTheme === 'light',
-                    'text-amber-lighten-1':
-                        spaceDown && $props.currTheme === 'amber',
-                }"
-                style="user-select: none; font-size: 128px">
-                {{ currentTimeStr }}
-            </p>
-        </div>
-        <div v-else-if="timerMode == 'input'" style="width: 60%">
-            <v-text-field
-                class="timeInput"
-                hide-details="auto"
-                label="Input your time"
-                v-model="timeInInput"></v-text-field>
-            <v-btn
-                style="width: 100%"
-                @click="submitInputTime()"
-                color="background"
-                ><button>Submit</button></v-btn
-            >
+            <div v-if="timerMode == 'normal'">
+                <p
+                    :class="{
+                        'text-amber': spaceDown,
+                        'text-black': $props.currTheme === 'light',
+                        'text-amber-lighten-1':
+                            spaceDown && $props.currTheme === 'amber',
+                    }"
+                    style="user-select: none; font-size: 128px">
+                    {{ currentTimeStr }}
+                </p>
+            </div>
+            <div v-else-if="timerMode == 'input'" style="width: 60%">
+                <v-text-field
+                    class="timeInput"
+                    hide-details="auto"
+                    label="Input your time"
+                    v-model="timeInInput"></v-text-field>
+                <v-btn
+                    style="width: 100%"
+                    @click="submitInputTime()"
+                    color="background"
+                    ><button>Submit</button></v-btn
+                >
+            </div>
         </div>
         <v-btn
             style="position: absolute; bottom: 0; right: 0"
@@ -199,5 +202,12 @@ export default defineComponent({
 .timeInput {
     width: 100%;
     color: #000;
+}
+
+.timerContainer {
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
 }
 </style>
