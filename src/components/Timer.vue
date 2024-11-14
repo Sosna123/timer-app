@@ -37,8 +37,10 @@
             @click="
                 timerMode == 'input'
                     ? (timerMode = 'normal')
-                    : (timerMode = 'input')
+                    : (timerMode = 'input');
+                ($event.target as HTMLButtonElement).blur();
             "
+            id="changeMode"
             color="background"
             ><button>Change button mode</button></v-btn
         >
@@ -54,6 +56,14 @@ export default defineComponent({
     props: ["removeTime", "currTheme", "editingOptions", "showTimeList"],
     setup(props, { emit }) {
         //* vars
+        let changeModeBtn: null | HTMLButtonElement = null;
+
+        window.document.addEventListener("load", () => {
+            changeModeBtn = document.getElementById(
+                "changeMode"
+            ) as HTMLButtonElement;
+        });
+
         const jscookie = require("js-cookie");
         let currentTimeStr = ref<string>("0.00");
         let currentTime = ref<number>(0);
@@ -70,11 +80,15 @@ export default defineComponent({
         //* change state of timer
         function manageTimer() {
             if (
-                !timerRunning &&
-                !props.editingOptions &&
-                timerMode.value == "normal" &&
-                !props.showTimeList
-            ) {
+                !(
+                    !props.editingOptions &&
+                    timerMode.value == "normal" &&
+                    !props.showTimeList
+                )
+            )
+                return;
+
+            if (!timerRunning) {
                 //* start timer if its not running
                 startOfTimer = new Date().getTime();
                 intervalTimer = setInterval(() => {
@@ -84,12 +98,7 @@ export default defineComponent({
                     );
                 }, 10);
                 timerRunning = true;
-            } else if (
-                timerRunning &&
-                !props.editingOptions &&
-                timerMode.value == "normal" &&
-                !props.showTimeList
-            ) {
+            } else if (timerRunning) {
                 //* stop timer if its running
                 clearInterval(intervalTimer);
                 currentTime.value = Math.trunc(
@@ -163,7 +172,7 @@ export default defineComponent({
         function submitInputTime() {
             let value: string = timeInInput.value.replace(/\D/g, "");
             value = value.length <= 6 ? value : value.slice(0, 6);
-            if (value.length) {
+            if (value.length && value.match(/[1-9]+/)) {
                 const time = {
                     id: Number(timeId),
                     str: formatNormal(value, "addDots"),
@@ -185,6 +194,7 @@ export default defineComponent({
         });
 
         return {
+            changeModeBtn,
             currentTimeStr,
             lightTheme,
             spaceDown,
