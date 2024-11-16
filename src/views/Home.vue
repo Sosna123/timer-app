@@ -71,8 +71,6 @@ import { defineComponent, ref } from "vue";
 import TimeList from "../components/TimeList.vue";
 import Timer from "../components/Timer.vue";
 import Scrambles from "@/components/Scrambles.vue";
-import ChangeUsername from "@/components/ChangeUsername.vue";
-import ChangeTheme from "@/components/ChangeTheme.vue";
 import Options from "@/components/Options.vue";
 import { useRoute } from "vue-router";
 import { useTheme } from "vuetify";
@@ -81,8 +79,6 @@ export default defineComponent({
         TimeList,
         Timer,
         Scrambles,
-        ChangeUsername,
-        ChangeTheme,
         Options,
     },
     setup() {

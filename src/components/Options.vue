@@ -20,11 +20,15 @@
                     >
                 </div>
                 <div>
+                    <v-checkbox
+                        label="Use as guest"
+                        v-model="isGuest"></v-checkbox>
                     <v-text-field
                         hide-details="auto"
                         label="Type in your username"
                         style="width: 400px"
                         v-model="newUsername"
+                        :disabled="isGuest"
                         prepend-inner-icon="mdi-account-circle">
                     </v-text-field>
                 </div>
@@ -48,13 +52,16 @@
                         @click="
                             $emit('hideOptions'); /* schowaj opcje */
                             changeTheme(); /* zmień motyw */
+                            changeIsGuest(); /* zmień isGuest */
                             /* zmień nick */
                             newUsername = newUsername.replaceAll(/\s/g, '');
                             newUsername.length > 0 &&
-                            !newUsername.startsWith('wca-') &&
-                            !(newUsername.length > 28)
-                                ? $emit('username-changed', newUsername)
-                                : null;
+                            !isGuest &&
+                            !newUsername.startsWith('wca-')
+                                ? !(newUsername.length > 28)
+                                    ? $emit('username-changed', newUsername)
+                                    : newUsername.substring(0, 28)
+                                : (newUsername = props.username);
                         ">
                         <button>Save Changes</button>
                     </v-btn>
@@ -111,6 +118,7 @@ export default defineComponent({
         ];
         let theme = ref<string>("dark");
         let newTheme = ref(theme.value);
+        let isGuest = jscookie.get("isGuest") ?? ref<boolean>(false);
 
         function changeTheme() {
             theme.value = newTheme.value;
@@ -121,6 +129,10 @@ export default defineComponent({
             emit("changed-theme", theme.value);
         }
 
+        function changeIsGuest() {
+            jscookie.set("isGuest", isGuest.value);
+        }
+
         function redirectToWca() {
             window.location.href =
                 "https://www.worldcubeassociation.org/oauth/authorize?client_id=veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0&client_secret=1aGASn8lsLAVHWz8tUlremODceIazL6CPwUTUH9iu-Y&redirect_uri=https%3A%2F%2Fspeedcubing-timer.netlify.app%2F&response_type=code&scope=";
@@ -129,13 +141,18 @@ export default defineComponent({
         function revertChanges() {
             newUsername.value = props.username;
             newTheme.value = theme.value;
+            isGuest.value = jscookie.get("isGuest");
         }
 
         return {
+            props,
+            jscookie,
+            isGuest,
             selectItems,
             newTheme,
             newUsername,
             changeTheme,
+            changeIsGuest,
             redirectToWca,
             revertChanges,
         };

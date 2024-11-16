@@ -13,7 +13,7 @@
             <h2 class="ma-0">Mean: {{ meanOfArr(timeArray) }}</h2>
         </div>
         <v-divider class="border-opacity-100 my-4"></v-divider>
-        <!--* username changer -->
+        <!--* options -->
         <div class="d-block">
             <v-btn
                 @click="$emit('changeOptions', true)"
@@ -31,14 +31,14 @@
                     {{ time.str }}
                 </p>
                 <p class="d-inline-block me-3 timeListText">|</p>
-                <!-- <p class="d-inline-block me-3 timeListText">
+                <p class="d-inline-block me-3 timeListText">
                     a05:
                     {{
-                        timeArrayAvgs.length > 0 && timeArray.
-                            ? timeArrayAvgs.toReversed()[time.id - 4].str
+                        timeArrayAvgs.length >= time.id
+                            ? timeArrayAvgs[time.id].str
                             : "0.00"
                     }}
-                </p> -->
+                </p>
                 <v-btn
                     @click="modifyTime('plus2', time)"
                     class="timeBtn mr-2"
@@ -69,10 +69,9 @@
 import { defineComponent, ref, toRaw, watch } from "vue";
 import formatNormal from "@/js/timeFormat";
 import TimeChart from "@/components/TimeChart.vue";
-import ChangeUsername from "@/components/ChangeUsername.vue";
 export default defineComponent({
     props: ["time", "username", "editingOptions", "updateChart"],
-    components: { TimeChart, ChangeUsername },
+    components: { TimeChart },
     setup(props, { emit }) {
         //* types
         type Time = {
@@ -91,7 +90,25 @@ export default defineComponent({
                 str: string;
                 num: number;
             }[]
-        >([]);
+        >([
+            {
+                str: "0.00",
+                num: 0,
+            },
+            {
+                str: "0.00",
+                num: 0,
+            },
+            {
+                str: "0.00",
+                num: 0,
+            },
+            {
+                str: "0.00",
+                num: 0,
+            },
+            // four empty averages to offset the first 5 solves
+        ]);
         let pbTime = ref<Time>({
             id: 0,
             str: "0.00",
@@ -122,6 +139,7 @@ export default defineComponent({
         }
         async function getData() {
             fetchData("get").then((e) => {
+                if (jscookie.get("isGuest") ?? false) return;
                 clearCookies();
                 e.forEach((i: any) => {
                     if (i.username == props.username) {
@@ -313,12 +331,26 @@ export default defineComponent({
                 }
 
                 //* calculate avg of 5
-                if (timeArray.length >= 5) {
-                    timeArrayAvgs.value = [];
-                    calcAvgs();
-                } else {
-                    timeArrayAvgs.value = [];
-                }
+                timeArrayAvgs.value = [
+                    {
+                        str: "0.00",
+                        num: 0,
+                    },
+                    {
+                        str: "0.00",
+                        num: 0,
+                    },
+                    {
+                        str: "0.00",
+                        num: 0,
+                    },
+                    {
+                        str: "0.00",
+                        num: 0,
+                    },
+                    // four empty averages to offset the first 5 solves
+                ];
+                calcAvgs();
 
                 //* cookies change
                 jscookie.set("timeArray", JSON.stringify(timeArray), {
@@ -483,6 +515,8 @@ export default defineComponent({
         watch(
             () => props.username,
             () => {
+                if (jscookie.get("isGuest") ?? false) return;
+
                 clearCookies();
                 getData().then(() => {
                     if (timeArray.value.length > 0) {
@@ -496,8 +530,10 @@ export default defineComponent({
             }
         );
 
-        clearCookies();
-        getData();
+        if (!(jscookie.get("isGuest") ?? false)) {
+            clearCookies();
+            getData();
+        }
 
         return {
             //* vars
