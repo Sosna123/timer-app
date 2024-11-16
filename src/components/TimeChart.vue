@@ -14,12 +14,13 @@ export default defineComponent({
     setup(props) {
         //* vars
         let canvas: any;
+        let canvasContext: any;
         let lineChart: any;
 
         let filteredTimeList = props.timeList.filter((i: any) => !i.addedDnf);
 
         function makeChart() {
-            lineChart = new Chart(canvas, {
+            lineChart = new Chart(canvasContext, {
                 type: "line",
                 options: {
                     animation: false,
@@ -72,6 +73,22 @@ export default defineComponent({
             });
         }
 
+        function tryToUpdateChartUntilShown() {
+            canvas = document.getElementById("timeChart") as HTMLCanvasElement;
+            let i = 0;
+            let interval = setInterval(() => {
+                i++;
+                if (canvas.checkVisibility()) {
+                    canvasContext = canvas.getContext("2d");
+                    updateChart(1);
+                    clearInterval(interval);
+                }
+                if (i >= 200) {
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+
         //* create or update every time timeList changes
         function updateChart(timeout: number = 0) {
             if (lineChart) {
@@ -85,10 +102,6 @@ export default defineComponent({
                     ],
                 };
                 setTimeout(() => {
-                    canvas = document.getElementById(
-                        "timeChart"
-                    ) as HTMLCanvasElement;
-                    canvas = canvas.getContext("2d");
                     lineChart.update();
                 }, timeout);
             } else {
@@ -100,9 +113,7 @@ export default defineComponent({
 
         //* create canvas when html is loaded
         onMounted(() => {
-            canvas = document.getElementById("timeChart") as HTMLCanvasElement;
-            canvas = canvas.getContext("2d");
-            updateChart();
+            tryToUpdateChartUntilShown();
         });
 
         //* watching for array change or show timelist on mobile to update chart
@@ -112,7 +123,6 @@ export default defineComponent({
                 filteredTimeList = props.timeList.filter(
                     (i: any) => !i.addedDnf
                 );
-                updateChart();
             },
             { deep: true }
         );
@@ -121,7 +131,7 @@ export default defineComponent({
         watch(
             () => props.updateChartNum,
             () => {
-                updateChart(1);
+                tryToUpdateChartUntilShown();
             }
         );
 
