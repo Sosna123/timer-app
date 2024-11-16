@@ -126,7 +126,7 @@ export default defineComponent({
             editingOptions.value = true;
         }
 
-        // wca authorization
+        //* wca authorization
 
         if (route.query.code) {
             console.log("authorization code found");
@@ -182,7 +182,7 @@ export default defineComponent({
             });
         }
 
-        // change theme
+        //* change theme
         if (jscookie.get("theme")) {
             let theme = useTheme();
             theme.global.name.value = jscookie.get("theme");

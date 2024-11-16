@@ -1,4 +1,4 @@
-// breakpoints
+//* breakpoints
 @mixin breakpoint($point) {
     @if $point == xs {
         @media (max-width: 600px) {

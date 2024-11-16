@@ -22,7 +22,8 @@
                 <div>
                     <v-checkbox
                         label="Use as guest"
-                        v-model="isGuest"></v-checkbox>
+                        v-model="isGuest"
+                        @change="changeIsGuest()"></v-checkbox>
                     <v-text-field
                         hide-details="auto"
                         label="Type in your username"
@@ -52,7 +53,6 @@
                         @click="
                             $emit('hideOptions'); /* schowaj opcje */
                             changeTheme(); /* zmień motyw */
-                            changeIsGuest(); /* zmień isGuest */
                             /* zmień nick */
                             newUsername = newUsername.replaceAll(/\s/g, '');
                             newUsername.length > 0 &&
@@ -118,7 +118,7 @@ export default defineComponent({
         ];
         let theme = ref<string>("dark");
         let newTheme = ref(theme.value);
-        let isGuest = jscookie.get("isGuest") ?? ref<boolean>(false);
+        let isGuest = ref<boolean>(jscookie.get("isGuest") === "1");
 
         function changeTheme() {
             theme.value = newTheme.value;
@@ -130,7 +130,7 @@ export default defineComponent({
         }
 
         function changeIsGuest() {
-            jscookie.set("isGuest", isGuest.value);
+            jscookie.set("isGuest", Number(isGuest.value));
         }
 
         function redirectToWca() {
@@ -141,7 +141,6 @@ export default defineComponent({
         function revertChanges() {
             newUsername.value = props.username;
             newTheme.value = theme.value;
-            isGuest.value = jscookie.get("isGuest") ?? false;
         }
 
         return {

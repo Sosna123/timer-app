@@ -108,7 +108,7 @@ export default defineComponent({
                 str: "0.00",
                 num: 0,
             },
-            // four empty averages to offset the first 5 solves
+            //* four empty averages to offset the first 5 solves
         ]);
         let pbTime = ref<Time>({
             id: 0,
@@ -140,7 +140,7 @@ export default defineComponent({
         }
         async function getData() {
             fetchData("get").then((e) => {
-                if (jscookie.get("isGuest") ?? false) return;
+                if (jscookie.get("isGuest") === "1") return;
                 clearCookies();
                 e.forEach((i: any) => {
                     if (i.username == props.username) {
@@ -188,7 +188,9 @@ export default defineComponent({
                 ) {
                     time.id = index;
                 }
-                e.id = index;
+                if (e.id != index) {
+                    e.id = index;
+                }
             });
             postData(time);
         }
@@ -548,7 +550,7 @@ export default defineComponent({
         watch(
             () => props.username,
             () => {
-                if (jscookie.get("isGuest") ?? false) return;
+                if (jscookie.get("isGuest") === "1") return;
 
                 clearCookies();
                 getData().then(() => {
@@ -563,7 +565,7 @@ export default defineComponent({
             }
         );
 
-        if (!(jscookie.get("isGuest") ?? false)) {
+        if (jscookie.get("isGuest") !== "1") {
             clearCookies();
             getData();
         }

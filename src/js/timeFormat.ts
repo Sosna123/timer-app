@@ -35,10 +35,10 @@ function formatNormal(
 
         return result;
     } else {
-        // centisec = przedostatni + ostatni
-        // sec = przedostatni + ostatni
-        // min = reszta
-        // result = min + ":" + sec + "." + centisec
+        //* centisec = przedostatni + ostatni
+        //* sec = przedostatni + ostatni
+        //* min = reszta
+        //* result = min + ":" + sec + "." + centisec
         let resultArr: string[] = time.split("");
         let centisec: string, sec: string, min: string;
 
