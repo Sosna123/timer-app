@@ -34,7 +34,8 @@
                 <p class="d-inline-block me-3 timeListText">
                     a05:
                     {{
-                        timeArrayAvgs.length >= time.id
+                        timeArrayAvgs.length >= time.id &&
+                        timeArrayAvgs[time.id]?.str
                             ? timeArrayAvgs[time.id].str
                             : "0.00"
                     }}
@@ -177,6 +178,18 @@ export default defineComponent({
             addedDnf: boolean;
         }) {
             timeArray.value.push(time);
+            //* fix ids (i dont know how to do it in a better way)
+            timeArray.value.forEach((e, index) => {
+                if (
+                    time.str == e.str &&
+                    time.num == e.num &&
+                    time.added2 == e.added2 &&
+                    time.addedDnf == e.addedDnf
+                ) {
+                    time.id = index;
+                }
+                e.id = index;
+            });
             postData(time);
         }
 
@@ -194,7 +207,12 @@ export default defineComponent({
             //* add +2 to time
             if (action == "plus2") {
                 timeArray.value.forEach((e) => {
-                    if (e.id == time.id && !e.added2) {
+                    if (
+                        e.id == time.id &&
+                        e.num == time.num &&
+                        e.str == time.str &&
+                        !e.added2
+                    ) {
                         if (e.addedDnf) {
                             e.addedDnf = !e.addedDnf;
                             e.str = formatNormal(e.num.toString());
@@ -202,7 +220,12 @@ export default defineComponent({
                         e.added2 = !e.added2;
                         e.num += 200;
                         e.str = formatNormal(e.num.toString()) + "+";
-                    } else if (e.id == time.id && e.added2) {
+                    } else if (
+                        e.id == time.id &&
+                        e.num == time.num &&
+                        e.str == time.str &&
+                        e.added2
+                    ) {
                         e.added2 = !e.added2;
                         e.num -= 200;
                         e.str = formatNormal(e.num.toString());
@@ -212,7 +235,12 @@ export default defineComponent({
             } else if (action == "dnf") {
                 //* change time to dnf
                 timeArray.value.forEach((e) => {
-                    if (e.id == time.id && !e.addedDnf) {
+                    if (
+                        e.id == time.id &&
+                        e.num == time.num &&
+                        e.str == time.str &&
+                        !e.addedDnf
+                    ) {
                         if (e.added2) {
                             e.added2 = !e.added2;
                             e.num -= 200;
@@ -220,7 +248,12 @@ export default defineComponent({
                         }
                         e.addedDnf = !e.addedDnf;
                         e.str = `DNF(${e.str})`;
-                    } else if (e.id == time.id && e.addedDnf) {
+                    } else if (
+                        e.id == time.id &&
+                        e.num == time.num &&
+                        e.str == time.str &&
+                        e.addedDnf
+                    ) {
                         e.addedDnf = !e.addedDnf;
                         e.str = formatNormal(e.num.toString());
                     }
@@ -446,14 +479,14 @@ export default defineComponent({
             (timeArrayAvgs) => {
                 //* update pbao5
                 if (timeArrayAvgs.length > 0) {
-                    timeArrayAvgs.filter((e) => {
-                        if (e.num < 0) {
+                    let newTimeArrayAvgs = timeArrayAvgs.filter((e) => {
+                        if (e.num < 1) {
                             return false;
                         }
                         return true;
                     });
-                    if (timeArrayAvgs.length > 0) {
-                        timeArrayAvgs.sort(
+                    if (newTimeArrayAvgs.length > 0) {
+                        newTimeArrayAvgs.sort(
                             (
                                 a: {
                                     str: string;
@@ -473,7 +506,7 @@ export default defineComponent({
                                 }
                             }
                         );
-                        pbAo5.value = timeArrayAvgs[0];
+                        pbAo5.value = newTimeArrayAvgs[0];
                     } else {
                         pbAo5.value = {
                             str: "0.00",

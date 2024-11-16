@@ -141,7 +141,7 @@ export default defineComponent({
         function revertChanges() {
             newUsername.value = props.username;
             newTheme.value = theme.value;
-            isGuest.value = jscookie.get("isGuest");
+            isGuest.value = jscookie.get("isGuest") ?? false;
         }
 
         return {
