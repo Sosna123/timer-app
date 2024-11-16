@@ -12,6 +12,11 @@
                 (i) => {
                     currTheme = i;
                 }
+            "
+            @time-chart-change="
+                (i) => {
+                    timeChartActive = i;
+                }
             " />
     </div>
 
@@ -27,6 +32,7 @@
             :username="username"
             :editing-options="editingOptions"
             :update-chart="updateChartNum"
+            :show-chart="timeChartActive"
             @time-deleted="
                 (i) => {
                     timeRemoved++;
@@ -101,6 +107,9 @@ export default defineComponent({
         let currTheme = jscookie.get("theme")
             ? ref<string>(jscookie.get("theme"))
             : ref<string>("dark");
+        let timeChartActive = ref<boolean>(
+            jscookie.get("timeChartActive") === "1"
+        );
 
         //* use a prop to send time to TimeList
         function addTime(i: {
@@ -197,6 +206,7 @@ export default defineComponent({
             showTimeList,
             updateChartNum,
             currTheme,
+            timeChartActive,
             addTime,
             changeUsernameFunc,
         };

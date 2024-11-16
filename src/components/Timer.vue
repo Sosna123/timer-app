@@ -119,6 +119,8 @@ export default defineComponent({
                     addedDnf: false,
                 };
 
+                if (time.num === 0) return;
+
                 timeId++;
                 jscookie.set("timeId", timeId, { expires: 365 * 10 });
 

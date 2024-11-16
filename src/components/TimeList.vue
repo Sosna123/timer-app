@@ -3,7 +3,8 @@
         <div class="d-inline-block">
             <TimeChart
                 :timeList="timeArray"
-                :update-chart-num="$props.updateChart" />
+                :update-chart-num="$props.updateChart"
+                v-show="$props.showChart" />
         </div>
         <div class="d-inline-block">
             <h1>Stats:</h1>
@@ -71,7 +72,7 @@ import { defineComponent, ref, toRaw, watch } from "vue";
 import formatNormal from "@/js/timeFormat";
 import TimeChart from "@/components/TimeChart.vue";
 export default defineComponent({
-    props: ["time", "username", "editingOptions", "updateChart"],
+    props: ["time", "username", "editingOptions", "updateChart", "showChart"],
     components: { TimeChart },
     setup(props, { emit }) {
         //* types
@@ -128,6 +129,7 @@ export default defineComponent({
 
         //* communication with database
         async function fetchData(method: string, body?: object) {
+            if (jscookie.get("isGuest") === "1") return;
             const fetched = await fetch("https://frog01-31260.wykr.es/", {
                 method: method,
                 headers: {

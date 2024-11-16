@@ -11,19 +11,22 @@
         ">
         <div>
             <div class="optionsContainer bg-primary">
-                <div>
+                <!-- <div>
                     <v-btn
                         style="width: 400px"
                         color="background"
                         @click="redirectToWca()"
                         ><button>Login using WCA</button></v-btn
                     >
+                </div> -->
+                <div>
+                    <h1>Options:</h1>
                 </div>
+                <v-divider class="my-3" :thickness="3" length="90%"></v-divider>
                 <div>
                     <v-checkbox
                         label="Use as guest"
-                        v-model="isGuest"
-                        @change="changeIsGuest()"></v-checkbox>
+                        v-model="isGuest"></v-checkbox>
                     <v-text-field
                         hide-details="auto"
                         label="Type in your username"
@@ -35,6 +38,9 @@
                 </div>
                 <v-divider class="my-3" :thickness="3" length="90%"></v-divider>
                 <div>
+                    <v-checkbox
+                        label="Show the Time Chart"
+                        v-model="timeChartActive"></v-checkbox>
                     <v-select
                         label="Change Theme"
                         :items="selectItems"
@@ -51,9 +57,14 @@
                         style="width: 200px; margin-right: 10px"
                         color="background"
                         @click="
-                            $emit('hideOptions'); /* schowaj opcje */
-                            changeTheme(); /* zmień motyw */
-                            /* zmień nick */
+                            $emit('hideOptions'); /* hide options */
+                            changeTheme();
+                            /* toggle guest mode*/
+                            changeIsGuest();
+                            /* toggle timeChart*/
+                            changeTimeChartActive();
+                            $emit('time-chart-change', timeChartActive);
+                            /* change username */
                             newUsername = newUsername.replaceAll(/\s/g, '');
                             newUsername.length > 0 &&
                             !isGuest &&
@@ -69,8 +80,8 @@
                         style="width: 200px"
                         color="background"
                         @click="
-                            revertChanges(); /* cofnij opcje do poprzednich */
-                            $emit('hideOptions'); /* schowaj opcje */
+                            revertChanges();
+                            $emit('hideOptions');
                         ">
                         <button>Revert Changes</button>
                     </v-btn>
@@ -120,6 +131,13 @@ export default defineComponent({
         let newTheme = ref(theme.value);
         let isGuest = ref<boolean>(jscookie.get("isGuest") === "1");
 
+        jscookie.get("timeChartActive") === undefined
+            ? jscookie.set("timeChartActive", 1)
+            : null;
+        let timeChartActive = ref<boolean>(
+            jscookie.get("timeChartActive") === "1"
+        );
+
         function changeTheme() {
             theme.value = newTheme.value;
             themeChanger.global.name.value = theme.value;
@@ -132,6 +150,9 @@ export default defineComponent({
         function changeIsGuest() {
             jscookie.set("isGuest", Number(isGuest.value));
         }
+        function changeTimeChartActive() {
+            jscookie.set("timeChartActive", Number(timeChartActive.value));
+        }
 
         function redirectToWca() {
             window.location.href =
@@ -141,17 +162,21 @@ export default defineComponent({
         function revertChanges() {
             newUsername.value = props.username;
             newTheme.value = theme.value;
+            isGuest.value = jscookie.get("isGuest") === "1";
+            timeChartActive.value = jscookie.get("timeChartActive") === "1";
         }
 
         return {
             props,
             jscookie,
             isGuest,
+            timeChartActive,
             selectItems,
             newTheme,
             newUsername,
             changeTheme,
             changeIsGuest,
+            changeTimeChartActive,
             redirectToWca,
             revertChanges,
         };
@@ -169,7 +194,7 @@ export default defineComponent({
     padding: 20px;
     border-radius: 10px;
     width: 500px;
-    height: 500px;
+    height: 600px;
     position: relative;
     overflow: hidden;
 }
