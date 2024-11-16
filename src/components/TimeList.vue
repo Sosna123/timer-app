@@ -572,6 +572,19 @@ export default defineComponent({
             getData();
         }
 
+        //* shortcuts to add +2 and DNF to the last solve
+        document.body.addEventListener("keydown", (e) => {
+            if (e.key == "2" && e.ctrlKey) {
+                modifyTime(
+                    "plus2",
+                    timeArray.value[timeArray.value.length - 1]
+                );
+            }
+            if (e.key == "3" && e.ctrlKey) {
+                modifyTime("dnf", timeArray.value[timeArray.value.length - 1]);
+            }
+        });
+
         return {
             //* vars
             jscookie,
