@@ -53,7 +53,13 @@ import formatNormal from "@/js/timeFormat";
 import Scrambles from "@/components/Scrambles.vue";
 export default defineComponent({
     components: { Scrambles },
-    props: ["removeTime", "currTheme", "editingOptions", "showTimeList"],
+    props: [
+        "removeTime",
+        "currTheme",
+        "editingOptions",
+        "showTimeList",
+        "timeList",
+    ],
     setup(props, { emit }) {
         //* vars
         let changeModeBtn: null | HTMLButtonElement = null;
@@ -70,7 +76,6 @@ export default defineComponent({
         let startOfTimer: number | null = null;
         let timerRunning: boolean = false;
         let intervalTimer: undefined | number;
-        let timeId: number = 0;
         let spaceDown = ref<boolean>(false);
         let lightTheme = ref<boolean>(false);
         let timerMode = ref<"normal" | "input">("normal");
@@ -108,11 +113,8 @@ export default defineComponent({
                     currentTime.value.toString()
                 );
                 timerRunning = false;
-                if (!jscookie.get("timeId")) {
-                    timeId = 0;
-                }
                 const time = {
-                    id: Number(timeId),
+                    id: props.timeList.length,
                     str: currentTimeStr.value,
                     num: currentTime.value,
                     added2: false,
@@ -121,31 +123,9 @@ export default defineComponent({
 
                 if (time.num === 0) return;
 
-                timeId++;
-                jscookie.set("timeId", timeId, { expires: 365 * 10 });
-
                 //* send the time to TimeList
                 emit("time-done", time);
             }
-        }
-
-        //* check if time is removed to update timeId
-        watch(
-            () => props.removeTime,
-            (removeTime) => {
-                if (jscookie.get("timeId")) {
-                    timeId = jscookie.get("timeId");
-                    jscookie.set("timeId", timeId, { expires: 365 * 10 });
-                } else {
-                    timeId = 0;
-                    jscookie.set("timeId", timeId, { expires: 365 * 10 });
-                }
-            }
-        );
-
-        //* load timeId from cookie
-        if (jscookie.get("timeId")) {
-            timeId = jscookie.get("timeId");
         }
 
         //* turn on the timer when space is pressed
@@ -176,14 +156,12 @@ export default defineComponent({
             value = value.length <= 6 ? value : value.slice(0, 6);
             if (value.length && value.match(/[1-9]+/)) {
                 const time = {
-                    id: Number(timeId),
+                    id: Number(props.timeList.length),
                     str: formatNormal(value, "addDots"),
                     num: Number(value),
                     added2: false,
                     addedDnf: false,
                 };
-                timeId++;
-                jscookie.set("timeId", timeId, { expires: 365 * 10 });
                 emit("time-done", time);
             }
             timeInInput.value = "";

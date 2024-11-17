@@ -42,6 +42,11 @@
                 (i) => {
                     editingOptions = i;
                 }
+            "
+            @timeListChanged="
+                (i) => {
+                    timeListChanged = i;
+                }
             " />
     </div>
     <div class="right-panel">
@@ -63,6 +68,7 @@
             :curr-theme="currTheme"
             :editing-options="editingOptions"
             :showTimeList="showTimeList"
+            :time-list="timeListChanged"
             @time-done="
                 (i) => {
                     addTime(i);
@@ -110,6 +116,7 @@ export default defineComponent({
         let timeChartActive = ref<boolean>(
             jscookie.get("timeChartActive") === "1"
         );
+        let timeListChanged = ref<any>([]);
 
         //* use a prop to send time to TimeList
         function addTime(i: {
@@ -207,6 +214,7 @@ export default defineComponent({
             updateChartNum,
             currTheme,
             timeChartActive,
+            timeListChanged,
             addTime,
             changeUsernameFunc,
         };

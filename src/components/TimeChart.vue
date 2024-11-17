@@ -83,7 +83,7 @@ export default defineComponent({
                     updateChart(1);
                     clearInterval(interval);
                 }
-                if (i >= 200) {
+                if (i >= 10) {
                     clearInterval(interval);
                 }
             }, 100);

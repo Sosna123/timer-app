@@ -147,7 +147,10 @@ export default defineComponent({
                 e.forEach((i: any) => {
                     if (i.username == props.username) {
                         let newTime = {
-                            id: i.id,
+                            id: timeArray.value[timeArray.value.length - 1]
+                                ? timeArray.value[timeArray.value.length - 1]
+                                      .id + 1
+                                : 0,
                             str: i.str,
                             num: i.num,
                             added2: i.added2,
@@ -319,6 +322,7 @@ export default defineComponent({
         watch(
             () => props.time,
             (time) => {
+                emit("timeListChanged", timeArray.value);
                 addTime(time);
             }
         );
@@ -387,16 +391,12 @@ export default defineComponent({
                     },
                     // four empty averages to offset the first 5 solves
                 ];
-                calcAvgs();
+                // calcAvgs();
 
                 //* cookies change
                 jscookie.set("timeArray", JSON.stringify(timeArray), {
                     expires: 365 * 10,
                 });
-
-                if (timeArray.length == 0) {
-                    jscookie.set("timeId", 0, { expires: 365 * 10 });
-                }
             },
             { deep: true }
         );
@@ -444,9 +444,8 @@ export default defineComponent({
                     return 1;
                 } else if (a.num < b.num) {
                     return -1;
-                } else {
-                    return 0;
                 }
+                return 0;
             });
 
             array.shift();
@@ -546,24 +545,14 @@ export default defineComponent({
             emit("timeDeleted");
             jscookie.remove("timeArray");
             jscookie.remove("timeArrayAvgs");
-            jscookie.remove("timeId");
         }
 
         watch(
             () => props.username,
             () => {
                 if (jscookie.get("isGuest") === "1") return;
-
                 clearCookies();
-                getData().then(() => {
-                    if (timeArray.value.length > 0) {
-                        let timeId = timeArray.value[-1].id + 1;
-                        jscookie.set("timeId", timeId, { expires: 365 * 10 });
-                    } else {
-                        jscookie.set("timeId", 0, { expires: 365 * 10 });
-                    }
-                    emit("timeDeleted");
-                });
+                getData();
             }
         );
 
