@@ -147,10 +147,7 @@ export default defineComponent({
                 e.forEach((i: any) => {
                     if (i.username == props.username) {
                         let newTime = {
-                            id: timeArray.value[timeArray.value.length - 1]
-                                ? timeArray.value[timeArray.value.length - 1]
-                                      .id + 1
-                                : 0,
+                            id: i.id,
                             str: i.str,
                             num: i.num,
                             added2: i.added2,
@@ -182,7 +179,6 @@ export default defineComponent({
             added2: boolean;
             addedDnf: boolean;
         }) {
-            timeArray.value.push(time);
             //* fix ids (i dont know how to do it in a better way)
             timeArray.value.forEach((e, index) => {
                 if (
@@ -197,6 +193,7 @@ export default defineComponent({
                     e.id = index;
                 }
             });
+            timeArray.value.push(time);
             postData(time);
         }
 
@@ -391,7 +388,7 @@ export default defineComponent({
                     },
                     // four empty averages to offset the first 5 solves
                 ];
-                // calcAvgs();
+                calcAvgs();
 
                 //* cookies change
                 jscookie.set("timeArray", JSON.stringify(timeArray), {

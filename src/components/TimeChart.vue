@@ -80,7 +80,7 @@ export default defineComponent({
                 i++;
                 if (canvas.checkVisibility()) {
                     canvasContext = canvas.getContext("2d");
-                    updateChart(1);
+                    updateChart();
                     clearInterval(interval);
                 }
                 if (i >= 10) {
@@ -90,7 +90,7 @@ export default defineComponent({
         }
 
         //* create or update every time timeList changes
-        function updateChart(timeout: number = 0) {
+        function updateChart() {
             if (lineChart) {
                 lineChart.data = {
                     labels: filteredTimeList.map((i: any) => i.num),
@@ -101,13 +101,9 @@ export default defineComponent({
                         },
                     ],
                 };
-                setTimeout(() => {
-                    lineChart.update();
-                }, timeout);
+                lineChart.update();
             } else {
-                setTimeout(() => {
-                    makeChart();
-                }, timeout);
+                makeChart();
             }
         }
 

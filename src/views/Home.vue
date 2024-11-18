@@ -16,6 +16,7 @@
             @time-chart-change="
                 (i) => {
                     timeChartActive = i;
+                    updateChartNum++;
                 }
             " />
     </div>
