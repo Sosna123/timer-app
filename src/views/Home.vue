@@ -5,7 +5,12 @@
             :username="username"
             @username-changed="
                 (i) => {
-                    changeUsernameFunc(i);
+                    changeUsernameFunc(i, false);
+                }
+            "
+            @guest-changed="
+                (i) => {
+                    changeUsernameFunc(i, true);
                 }
             "
             @changed-theme="
@@ -31,6 +36,7 @@
             style="height: 100vh"
             :time="time"
             :username="username"
+            :guest-mode-changed="guestModeChanged"
             :editing-options="editingOptions"
             :update-chart="updateChartNum"
             :show-chart="timeChartActive"
@@ -118,6 +124,7 @@ export default defineComponent({
             jscookie.get("timeChartActive") === "1"
         );
         let timeListChanged = ref<any>([]);
+        let guestModeChanged = ref<number>(0);
 
         //* use a prop to send time to TimeList
         function addTime(i: {
@@ -130,9 +137,15 @@ export default defineComponent({
             time.value = i;
         }
 
-        function changeUsernameFunc(newUsername: string) {
+        function changeUsernameFunc(
+            newUsername: string,
+            hasGuestChanged: boolean = false
+        ) {
             username.value = newUsername.toLowerCase();
             jscookie.set("username", newUsername, { expires: 365 * 10 });
+            // if (hasGuestChanged) {
+            //     guestModeChanged.value++;
+            // }
         }
 
         if (jscookie.get("username")) {
@@ -216,6 +229,7 @@ export default defineComponent({
             currTheme,
             timeChartActive,
             timeListChanged,
+            guestModeChanged,
             addTime,
             changeUsernameFunc,
         };

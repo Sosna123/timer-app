@@ -72,7 +72,14 @@ import { defineComponent, ref, toRaw, watch } from "vue";
 import formatNormal from "@/js/timeFormat";
 import TimeChart from "@/components/TimeChart.vue";
 export default defineComponent({
-    props: ["time", "username", "editingOptions", "updateChart", "showChart"],
+    props: [
+        "time",
+        "username",
+        "editingOptions",
+        "updateChart",
+        "showChart",
+        "guestModeChanged",
+    ],
     components: { TimeChart },
     setup(props, { emit }) {
         //* types
@@ -546,6 +553,15 @@ export default defineComponent({
 
         watch(
             () => props.username,
+            () => {
+                if (jscookie.get("isGuest") === "1") return;
+                clearCookies();
+                getData();
+            }
+        );
+
+        watch(
+            () => props.guestModeChanged,
             () => {
                 if (jscookie.get("isGuest") === "1") return;
                 clearCookies();

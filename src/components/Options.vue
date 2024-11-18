@@ -59,20 +59,19 @@
                         @click="
                             $emit('hideOptions'); /* hide options */
                             changeTheme();
-                            /* toggle guest mode*/
-                            changeIsGuest();
                             /* toggle timeChart*/
                             changeTimeChartActive();
                             $emit('time-chart-change', timeChartActive);
                             /* change username */
                             newUsername = newUsername.replaceAll(/\s/g, '');
                             newUsername.length > 0 &&
-                            !isGuest &&
                             !newUsername.startsWith('wca-')
                                 ? !(newUsername.length > 28)
                                     ? $emit('username-changed', newUsername)
                                     : newUsername.substring(0, 28)
                                 : (newUsername = props.username);
+                            /* toggle guest mode*/
+                            changeIsGuest();
                         ">
                         <button>Save Changes</button>
                     </v-btn>
@@ -149,6 +148,9 @@ export default defineComponent({
 
         function changeIsGuest() {
             jscookie.set("isGuest", Number(isGuest.value));
+            if (jscookie.get("isGuest") !== "1") {
+                emit("guest-changed", newUsername.value);
+            }
         }
         function changeTimeChartActive() {
             jscookie.set("timeChartActive", Number(timeChartActive.value));
