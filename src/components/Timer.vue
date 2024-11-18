@@ -131,6 +131,11 @@ export default defineComponent({
         //* turn on the timer when space is pressed
         document.body.addEventListener("keyup", (e) => {
             spaceDown.value = false;
+            if (e.key == "m" && e.ctrlKey) {
+                timerMode.value =
+                    timerMode.value == "normal" ? "input" : "normal";
+                return;
+            }
             if (timerMode.value == "normal") {
                 if (timerRunning && e.code != "Space" && e.code != "Escape") {
                     manageTimer();
