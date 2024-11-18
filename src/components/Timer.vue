@@ -114,7 +114,7 @@ export default defineComponent({
                 );
                 timerRunning = false;
                 const time = {
-                    id: props.timeList.length,
+                    id: 0,
                     str: currentTimeStr.value,
                     num: currentTime.value,
                     added2: false,

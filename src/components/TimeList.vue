@@ -187,19 +187,9 @@ export default defineComponent({
             addedDnf: boolean;
         }) {
             //* fix ids (i dont know how to do it in a better way)
-            timeArray.value.forEach((e, index) => {
-                if (
-                    time.str == e.str &&
-                    time.num == e.num &&
-                    time.added2 == e.added2 &&
-                    time.addedDnf == e.addedDnf
-                ) {
-                    time.id = index;
-                }
-                if (e.id != index) {
-                    e.id = index;
-                }
-            });
+            time.id = timeArray.value[timeArray.value.length - 1].id
+                ? timeArray.value[timeArray.value.length - 1].id + 1
+                : 0;
             timeArray.value.push(time);
             postData(time);
         }
@@ -326,8 +316,15 @@ export default defineComponent({
         watch(
             () => props.time,
             (time) => {
-                emit("timeListChanged", timeArray.value);
                 addTime(time);
+            }
+        );
+
+        //* track timeArray to have access in Timer.vue
+        watch(
+            () => timeArray,
+            () => {
+                jscookie.set("timeArray", JSON.stringify(timeArray.value));
             }
         );
 
