@@ -187,9 +187,11 @@ export default defineComponent({
             addedDnf: boolean;
         }) {
             //* fix ids (i dont know how to do it in a better way)
-            time.id = timeArray.value[timeArray.value.length - 1].id
-                ? timeArray.value[timeArray.value.length - 1].id + 1
-                : 0;
+            try {
+                time.id = timeArray.value[timeArray.value.length - 1].id + 1;
+            } catch (e) {
+                time.id = 0;
+            }
             timeArray.value.push(time);
             postData(time);
         }
