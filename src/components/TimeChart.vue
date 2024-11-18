@@ -123,6 +123,7 @@ export default defineComponent({
                 filteredTimeList = props.timeList.filter(
                     (i: any) => !i.addedDnf
                 );
+                tryToUpdateChartUntilShown();
             },
             { deep: true }
         );
