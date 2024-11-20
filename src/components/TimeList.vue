@@ -574,14 +574,17 @@ export default defineComponent({
         }
 
         //* shortcuts to add +2 and DNF to the last solve
-        document.body.addEventListener("keydown", (e) => {
-            if (e.key == "2" && e.ctrlKey) {
+        document.body.addEventListener("keydown", (event) => {
+            if (timeArray.value.length < 1) return;
+            if (event.key == "2" && event.ctrlKey) {
+                event.preventDefault();
                 modifyTime(
                     "plus2",
                     timeArray.value[timeArray.value.length - 1]
                 );
             }
-            if (e.key == "3" && e.ctrlKey) {
+            if (event.key == "3" && event.ctrlKey) {
+                event.preventDefault();
                 modifyTime("dnf", timeArray.value[timeArray.value.length - 1]);
             }
         });
