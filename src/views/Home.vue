@@ -70,7 +70,7 @@
         <Timer
             @click="showTimeList ? (showTimeList = false) : null"
             class="pa-0"
-            style="height: 73vh; width: 100%; overflow-x: hidden;"
+            style="height: 73vh; width: 100%; overflow-x: hidden"
             :remove-time="timeRemoved"
             :curr-theme="currTheme"
             :editing-options="editingOptions"
@@ -164,7 +164,7 @@ export default defineComponent({
             jscookie.set("authorCode", authorCode, { expires: 365 * 10 });
 
             console.log("fetching token");
-            fetch("https://frog01-31260.wykr.es/wca/token", {
+            fetch(process.env.VUE_APP_DB_API_URL, {
                 method: "POST",
                 body: JSON.stringify({ authorizationCode: authorCode }),
             }).then((data: any) => {
@@ -181,7 +181,7 @@ export default defineComponent({
 
         if (jscookie.get("bearerToken")) {
             console.log("fetching data");
-            fetch("https://frog01-31260.wykr.es/wca/data", {
+            fetch(process.env.VUE_APP_DB_API_URL, {
                 method: "POST",
                 body: JSON.stringify({
                     bearerToken: jscookie.get("bearerToken"),
@@ -197,7 +197,7 @@ export default defineComponent({
         }
 
         if (jscookie.get("refreshToken")) {
-            fetch("https://frog01-31260.wykr.es/", {
+            fetch(process.env.VUE_APP_DB_API_URL, {
                 method: "POST",
                 body: JSON.stringify({
                     refreshToken: jscookie.get("refreshToken"),

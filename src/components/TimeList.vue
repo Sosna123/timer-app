@@ -137,7 +137,7 @@ export default defineComponent({
         //* communication with database
         async function fetchData(method: string, body?: object) {
             if (jscookie.get("isGuest") === "1") return;
-            const fetched = await fetch("https://frog01-31260.wykr.es/", {
+            const fetched = await fetch(process.env.VUE_APP_DB_API_URL, {
                 method: method,
                 headers: {
                     "Content-Type": "application/json",
