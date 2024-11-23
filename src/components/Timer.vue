@@ -114,7 +114,6 @@ export default defineComponent({
                     currentTime.value.toString()
                 );
                 timerRunning = false;
-                console.log(props.currentScramble);
                 const time = {
                     id: 0,
                     str: currentTimeStr.value,
@@ -130,6 +129,7 @@ export default defineComponent({
                 //* send the time to TimeList
                 emit("time-done", time);
             }
+            emit("timer-running", timerRunning);
         }
 
         //* turn on the timer when space is pressed

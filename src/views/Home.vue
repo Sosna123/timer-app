@@ -58,6 +58,12 @@
     </div>
     <div class="right-panel">
         <Scrambles
+            class="pa-0"
+            style="height: 27vh; width: 100%"
+            :change-scramble="changeScramble"
+            :disable-input="editingOptions"
+            :disable-input2="showTimeList"
+            :timer-running="timerRunning"
             @show-timelist="
                 showTimeList = true;
                 updateChartNum++;
@@ -66,14 +72,8 @@
                 (i) => {
                     currentScramble = i;
                 }
-            "
-            class="pa-0"
-            :change-scramble="changeScramble"
-            :disable-input="editingOptions"
-            :disable-input2="showTimeList"
-            style="height: 27vh; width: 100%" />
+            " />
         <Timer
-            @click="showTimeList ? (showTimeList = false) : null"
             class="pa-0"
             style="height: 73vh; width: 100%; overflow-x: hidden"
             :remove-time="timeRemoved"
@@ -82,10 +82,16 @@
             :showTimeList="showTimeList"
             :time-list="timeListChanged"
             :current-scramble="currentScramble"
+            @click="showTimeList ? (showTimeList = false) : null"
             @time-done="
                 (i) => {
                     addTime(i);
                     changeScramble++;
+                }
+            "
+            @timer-running="
+                (i) => {
+                    timerRunning = i;
                 }
             " />
     </div>
@@ -132,6 +138,7 @@ export default defineComponent({
         let timeListChanged = ref<any>([]);
         let guestModeChanged = ref<number>(0);
         let currentScramble = ref<string>("");
+        let timerRunning = ref<boolean>(false);
 
         //* use a prop to send time to TimeList
         function addTime(i: {
@@ -238,6 +245,7 @@ export default defineComponent({
             timeListChanged,
             guestModeChanged,
             currentScramble,
+            timerRunning,
             addTime,
             changeUsernameFunc,
         };

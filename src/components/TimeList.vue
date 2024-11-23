@@ -194,7 +194,6 @@ export default defineComponent({
                 time.id = 0;
             }
             timeArray.value.push(time);
-            console.log(time);
             postData(time);
         }
 
