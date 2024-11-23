@@ -89,6 +89,8 @@ export default defineComponent({
             num: number;
             added2: boolean;
             addedDnf: boolean;
+            scramble: string;
+            date: number;
         };
 
         //* vars
@@ -124,6 +126,8 @@ export default defineComponent({
             num: 0,
             added2: false,
             addedDnf: false,
+            scramble: "",
+            date: Number(new Date()),
         });
         let pbAo5 = ref<{
             str: string;
@@ -141,6 +145,7 @@ export default defineComponent({
                 method: method,
                 headers: {
                     "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
                 },
                 body: JSON.stringify(body),
             });
@@ -159,6 +164,8 @@ export default defineComponent({
                             num: i.num,
                             added2: i.added2,
                             addedDnf: i.addedDnf,
+                            scramble: i.scramble,
+                            date: Number(i.date),
                         };
                         timeArray.value.push(newTime);
                     }
@@ -179,13 +186,7 @@ export default defineComponent({
         }
 
         //* push the time to timeArray
-        function addTime(time: {
-            id: number;
-            str: string;
-            num: number;
-            added2: boolean;
-            addedDnf: boolean;
-        }) {
+        function addTime(time: Time) {
             //* fix ids (i dont know how to do it in a better way)
             try {
                 time.id = timeArray.value[timeArray.value.length - 1].id + 1;
@@ -193,20 +194,12 @@ export default defineComponent({
                 time.id = 0;
             }
             timeArray.value.push(time);
+            console.log(time);
             postData(time);
         }
 
         //* modify the time to add +2, dnf or remove it
-        function modifyTime(
-            action: "plus2" | "dnf" | "remove",
-            time: {
-                id: number;
-                str: string;
-                num: number;
-                added2: boolean;
-                addedDnf: boolean;
-            }
-        ) {
+        function modifyTime(action: "plus2" | "dnf" | "remove", time: Time) {
             //* add +2 to time
             if (action == "plus2") {
                 timeArray.value.forEach((e) => {
@@ -272,7 +265,9 @@ export default defineComponent({
                             e.str == time.str &&
                             e.num == time.num &&
                             e.added2 == time.added2 &&
-                            e.addedDnf == time.addedDnf
+                            e.addedDnf == time.addedDnf &&
+                            e.scramble == time.scramble &&
+                            e.date == time.date
                         ) {
                             return false;
                         }
@@ -293,15 +288,7 @@ export default defineComponent({
         }
 
         //* calculate mean of session
-        function meanOfArr(
-            array: {
-                id: number;
-                str: string;
-                num: number;
-                added2: boolean;
-                addedDnf: boolean;
-            }[]
-        ): string {
+        function meanOfArr(array: Time[]): string {
             if (array.length > 0) {
                 let sumOfTimes = array.reduce((acc, e) => {
                     return acc + e.num;
@@ -338,32 +325,15 @@ export default defineComponent({
                 let timeArrayCopy = timeArray;
                 timeArrayCopy = timeArrayCopy.filter((e) => !e.addedDnf);
                 if (timeArrayCopy.length > 0) {
-                    pbTime.value = timeArrayCopy.sort(
-                        (
-                            a: {
-                                id: number;
-                                str: string;
-                                num: number;
-                                added2: boolean;
-                                addedDnf: boolean;
-                            },
-                            b: {
-                                id: number;
-                                str: string;
-                                num: number;
-                                added2: boolean;
-                                addedDnf: boolean;
-                            }
-                        ) => {
-                            if (a.num > b.num && !a.addedDnf) {
-                                return 1;
-                            } else if (a.num < b.num && !b.addedDnf) {
-                                return -1;
-                            } else {
-                                return 0;
-                            }
+                    pbTime.value = timeArrayCopy.sort((a: Time, b: Time) => {
+                        if (a.num > b.num && !a.addedDnf) {
+                            return 1;
+                        } else if (a.num < b.num && !b.addedDnf) {
+                            return -1;
+                        } else {
+                            return 0;
                         }
-                    )[0];
+                    })[0];
                 } else {
                     pbTime.value = {
                         id: 0,
@@ -371,6 +341,8 @@ export default defineComponent({
                         num: 0,
                         added2: false,
                         addedDnf: false,
+                        scramble: "",
+                        date: Number(new Date()),
                     };
                 }
 
@@ -411,13 +383,7 @@ export default defineComponent({
 
         //* function to calculate avg of 5
         function calcAvgs() {
-            let timeArrayCopy: {
-                id: number;
-                str: string;
-                num: number;
-                added2: boolean;
-                addedDnf: boolean;
-            }[] = [...toRaw(timeArray.value)];
+            let timeArrayCopy: Time[] = [...toRaw(timeArray.value)];
 
             let allArrays = getConsecutiveArrays(timeArrayCopy, 5);
 
@@ -426,15 +392,7 @@ export default defineComponent({
             });
         }
 
-        function calcAvg(
-            array: {
-                id: number;
-                str: string;
-                num: number;
-                added2: boolean;
-                addedDnf: boolean;
-            }[]
-        ) {
+        function calcAvg(array: Time[]) {
             array.sort((a, b) => {
                 if (a.addedDnf) {
                     return 1;

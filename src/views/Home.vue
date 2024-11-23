@@ -62,6 +62,11 @@
                 showTimeList = true;
                 updateChartNum++;
             "
+            @new-scramble="
+                (i) => {
+                    currentScramble = i;
+                }
+            "
             class="pa-0"
             :change-scramble="changeScramble"
             :disable-input="editingOptions"
@@ -76,6 +81,7 @@
             :editing-options="editingOptions"
             :showTimeList="showTimeList"
             :time-list="timeListChanged"
+            :current-scramble="currentScramble"
             @time-done="
                 (i) => {
                     addTime(i);
@@ -125,6 +131,7 @@ export default defineComponent({
         );
         let timeListChanged = ref<any>([]);
         let guestModeChanged = ref<number>(0);
+        let currentScramble = ref<string>("");
 
         //* use a prop to send time to TimeList
         function addTime(i: {
@@ -230,6 +237,7 @@ export default defineComponent({
             timeChartActive,
             timeListChanged,
             guestModeChanged,
+            currentScramble,
             addTime,
             changeUsernameFunc,
         };

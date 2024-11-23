@@ -59,6 +59,7 @@ export default defineComponent({
         "editingOptions",
         "showTimeList",
         "timeList",
+        "currentScramble",
     ],
     setup(props, { emit }) {
         //* vars
@@ -113,12 +114,15 @@ export default defineComponent({
                     currentTime.value.toString()
                 );
                 timerRunning = false;
+                console.log(props.currentScramble);
                 const time = {
                     id: 0,
                     str: currentTimeStr.value,
                     num: currentTime.value,
                     added2: false,
                     addedDnf: false,
+                    scramble: props.currentScramble,
+                    date: Number(new Date()),
                 };
 
                 if (time.num === 0) return;

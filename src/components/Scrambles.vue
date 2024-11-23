@@ -64,6 +64,10 @@ export default defineComponent({
         let scrambleGen = new Scrambow();
         let smallFont = ref<0 | 1 | 2 | 3>(0);
         let scramble = ref<{ scramble_string: string }[]>(scrambleGen.get(1));
+        console.log(scramble.value);
+        console.log("emitting first scramble");
+        console.log(scramble.value[0].scramble_string);
+        emit("new-scramble", scramble.value[0].scramble_string);
         type ScrambleType =
             | "333"
             | "222"
@@ -101,6 +105,8 @@ export default defineComponent({
         //* change the scramble
         function changeScramble() {
             scramble.value = scrambleGen.get(1);
+            console.log("emitting new scramble");
+            emit("new-scramble", scramble.value[0].scramble_string);
         }
 
         //* watch if you need to change scramble
