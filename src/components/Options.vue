@@ -98,9 +98,12 @@ export default defineComponent({
     setup(props, { emit }) {
         let newUsername = ref<string>(props.username);
 
-        watch(props.username, (username: string) => {
-            newUsername.value = username.toLowerCase();
-        });
+        watch(
+            () => props.username,
+            (username: string) => {
+                newUsername.value = username.toLowerCase();
+            }
+        );
 
         const jscookie = require("js-cookie");
         const themeChanger = useTheme();

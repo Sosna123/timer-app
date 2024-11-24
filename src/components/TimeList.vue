@@ -13,7 +13,7 @@
             <h2 class="ma-0">PB ao5: {{ pbAo5.str }}</h2>
             <h2 class="ma-0">Mean: {{ meanOfArr(timeArray) }}</h2>
         </div>
-        <v-divider class="border-opacity-100 my-4"></v-divider>
+        <v-divider class="my-3" :thickness="3" length="100%"></v-divider>
         <!--* options -->
         <div class="d-block">
             <v-btn
@@ -24,7 +24,7 @@
                 <button>Options</button>
             </v-btn>
         </div>
-        <v-divider class="border-opacity-100 my-4"></v-divider>
+        <v-divider class="my-3" :thickness="3" length="100%"></v-divider>
         <h1>Times:</h1>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
@@ -123,16 +123,25 @@ export default defineComponent({
         //* communication with database
         async function fetchData(method: string, body?: object) {
             if (jscookie.get("isGuest") === "1") return;
-            const fetched = await fetch(process.env.VUE_APP_DB_API_URL, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*",
-                },
-                body: JSON.stringify(body),
-            });
-            const data = await fetched.json();
-            return data;
+            try {
+                const fetched = await fetch(process.env.VUE_APP_DB_API_URL, {
+                    method: method,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*",
+                    },
+                    body: JSON.stringify(body),
+                });
+                const data = await fetched.json();
+                return data;
+            } catch (e) {
+                console.warn(`Error while fetching data: ${e}`);
+                modifyTime(
+                    "remove",
+                    timeArray.value[timeArray.value.length - 1]
+                );
+                return false;
+            }
         }
         async function getData() {
             fetchData("get").then((e) => {
@@ -154,14 +163,17 @@ export default defineComponent({
                 });
             });
         }
+        //* adding times
         function postData(body: any) {
             body.username = props.username;
             fetchData("post", body);
         }
+        //* modifying times
         function putData(body: any) {
             body.username = props.username;
             fetchData("put", body);
         }
+        //* deleting times
         function delData(body: any) {
             body.username = props.username;
             fetchData("delete", body);
