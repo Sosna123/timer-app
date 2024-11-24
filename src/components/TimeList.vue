@@ -28,7 +28,9 @@
         <h1>Times:</h1>
         <ul>
             <li v-for="time in timeArray.toReversed()" class="fs-2">
-                <p class="d-inline-block me-3 timeListText">
+                <p
+                    class="d-inline-block me-3 timeListText cursor-pointer timeListTextHover"
+                    @click="$emit('modify-time', time)">
                     {{ time.str }}
                 </p>
                 <p class="d-inline-block me-3 timeListText">|</p>
@@ -41,27 +43,6 @@
                             : "0.00"
                     }}
                 </p>
-                <v-btn
-                    @click="modifyTime('plus2', time)"
-                    class="timeBtn mr-2"
-                    :disabled="$props.editingOptions"
-                    color="background">
-                    <button>+2</button>
-                </v-btn>
-                <v-btn
-                    @click="modifyTime('dnf', time)"
-                    class="timeBtn mr-2"
-                    :disabled="$props.editingOptions"
-                    color="background">
-                    <button>dnf</button>
-                </v-btn>
-                <v-btn
-                    @click="modifyTime('remove', time)"
-                    class="timeBtn mr-2"
-                    :disabled="$props.editingOptions"
-                    color="background">
-                    <button>-</button>
-                </v-btn>
             </li>
         </ul>
     </div>
@@ -79,6 +60,7 @@ export default defineComponent({
         "updateChart",
         "showChart",
         "guestModeChanged",
+        "makeChangeToTime",
     ],
     components: { TimeChart },
     setup(props, { emit }) {
@@ -546,6 +528,17 @@ export default defineComponent({
             }
         });
 
+        watch(
+            () => props.makeChangeToTime,
+            (value) => {
+                if (value) {
+                    modifyTime(value[0], value[1]);
+                    emit("stopModyfiyngTime");
+                    emit("clearModifyArray", value[1]);
+                }
+            }
+        );
+
         return {
             //* vars
             jscookie,
@@ -567,5 +560,9 @@ export default defineComponent({
 <style>
 .timeListText {
     font-size: 32px;
+}
+
+.timeListTextHover:hover {
+    text-decoration: underline;
 }
 </style>

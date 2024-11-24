@@ -1,8 +1,8 @@
 <template>
     <div v-show="editingOptions">
         <Options
-            @hide-options="editingOptions = false"
             :username="username"
+            @hide-options="editingOptions = false"
             @username-changed="
                 (i) => {
                     changeUsernameFunc(i, false);
@@ -26,6 +26,17 @@
             " />
     </div>
 
+    <div v-show="editingTime && timeModified != null">
+        <ModifyTime
+            :time="timeModified"
+            @exit-time-modifying="editingTime = false"
+            @modifyTime="
+                (i) => {
+                    makeChangeToTime = i;
+                }
+            " />
+    </div>
+
     <div
         class="left-panel"
         v-show="
@@ -40,6 +51,7 @@
             :editing-options="editingOptions"
             :update-chart="updateChartNum"
             :show-chart="timeChartActive"
+            :makeChangeToTime="makeChangeToTime"
             @time-deleted="
                 (i) => {
                     timeRemoved++;
@@ -54,7 +66,14 @@
                 (i) => {
                     timeListChanged = i;
                 }
-            " />
+            "
+            @modify-time="
+                (i) => {
+                    timeModified = i;
+                    editingTime = true;
+                }
+            "
+            @clearModifyArray="makeChangeToTime = null" />
     </div>
     <div class="right-panel">
         <Scrambles
@@ -103,6 +122,7 @@ import TimeList from "../components/TimeList.vue";
 import Timer from "../components/Timer.vue";
 import Scrambles from "@/components/Scrambles.vue";
 import Options from "@/components/Options.vue";
+import ModifyTime from "@/components/ModifyTime.vue";
 import { useRoute } from "vue-router";
 import { useTheme } from "vuetify";
 export default defineComponent({
@@ -111,6 +131,7 @@ export default defineComponent({
         Timer,
         Scrambles,
         Options,
+        ModifyTime,
     },
     setup() {
         //* vars
@@ -139,6 +160,18 @@ export default defineComponent({
         let guestModeChanged = ref<number>(0);
         let currentScramble = ref<string>("");
         let timerRunning = ref<boolean>(false);
+        type Time = {
+            id: number;
+            str: string;
+            num: number;
+            added2: boolean;
+            addedDnf: boolean;
+            scramble: string;
+            date: number;
+        };
+        let editingTime = ref<boolean>(false);
+        let timeModified = ref<Time | null>(null);
+        let makeChangeToTime = ref<[string, Time] | null>(null);
 
         //* use a prop to send time to TimeList
         function addTime(i: {
@@ -246,6 +279,9 @@ export default defineComponent({
             guestModeChanged,
             currentScramble,
             timerRunning,
+            editingTime,
+            timeModified,
+            makeChangeToTime,
             addTime,
             changeUsernameFunc,
         };
