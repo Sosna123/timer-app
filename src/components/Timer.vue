@@ -88,6 +88,7 @@ export default defineComponent({
         //* change state of timer
         function manageTimer() {
             resetFontSize();
+            changeOverflowFontSize();
             if (
                 !(
                     !props.editingOptions &&
@@ -174,6 +175,8 @@ export default defineComponent({
                     num: Number(value),
                     added2: false,
                     addedDnf: false,
+                    scramble: props.currentScramble,
+                    date: Number(new Date()),
                 };
                 emit("time-done", time);
             }
