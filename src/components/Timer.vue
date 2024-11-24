@@ -6,7 +6,7 @@
             style=""
             class="d-flex timerContainer"
             @touchend="screenWidth <= 600 ? manageTimer() : null">
-            <div v-if="timerMode == 'normal'">
+            <div v-if="timerMode == 'normal'" id="timerOverflowDiv">
                 <p
                     :class="{
                         'text-amber': spaceDown,
@@ -14,6 +14,7 @@
                         'text-amber-lighten-1':
                             spaceDown && $props.currTheme === 'amber',
                     }"
+                    id="timerText"
                     style="user-select: none; font-size: 128px">
                     {{ currentTimeStr }}
                 </p>
@@ -82,9 +83,11 @@ export default defineComponent({
         let timerMode = ref<"normal" | "input">("normal");
         let timeInInput = ref<string>("");
         let screenWidth = ref<number>(window.screen.width);
+        let fontSize = 128;
 
         //* change state of timer
         function manageTimer() {
+            resetFontSize();
             if (
                 !(
                     !props.editingOptions &&
@@ -102,6 +105,7 @@ export default defineComponent({
                     currentTimeStr.value = formatNormal(
                         Math.trunc(currentTime.value / 10).toString()
                     );
+                    changeOverflowFontSize();
                 }, 10);
                 timerRunning = true;
             } else if (timerRunning) {
@@ -174,6 +178,45 @@ export default defineComponent({
                 emit("time-done", time);
             }
             timeInInput.value = "";
+        }
+
+        function checkOverflow(element: HTMLElement) {
+            var curOverflow = element.style.overflow;
+
+            if (!curOverflow || curOverflow === "visible")
+                element.style.overflow = "hidden";
+
+            var isOverflowing =
+                element.clientWidth < element.scrollWidth ||
+                element.clientHeight < element.scrollHeight;
+
+            element.style.overflow = curOverflow;
+
+            return isOverflowing;
+        }
+
+        function resetFontSize() {
+            fontSize = 128;
+            document.getElementById(
+                "timerText"
+            )!.style.fontSize = `${fontSize}px`;
+        }
+
+        function changeOverflowFontSize() {
+            if (timerMode.value == "normal") {
+                const timerText = document.getElementById("timerText")!;
+                const timerOverflowDiv =
+                    document.getElementById("timerOverflowDiv")!;
+
+                let overflow = checkOverflow(timerOverflowDiv);
+
+                if (overflow) {
+                    fontSize--;
+                    console.log(fontSize);
+                    timerText.style.fontSize = `${fontSize}px`;
+                    changeOverflowFontSize();
+                }
+            }
         }
 
         document.body.addEventListener("keydown", (e) => {

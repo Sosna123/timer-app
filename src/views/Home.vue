@@ -94,7 +94,7 @@
             " />
         <Timer
             class="pa-0"
-            style="height: 73vh; width: 100%; overflow-x: hidden"
+            style="height: 73vh; width: 100%; /*overflow-x: hidden*/"
             :remove-time="timeRemoved"
             :curr-theme="currTheme"
             :editing-options="editingOptions"
