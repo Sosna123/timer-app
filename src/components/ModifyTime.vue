@@ -10,8 +10,11 @@
             z-index: 2;
         ">
         <div>
-            <div class="timeContainer bg-primary" v-if="$props.time != null">
-                <h1>{{ $props.time.str }}</h1>
+            <div
+                class="timeContainer bg-primary"
+                v-if="$props.time != null"
+                style="overflow-y: scroll">
+                <h1 style="font-size: 64px">{{ $props.time.str }}</h1>
                 <div
                     style="
                         display: flex;
@@ -41,7 +44,13 @@
                     >
                 </div>
                 <v-divider class="my-3" :thickness="3" length="90%"></v-divider>
-                <p>Scramble: {{ $props.time.scramble }}</p>
+                <p
+                    class="hoverUnderline"
+                    @click="
+                        navigator.clipboard.writeText($props.time.scramble)
+                    ">
+                    Scramble: {{ makeShortScrambleText($props.time.scramble) }}
+                </p>
                 <p>Date: {{ getDateString(new Date($props.time.date)) }}</p>
                 <v-divider class="my-3" :thickness="3" length="90%"></v-divider>
                 <v-btn
@@ -74,7 +83,33 @@ export default defineComponent({
             return `${hours}:${minutes}.${seconds} ${days}/${months}/${year}`;
         }
 
+        function makeShortScrambleText(scramble: string): string {
+            let scrambleArr: string[] = scramble.split(" ");
+            scrambleArr = scrambleArr.filter((e) => {
+                if (e == "" || e == " ") {
+                    return false;
+                }
+                return true;
+            });
+            if (scrambleArr.length <= 15) {
+                return scrambleArr.join(" ");
+            }
+            let scrambleArrFiltered: string[] = scrambleArr.filter(
+                (_e, index) => {
+                    if (index > 15) {
+                        return false;
+                    }
+                    return true;
+                }
+            );
+            let shortScrambleText: string =
+                scrambleArrFiltered.join(" ") + "...";
+            return shortScrambleText;
+        }
+
         return {
+            navigator,
+            makeShortScrambleText,
             getDateString,
         };
     },
@@ -98,5 +133,8 @@ export default defineComponent({
 }
 .timeContainer > p {
     font-size: 24px;
+}
+.hoverUnderline:hover {
+    text-decoration: underline;
 }
 </style>
