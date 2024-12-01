@@ -1,6 +1,6 @@
 function formatNormal(
     time: string,
-    mode: "msIntoTime" | "addDots" = "msIntoTime"
+    mode: "msIntoTime" | "addDots" | "calcNumBasedStr" = "msIntoTime"
 ): string {
     let result: string;
     if (parseInt(time) <= 0) {
@@ -34,62 +34,51 @@ function formatNormal(
             : `${secondsStr}.${centisecondsStr}`;
 
         return result;
-    } else {
-        //* centisec = przedostatni + ostatni
-        //* sec = przedostatni + ostatni
-        //* min = reszta
-        //* result = min + ":" + sec + "." + centisec
-        let resultArr: string[] = time.split("");
-        let centisec: string, sec: string, min: string;
-
-        if (resultArr.length >= 5) {
-            centisec =
-                resultArr[resultArr.length - 2] +
-                resultArr[resultArr.length - 1];
-            resultArr.pop();
-            resultArr.pop();
-            sec =
-                resultArr[resultArr.length - 2] +
-                resultArr[resultArr.length - 1];
-            resultArr.pop();
-            resultArr.pop();
-            min = resultArr.join("");
-        } else if (resultArr.length == 4) {
-            centisec =
-                resultArr[resultArr.length - 2] +
-                resultArr[resultArr.length - 1];
-            resultArr.pop();
-            resultArr.pop();
-            sec =
-                resultArr[resultArr.length - 2] +
-                resultArr[resultArr.length - 1];
-            min = "0";
-        } else if (resultArr.length == 3) {
-            centisec =
-                resultArr[resultArr.length - 2] +
-                resultArr[resultArr.length - 1];
-            resultArr.pop();
-            resultArr.pop();
-            sec = "0" + resultArr[resultArr.length - 1];
-            min = "0";
-        } else if (resultArr.length == 2) {
-            centisec =
-                resultArr[resultArr.length - 2] +
-                resultArr[resultArr.length - 1];
-            sec = "0";
-            min = "0";
-        } else {
-            centisec = "0" + resultArr[resultArr.length - 1];
-            sec = "0";
-            min = "0";
+    } else if (mode == "addDots") {
+        let hundreths: string[] = [...time].slice(time.length - 2, time.length);
+        if (hundreths.length == 1) {
+            hundreths.unshift("0");
         }
+        let seconds: string[] = [...time].slice(
+            time.length - 4,
+            time.length - 2
+        );
+        if (seconds.length == 0) {
+            seconds.unshift("0", "0");
+        } else if (seconds.length == 1) {
+            seconds.unshift("0");
+        }
+        let minutes: string[] = [...time].slice(0, time.length - 4);
 
-        result = parseInt(min)
-            ? `${min}:${sec}.${centisec}`
-            : `${sec}.${centisec}`;
+        let result = seconds.join("") + "." + hundreths.join("");
+        if (minutes.length) {
+            result = minutes.join("") + ":" + result;
+        }
+        return result;
+    } else {
+        // } else if (mode == "calcNumBasedStr") {
+        let hundreths: string[] = [...time].slice(time.length - 2, time.length);
+        if (hundreths.length == 1) {
+            hundreths.unshift("0");
+        }
+        let seconds: string[] = [...time].slice(
+            time.length - 4,
+            time.length - 2
+        );
+        if (seconds.length == 0) {
+            seconds.unshift("0", "0");
+        } else if (seconds.length == 1) {
+            seconds.unshift("0");
+        }
+        let minutes: string[] = [...time].slice(0, time.length - 4);
+
+        let result =
+            Number(minutes.join("")) * 6000 +
+            Number(seconds.join("")) * 100 +
+            Number(hundreths.join(""));
+
+        return result.toString();
     }
-
-    return result;
 }
 
 export default formatNormal;

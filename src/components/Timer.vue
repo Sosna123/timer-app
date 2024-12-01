@@ -172,7 +172,7 @@ export default defineComponent({
                 const time = {
                     id: Number(props.timeList.length),
                     str: formatNormal(value, "addDots"),
-                    num: Number(value),
+                    num: Number(formatNormal(value, "calcNumBasedStr")),
                     added2: false,
                     addedDnf: false,
                     scramble: props.currentScramble,

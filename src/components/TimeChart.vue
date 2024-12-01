@@ -103,7 +103,11 @@ export default defineComponent({
                 };
                 lineChart.update();
             } else {
-                makeChart();
+                try {
+                    makeChart();
+                } catch (e) {
+                    return;
+                }
             }
         }
 
