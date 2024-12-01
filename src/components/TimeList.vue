@@ -31,15 +31,16 @@
                 <p
                     class="d-inline-block me-3 timeListText cursor-pointer timeListTextHover"
                     @click="$emit('modify-time', time)">
+                    <!-- {{ time }} -->
                     {{ time.str }}
                 </p>
                 <p class="d-inline-block me-3 timeListText">|</p>
                 <p class="d-inline-block me-3 timeListText">
                     a05:
                     {{
-                        timeArrayAvgs.length >= time.id &&
-                        timeArrayAvgs[time.id]?.str
-                            ? timeArrayAvgs[time.id].str
+                        timeArrayAvgs.length >= timeArray.indexOf(time) &&
+                        timeArrayAvgs[timeArray.indexOf(time)]?.str
+                            ? timeArrayAvgs[timeArray.indexOf(time)].str
                             : "0.00"
                     }}
                 </p>

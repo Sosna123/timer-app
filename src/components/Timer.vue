@@ -215,7 +215,6 @@ export default defineComponent({
 
                 if (overflow) {
                     fontSize--;
-                    console.log(fontSize);
                     timerText.style.fontSize = `${fontSize}px`;
                     changeOverflowFontSize();
                 }
