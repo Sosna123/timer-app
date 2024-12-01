@@ -35,6 +35,7 @@ function formatNormal(
 
         return result;
     } else if (mode == "addDots") {
+        //* adding "dots" to make 123456 into 12:34.56
         let hundreths: string[] = [...time].slice(time.length - 2, time.length);
         if (hundreths.length == 1) {
             hundreths.unshift("0");
@@ -56,7 +57,7 @@ function formatNormal(
         }
         return result;
     } else {
-        // } else if (mode == "calcNumBasedStr") {
+        //* calculating the number in ms from the string
         let hundreths: string[] = [...time].slice(time.length - 2, time.length);
         if (hundreths.length == 1) {
             hundreths.unshift("0");

@@ -21,7 +21,8 @@
             :disabled="
                 $props.disableInput ||
                 $props.disableInput2 ||
-                $props.disableInput3
+                $props.disableInput3 ||
+                $props.timerRunning
             ">
         </v-select>
         <h2
@@ -91,6 +92,7 @@ export default defineComponent({
         watch(
             () => scrambleType.value,
             (scramType) => {
+                if (props.timerRunning) return;
                 scrambleGen = new Scrambow().setType(scramType);
                 changeScramble();
                 if (scramType === "555") {
