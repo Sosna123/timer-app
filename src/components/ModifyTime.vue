@@ -70,17 +70,16 @@ export default defineComponent({
     props: ["time"],
     setup(props, { emit }) {
         function getDateString(date: Date): string {
-            // time hh:mm:ss
-            let hours = date.getHours(); /* hours */
-            let minutes = date.getMinutes() + ""; /* minutes */
+            //* time hh:mm
+            let hours: string = date.getHours().toString(); /* hours */
+            hours.length == 1 ? (hours = "0" + hours) : null;
+            let minutes: string = date.getMinutes().toString(); /* minutes */
             minutes.length == 1 ? (minutes = "0" + minutes) : null;
-            let seconds = date.getSeconds() + ""; /* seconds */
-            seconds.length == 1 ? (seconds = "0" + seconds) : null;
-            // day dd/mm/yyyy
+            //* day dd/mm/yyyy
             let days = date.getDate(); /* day */
             let months = date.getMonth() + 1; /* month */
             let year = date.getFullYear(); /* year */
-            return `${hours}:${minutes}.${seconds} ${days}/${months}/${year}`;
+            return `${hours}:${minutes} ${days}/${months}/${year}`;
         }
 
         function makeShortScrambleText(scramble: string): string {
