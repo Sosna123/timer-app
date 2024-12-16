@@ -36,27 +36,35 @@ function formatNormal(
         return result;
     } else if (mode == "addDots") {
         //* adding "dots" to make 123456 into 12:34.56
+        //* 12:34.56
+        //  01 23 45
         let hundreths: string[] = [...time].slice(time.length - 2, time.length);
         if (hundreths.length == 1) {
             hundreths.unshift("0");
         }
+
         let seconds: string[] = [...time].slice(
             time.length - 4,
             time.length - 2
         );
+        if (time.length == 3) {
+            seconds = [...time].slice(time.length - 3, time.length - 2);
+        }
+
         if (seconds.length == 0) {
             seconds.unshift("0", "0");
         } else if (seconds.length == 1) {
             seconds.unshift("0");
         }
-        let minutes: string[] = [...time].slice(0, time.length - 4);
 
         let result = seconds.join("") + "." + hundreths.join("");
-        if (minutes.length) {
+        if (time.length >= 5) {
+            let minutes = [...time].slice(0, time.length - 4);
             result = minutes.join("") + ":" + result;
         }
         return result;
     } else {
+        //* mode == "calcNumBasedStr"
         //* calculating the number in ms from the string
         let hundreths: string[] = [...time].slice(time.length - 2, time.length);
         if (hundreths.length == 1) {
@@ -66,12 +74,18 @@ function formatNormal(
             time.length - 4,
             time.length - 2
         );
+        if (time.length == 3) {
+            seconds = [...time].slice(time.length - 3, time.length - 2);
+        }
         if (seconds.length == 0) {
             seconds.unshift("0", "0");
         } else if (seconds.length == 1) {
             seconds.unshift("0");
         }
         let minutes: string[] = [...time].slice(0, time.length - 4);
+        if (time.length <= 4) {
+            minutes = [];
+        }
 
         let result =
             Number(minutes.join("")) * 6000 +
