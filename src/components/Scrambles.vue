@@ -34,7 +34,7 @@
                 smallFont666: smallFont === 2,
                 smallerFont: smallFont === 3,
             }">
-            {{ scramble[0].scramble_string }}
+            {{ scrambleText }}
         </h2>
     </div>
 </template>
@@ -71,7 +71,9 @@ export default defineComponent({
         let scrambleGen = new Scrambow();
         let smallFont = ref<0 | 1 | 2 | 3>(0);
         let scramble = ref<{ scramble_string: string }[]>(scrambleGen.get(1));
-        emit("new-scramble", scramble.value[0].scramble_string);
+        let scrambleText = ref<string>("");
+        changeScramble();
+        emit("new-scramble", scrambleText);
         type ScrambleType =
             | "333"
             | "222"
@@ -111,7 +113,18 @@ export default defineComponent({
         function changeScramble() {
             if (props.timerRunning) return;
             scramble.value = scrambleGen.get(1);
-            emit("new-scramble", scramble.value[0].scramble_string);
+            let scrambleArr: string[] =
+                scramble.value[0].scramble_string.split(" ");
+            scrambleArr = scrambleArr.filter((e) => {
+                if (e === " " || e === "") {
+                    console.log(e);
+                    return false;
+                }
+                return true;
+            });
+            scrambleText.value = scrambleArr.join(" ");
+
+            emit("new-scramble", scrambleText.value);
         }
 
         //* watch if you need to change scramble
@@ -135,6 +148,7 @@ export default defineComponent({
             selectItems,
             smallFont,
             disableInput2,
+            scrambleText,
             changeScramble,
             showTimeList,
         };
