@@ -37,12 +37,7 @@
             " />
     </div>
 
-    <div
-        class="left-panel"
-        v-show="
-            (showTimeList && $vuetify.display.mdAndDown) ||
-            $vuetify.display.lgAndUp
-        ">
+    <div class="left-panel" v-show="(showTimeList && $vuetify.display.mdAndDown) || $vuetify.display.lgAndUp">
         <TimeList
             style="height: 100vh"
             :time="time"
@@ -52,11 +47,7 @@
             :update-chart="updateChartNum"
             :show-chart="timeChartActive"
             :makeChangeToTime="makeChangeToTime"
-            @time-deleted="
-                (i) => {
-                    timeRemoved++;
-                }
-            "
+            @time-deleted="timeRemoved++"
             @change-options="
                 (i) => {
                     editingOptions = i;
@@ -116,8 +107,8 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from "vue";
+<script lang="ts" setup>
+import { ref } from "vue";
 import TimeList from "../components/TimeList.vue";
 import Timer from "../components/Timer.vue";
 import Scrambles from "@/components/Scrambles.vue";
@@ -125,168 +116,124 @@ import Options from "@/components/Options.vue";
 import ModifyTime from "@/components/ModifyTime.vue";
 import { useRoute } from "vue-router";
 import { useTheme } from "vuetify";
-export default defineComponent({
-    components: {
-        TimeList,
-        Timer,
-        Scrambles,
-        Options,
-        ModifyTime,
-    },
-    setup() {
-        //* vars
-        const jscookie = require("js-cookie");
-        const route = useRoute();
-        let time = ref<{
-            id: number;
-            str: string;
-            num: number;
-            added2: boolean;
-            addedDnf: boolean;
-        }>();
-        let changeScramble = ref<number>(0);
-        let timeRemoved = ref<number>(0);
-        let username = ref<string>("");
-        let editingOptions = ref<boolean>(false);
-        let showTimeList = ref<boolean>(false);
-        let updateChartNum = ref<number>(0);
-        let currTheme = jscookie.get("theme")
-            ? ref<string>(jscookie.get("theme"))
-            : ref<string>("dark");
-        let timeChartActive = ref<boolean>(
-            jscookie.get("timeChartActive") === "1"
-        );
-        let timeListChanged = ref<any>([]);
-        let guestModeChanged = ref<number>(0);
-        let currentScramble = ref<string>("");
-        let timerRunning = ref<boolean>(false);
-        type Time = {
-            id: number;
-            str: string;
-            num: number;
-            added2: boolean;
-            addedDnf: boolean;
-            scramble: string;
-            date: number;
-        };
-        let editingTime = ref<boolean>(false);
-        let timeModified = ref<Time | null>(null);
-        let makeChangeToTime = ref<[string, Time] | null>(null);
 
-        //* use a prop to send time to TimeList
-        function addTime(i: {
-            id: number;
-            str: string;
-            num: number;
-            added2: boolean;
-            addedDnf: boolean;
-        }) {
-            time.value = i;
-        }
+//* vars
+const jscookie = require("js-cookie");
+const route = useRoute();
+let time = ref<{
+    id: number;
+    str: string;
+    num: number;
+    added2: boolean;
+    addedDnf: boolean;
+}>();
+let changeScramble = ref<number>(0);
+let timeRemoved = ref<number>(0);
+let username = ref<string>("");
+let editingOptions = ref<boolean>(false);
+let showTimeList = ref<boolean>(false);
+let updateChartNum = ref<number>(0);
+let currTheme = jscookie.get("theme") ? ref<string>(jscookie.get("theme")) : ref<string>("dark");
+let timeChartActive = ref<boolean>(jscookie.get("timeChartActive") === "1");
+let timeListChanged = ref<any>([]);
+let guestModeChanged = ref<number>(0);
+let currentScramble = ref<string>("");
+let timerRunning = ref<boolean>(false);
+type Time = {
+    id: number;
+    str: string;
+    num: number;
+    added2: boolean;
+    addedDnf: boolean;
+    scramble: string;
+    date: number;
+};
+let editingTime = ref<boolean>(false);
+let timeModified = ref<Time | null>(null);
+let makeChangeToTime = ref<[string, Time] | null>(null);
 
-        function changeUsernameFunc(
-            newUsername: string,
-            hasGuestChanged: boolean = false
-        ) {
-            username.value = newUsername.toLowerCase();
-            jscookie.set("username", newUsername, { expires: 365 * 10 });
-            // if (hasGuestChanged) {
-            //     guestModeChanged.value++;
-            // }
-        }
+//* use a prop to send time to TimeList
+function addTime(i: { id: number; str: string; num: number; added2: boolean; addedDnf: boolean }) {
+    time.value = i;
+}
 
-        if (jscookie.get("username")) {
-            username.value = jscookie.get("username");
-        }
+function changeUsernameFunc(newUsername: string, hasGuestChanged: boolean = false) {
+    username.value = newUsername.toLowerCase();
+    jscookie.set("username", newUsername, { expires: 365 * 10 });
+    // if (hasGuestChanged) {
+    //     guestModeChanged.value++;
+    // }
+}
 
-        if (username.value == "") {
-            editingOptions.value = true;
-        }
+if (jscookie.get("username")) {
+    username.value = jscookie.get("username");
+}
 
-        //* wca authorization
+if (username.value == "") {
+    editingOptions.value = true;
+}
 
-        if (route.query.code) {
-            console.log("authorization code found");
-            let authorCode = route.query.code;
-            jscookie.set("authorCode", authorCode, { expires: 365 * 10 });
+//* wca authorization
 
-            console.log("fetching token");
-            fetch(process.env.VUE_APP_DB_API_URL, {
-                method: "POST",
-                body: JSON.stringify({ authorizationCode: authorCode }),
-            }).then((data: any) => {
-                console.log("token fetched");
-                jscookie.set("bearerToken", data.access_token, {
-                    expires: data.access_token / 60 / 60 / 24,
-                });
-                jscookie.set("refreshToken", data.access_token, {
-                    expires: data.access_token / 60 / 60 / 24,
-                });
-                jscookie.remove("authorCode");
-            });
-        }
+if (route.query.code) {
+    console.log("authorization code found");
+    let authorCode = route.query.code;
+    jscookie.set("authorCode", authorCode, { expires: 365 * 10 });
 
-        if (jscookie.get("bearerToken")) {
-            console.log("fetching data");
-            fetch(process.env.VUE_APP_DB_API_URL, {
-                method: "POST",
-                body: JSON.stringify({
-                    bearerToken: jscookie.get("bearerToken"),
-                }),
-            }).then((data: any) => {
-                console.log("data fetched");
-                console.log(data);
-                username.value = "wca-" + data.me.id;
-                jscookie.set("username", username.value, {
-                    expires: 365 * 10,
-                });
-            });
-        }
+    console.log("fetching token");
+    fetch(process.env.VUE_APP_DB_API_URL, {
+        method: "POST",
+        body: JSON.stringify({ authorizationCode: authorCode }),
+    }).then((data: any) => {
+        console.log("token fetched");
+        jscookie.set("bearerToken", data.access_token, {
+            expires: data.access_token / 60 / 60 / 24,
+        });
+        jscookie.set("refreshToken", data.access_token, {
+            expires: data.access_token / 60 / 60 / 24,
+        });
+        jscookie.remove("authorCode");
+    });
+}
 
-        if (jscookie.get("refreshToken")) {
-            fetch(process.env.VUE_APP_DB_API_URL, {
-                method: "POST",
-                body: JSON.stringify({
-                    refreshToken: jscookie.get("refreshToken"),
-                }),
-            }).then((data: any) => {
-                jscookie.set("bearerToken", data.access_token, {
-                    expires: data.access_token / 60 / 60 / 24,
-                });
-                jscookie.set("refreshToken", data.access_token, {
-                    expires: data.access_token / 60 / 60 / 24,
-                });
-            });
-        }
+if (jscookie.get("bearerToken")) {
+    console.log("fetching data");
+    fetch(process.env.VUE_APP_DB_API_URL, {
+        method: "POST",
+        body: JSON.stringify({
+            bearerToken: jscookie.get("bearerToken"),
+        }),
+    }).then((data: any) => {
+        console.log("data fetched");
+        console.log(data);
+        username.value = "wca-" + data.me.id;
+        jscookie.set("username", username.value, {
+            expires: 365 * 10,
+        });
+    });
+}
 
-        //* change theme
-        if (jscookie.get("theme")) {
-            let theme = useTheme();
-            theme.global.name.value = jscookie.get("theme");
-        }
+if (jscookie.get("refreshToken")) {
+    fetch(process.env.VUE_APP_DB_API_URL, {
+        method: "POST",
+        body: JSON.stringify({
+            refreshToken: jscookie.get("refreshToken"),
+        }),
+    }).then((data: any) => {
+        jscookie.set("bearerToken", data.access_token, {
+            expires: data.access_token / 60 / 60 / 24,
+        });
+        jscookie.set("refreshToken", data.access_token, {
+            expires: data.access_token / 60 / 60 / 24,
+        });
+    });
+}
 
-        return {
-            time,
-            changeScramble,
-            timeRemoved,
-            username,
-            editingOptions,
-            showTimeList,
-            updateChartNum,
-            currTheme,
-            timeChartActive,
-            timeListChanged,
-            guestModeChanged,
-            currentScramble,
-            timerRunning,
-            editingTime,
-            timeModified,
-            makeChangeToTime,
-            addTime,
-            changeUsernameFunc,
-        };
-    },
-});
+//* change theme
+if (jscookie.get("theme")) {
+    let theme = useTheme();
+    theme.global.name.value = jscookie.get("theme");
+}
 </script>
 
 <style lang="scss">

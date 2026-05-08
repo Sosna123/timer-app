@@ -4,141 +4,133 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, watch } from "vue";
+<script lang="ts" setup>
+import { watch } from "vue";
 import Chart from "chart.js/auto";
 import { onMounted } from "vue";
 import formatNormal from "@/js/timeFormat";
-export default defineComponent({
-    props: ["timeList", "updateChartNum"],
-    setup(props) {
-        //* vars
-        let canvas: any;
-        let canvasContext: any;
-        let lineChart: any;
 
-        let filteredTimeList = props.timeList.filter((i: any) => !i.addedDnf);
+const props = defineProps(["timeList", "updateChartNum"]);
 
-        function makeChart() {
-            lineChart = new Chart(canvasContext, {
-                type: "line",
-                options: {
-                    animation: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function (value: any) {
-                                    return formatNormal(value.toString());
-                                },
-                                color: "rgba(255,255,255,0.5)",
-                            },
-                            grid: {
-                                color: "rgba(255,255,255,0.5)",
-                            },
+//* vars
+let canvas: any;
+let canvasContext: any;
+let lineChart: any;
+
+let filteredTimeList = props.timeList.filter((i: any) => !i.addedDnf);
+
+function makeChart() {
+    lineChart = new Chart(canvasContext, {
+        type: "line",
+        options: {
+            animation: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function (value: any) {
+                            return formatNormal(value.toString());
                         },
-                        x: {
-                            grid: {
-                                color: "rgba(255,255,255,0.5)",
-                            },
-                            ticks: {
-                                color: "rgba(255,255,255,0)",
-                            },
-                        },
+                        color: "rgba(255,255,255,0.5)",
                     },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function (tooltipItem: any) {
-                                    return formatNormal(
-                                        tooltipItem.parsed.y.toString()
-                                    );
-                                },
-                                title: function (tooltipItem: any) {
-                                    return "";
-                                },
-                            },
-                        },
+                    grid: {
+                        color: "rgba(255,255,255,0.5)",
                     },
                 },
-                data: {
-                    labels: filteredTimeList.map((i: any) => i.num),
-                    datasets: [
-                        {
-                            label: "Time",
-                            data: filteredTimeList.map((i: any) => i.num),
-                        },
-                    ],
+                x: {
+                    grid: {
+                        color: "rgba(255,255,255,0.5)",
+                    },
+                    ticks: {
+                        color: "rgba(255,255,255,0)",
+                    },
                 },
-            });
-        }
-
-        function tryToUpdateChartUntilShown() {
-            canvas = document.getElementById("timeChart") as HTMLCanvasElement;
-            let i = 0;
-            let interval = setInterval(() => {
-                i++;
-                if (canvas.checkVisibility()) {
-                    canvasContext = canvas.getContext("2d");
-                    updateChart();
-                    clearInterval(interval);
-                }
-                if (i >= 10) {
-                    clearInterval(interval);
-                }
-            }, 100);
-        }
-
-        //* create or update every time timeList changes
-        function updateChart() {
-            if (lineChart) {
-                lineChart.data = {
-                    labels: filteredTimeList.map((i: any) => i.num),
-                    datasets: [
-                        {
-                            label: "Time",
-                            data: filteredTimeList.map((i: any) => i.num),
-                        },
-                    ],
-                };
-                lineChart.update();
-            } else {
-                try {
-                    makeChart();
-                } catch (e) {
-                    return;
-                }
-            }
-        }
-
-        //* create canvas when html is loaded
-        onMounted(() => {
-            tryToUpdateChartUntilShown();
-        });
-
-        //* watching for array change or show timelist on mobile to update chart
-        watch(
-            () => props.timeList,
-            () => {
-                filteredTimeList = props.timeList.filter(
-                    (i: any) => !i.addedDnf
-                );
-                tryToUpdateChartUntilShown();
             },
-            { deep: true }
-        );
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (tooltipItem: any) {
+                            return formatNormal(tooltipItem.parsed.y.toString());
+                        },
+                        title: function (tooltipItem: any) {
+                            return "";
+                        },
+                    },
+                },
+            },
+        },
+        data: {
+            labels: filteredTimeList.map((i: any) => i.num),
+            datasets: [
+                {
+                    label: "Time",
+                    data: filteredTimeList.map((i: any) => i.num),
+                },
+            ],
+        },
+    });
+}
 
-        //* timeout so it renders after timelist is shown
-        watch(
-            () => props.updateChartNum,
-            () => {
-                tryToUpdateChartUntilShown();
-            }
-        );
+function tryToUpdateChartUntilShown() {
+    canvas = document.getElementById("timeChart") as HTMLCanvasElement;
+    let i = 0;
+    let interval = setInterval(() => {
+        i++;
+        if (canvas.checkVisibility()) {
+            canvasContext = canvas.getContext("2d");
+            updateChart();
+            clearInterval(interval);
+        }
+        if (i >= 10) {
+            clearInterval(interval);
+        }
+    }, 100);
+}
 
-        return { timeList: props.timeList };
-    },
+//* create or update every time timeList changes
+function updateChart() {
+    if (lineChart) {
+        lineChart.data = {
+            labels: filteredTimeList.map((i: any) => i.num),
+            datasets: [
+                {
+                    label: "Time",
+                    data: filteredTimeList.map((i: any) => i.num),
+                },
+            ],
+        };
+        lineChart.update();
+    } else {
+        try {
+            makeChart();
+        } catch (e) {
+            return;
+        }
+    }
+}
+
+//* create canvas when html is loaded
+onMounted(() => {
+    tryToUpdateChartUntilShown();
 });
+
+//* watching for array change or show timelist on mobile to update chart
+watch(
+    () => props.timeList,
+    () => {
+        filteredTimeList = props.timeList.filter((i: any) => !i.addedDnf);
+        tryToUpdateChartUntilShown();
+    },
+    { deep: true },
+);
+
+//* timeout so it renders after timelist is shown
+watch(
+    () => props.updateChartNum,
+    () => {
+        tryToUpdateChartUntilShown();
+    },
+);
 </script>
 
 <style></style>

@@ -1,11 +1,7 @@
 <template>
     <div class="text-center pa-5 bg-secondary">
         <div class="timeListBtn" id="timeListBtn">
-            <v-btn
-                class="timeListBtn"
-                @click="showTimeList()"
-                v-if="disableInput2 === false"
-                color="background">
+            <v-btn class="timeListBtn" @click="showTimeList()" v-if="disableInput2 === false" color="background">
                 <button>Show stats and times</button>
             </v-btn>
         </div>
@@ -18,12 +14,7 @@
             density="compact"
             hide-details
             class="mb-1"
-            :disabled="
-                $props.disableInput ||
-                $props.disableInput2 ||
-                $props.disableInput3 ||
-                $props.timerRunning
-            ">
+            :disabled="props.disableInput || props.disableInput2 || props.disableInput3 || props.timerRunning">
         </v-select>
         <h2
             @click="changeScramble()"
@@ -39,121 +30,93 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, watchEffect } from "vue";
-import { ref } from "vue";
-import { watch } from "vue";
-export default defineComponent({
-    props: [
-        "changeScramble",
-        "disableInput",
-        "disableInput2",
-        "disableInput3",
-        "timerRunning",
-    ],
-    setup(props, { emit }) {
-        //* vars
-        const selectItems = [
-            { value: "333", name: "3x3" },
-            { value: "222", name: "2x2" },
-            { value: "444", name: "4x4" },
-            { value: "555", name: "5x5" },
-            { value: "666", name: "6x6" },
-            { value: "777", name: "7x7" },
-            { value: "clock", name: "Clock" },
-            { value: "minx", name: "Megaminx" },
-            { value: "pyram", name: "Pyraminx" },
-            { value: "skewb", name: "Skewb" },
-            { value: "sq1", name: "Square-1" },
-        ];
+<script lang="ts" setup>
+import { ref, watch } from "vue";
 
-        const Scrambow = require("scrambow").Scrambow;
-        let scrambleGen = new Scrambow();
-        let smallFont = ref<0 | 1 | 2 | 3>(0);
-        let scramble = ref<{ scramble_string: string }[]>(scrambleGen.get(1));
-        let scrambleText = ref<string>("");
+// props: ,
+const emit = defineEmits<{
+    "new-scramble": [string];
+    "show-timelist": [];
+}>();
+const props = defineProps(["changeScramble", "disableInput", "disableInput2", "disableInput3", "timerRunning"]);
+
+//* vars
+const selectItems = [
+    { value: "333", name: "3x3" },
+    { value: "222", name: "2x2" },
+    { value: "444", name: "4x4" },
+    { value: "555", name: "5x5" },
+    { value: "666", name: "6x6" },
+    { value: "777", name: "7x7" },
+    { value: "clock", name: "Clock" },
+    { value: "minx", name: "Megaminx" },
+    { value: "pyram", name: "Pyraminx" },
+    { value: "skewb", name: "Skewb" },
+    { value: "sq1", name: "Square-1" },
+];
+
+const Scrambow = require("scrambow").Scrambow;
+let scrambleGen = new Scrambow();
+let smallFont = ref<0 | 1 | 2 | 3>(0);
+let scramble = ref<{ scramble_string: string }[]>(scrambleGen.get(1));
+let scrambleText = ref<string>("");
+changeScramble();
+emit("new-scramble", scrambleText.value);
+type ScrambleType = "333" | "222" | "444" | "555" | "666" | "777" | "clock" | "minx" | "pyram" | "skweb" | "sq1";
+let scrambleType = ref<ScrambleType>("333");
+let disableInput = ref<boolean>(false);
+let disableInput2 = ref<boolean>(false);
+
+//* watch if scramble type changes
+watch(
+    () => scrambleType.value,
+    (scramType) => {
+        if (props.timerRunning) return;
+        scrambleGen = new Scrambow().setType(scramType);
         changeScramble();
-        emit("new-scramble", scrambleText);
-        type ScrambleType =
-            | "333"
-            | "222"
-            | "444"
-            | "555"
-            | "666"
-            | "777"
-            | "clock"
-            | "minx"
-            | "pyram"
-            | "skweb"
-            | "sq1";
-        let scrambleType = ref<ScrambleType>("333");
-        let disableInput = ref<boolean>(false);
-        let disableInput2 = ref<boolean>(false);
-
-        //* watch if scramble type changes
-        watch(
-            () => scrambleType.value,
-            (scramType) => {
-                if (props.timerRunning) return;
-                scrambleGen = new Scrambow().setType(scramType);
-                changeScramble();
-                if (scramType === "555") {
-                    smallFont.value = 1;
-                } else if (scramType === "666" || scramType === "minx") {
-                    smallFont.value = 2;
-                } else if (scramType === "777") {
-                    smallFont.value = 3;
-                } else {
-                    smallFont.value = 0;
-                }
-            }
-        );
-
-        //* change the scramble
-        function changeScramble() {
-            if (props.timerRunning) return;
-            scramble.value = scrambleGen.get(1);
-            let scrambleArr: string[] =
-                scramble.value[0].scramble_string.split(" ");
-            scrambleArr = scrambleArr.filter((e) => {
-                if (e === " " || e === "") {
-                    console.log(e);
-                    return false;
-                }
-                return true;
-            });
-            scrambleText.value = scrambleArr.join(" ");
-
-            emit("new-scramble", scrambleText.value);
+        if (scramType === "555") {
+            smallFont.value = 1;
+        } else if (scramType === "666" || scramType === "minx") {
+            smallFont.value = 2;
+        } else if (scramType === "777") {
+            smallFont.value = 3;
+        } else {
+            smallFont.value = 0;
         }
-
-        //* watch if you need to change scramble
-        watch(
-            () => props.changeScramble,
-            () => {
-                changeScramble();
-            }
-        );
-
-        function showTimeList() {
-            const button = document.getElementById("timeListBtn");
-            button!.blur();
-            emit("show-timelist");
-            disableInput2.value = false;
-        }
-
-        return {
-            scramble,
-            scrambleType,
-            selectItems,
-            smallFont,
-            disableInput2,
-            scrambleText,
-            changeScramble,
-            showTimeList,
-        };
     },
-});
+);
+
+//* change the scramble
+function changeScramble() {
+    if (props.timerRunning) return;
+    scramble.value = scrambleGen.get(1);
+    let scrambleArr: string[] = scramble.value[0].scramble_string.split(" ");
+    scrambleArr = scrambleArr.filter((e) => {
+        if (e === " " || e === "") {
+            console.log(e);
+            return false;
+        }
+        return true;
+    });
+    scrambleText.value = scrambleArr.join(" ");
+
+    emit("new-scramble", scrambleText.value);
+}
+
+//* watch if you need to change scramble
+watch(
+    () => props.changeScramble,
+    () => {
+        changeScramble();
+    },
+);
+
+function showTimeList() {
+    const button = document.getElementById("timeListBtn");
+    button!.blur();
+    emit("show-timelist");
+    disableInput2.value = false;
+}
 </script>
 
 <style lang="scss">
