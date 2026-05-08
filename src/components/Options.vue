@@ -87,10 +87,10 @@ const selectStatsItems: { title: string; value: number }[] = [
         value: 1,
     },
 ];
-let theme = ref<string>("dark");
+let theme = ref<string>(jscookie.get("theme") ?? "dark");
 let newTheme = ref(theme.value);
 let isGuest = ref<boolean>(jscookie.get("isGuest") === "1");
-let statsMode = ref<number>(-1);
+let statsMode = ref<number>(Number(jscookie.get("statsMode")) ?? -1);
 
 jscookie.get("timeChartActive") === undefined
     ? jscookie.set("timeChartActive", 1, {
