@@ -1,7 +1,7 @@
 <template>
     <div class="position-absolute d-flex" style="justify-content: center; align-items: center; height: 100vh; width: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 2">
         <div>
-            <div class="timeContainer bg-primary" v-if="props.time != null" style="overflow-y: scroll">
+            <div class="timeContainer bg-primary" v-if="props.time != null" style="overflow-y: auto">
                 <h1 style="font-size: 64px">{{ props.time.str }}</h1>
                 <div style="display: flex; justify-content: space-between; width: 100%">
                     <v-btn style="width: 150px" color="background" @click="emit('modifyTime', ['plus2', time])"><button>Add +2</button></v-btn>

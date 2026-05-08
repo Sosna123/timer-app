@@ -131,7 +131,6 @@ watch(
             i--;
         }
 
-        console.log(newFilteredTimeList);
         filteredTimeList = newFilteredTimeList;
         tryToUpdateChartUntilShown();
     },

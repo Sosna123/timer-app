@@ -1,5 +1,5 @@
 <template>
-    <div class="overflow-y-scroll overflow-x-hidden pa-5 bg-primary">
+    <div class="overflow-y-auto overflow-x-hidden pa-5 bg-primary">
         <div class="d-inline-block">
             <TimeChart :timeList="timeArray" :update-chart-num="props.updateChart" v-show="props.showChart" />
         </div>
