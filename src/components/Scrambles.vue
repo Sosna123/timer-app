@@ -93,7 +93,6 @@ function changeScramble() {
     let scrambleArr: string[] = scramble.value[0].scramble_string.split(" ");
     scrambleArr = scrambleArr.filter((e) => {
         if (e === " " || e === "") {
-            console.log(e);
             return false;
         }
         return true;

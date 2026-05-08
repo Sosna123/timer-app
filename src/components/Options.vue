@@ -13,7 +13,8 @@
                 <v-divider class="my-3" :thickness="3" length="90%"></v-divider>
                 <div>
                     <v-checkbox label="Show the Time Chart" v-model="timeChartActive"></v-checkbox>
-                    <v-select label="Change Theme" :items="selectItems" v-model="newTheme" prepend-inner-icon="mdi-palette" hide-details style="width: 400px" class="mb-1"> </v-select>
+                    <v-select label="Change Theme" :items="selectThemeItems" v-model="newTheme" prepend-inner-icon="mdi-palette" hide-details style="width: 400px" class="mb-1"> </v-select>
+                    <v-select label="Show stats for:" :items="selectStatsItems" v-model="statsMode" hide-details style="width: 400px" class="mb-1"> </v-select>
                 </div>
                 <v-divider class="my-3" :thickness="3" length="90%"></v-divider>
                 <div>
@@ -31,6 +32,8 @@
                             newUsername.length > 0 && !newUsername.startsWith('wca-') ? (!(newUsername.length > 28) ? emit('username-changed', newUsername) : newUsername.substring(0, 28)) : (newUsername = props.username);
                             /* toggle guest mode*/
                             changeIsGuest();
+                            /* toggle stats mode*/
+                            changeStatsMode();
                         ">
                         <button>Save Changes</button>
                     </v-btn>
@@ -60,6 +63,7 @@ const emit = defineEmits<{
     "username-changed": [string];
     "time-chart-change": [boolean];
     hideOptions: [];
+    statsModeChanged: [];
 }>();
 let newUsername = ref<string>(props.username);
 
@@ -72,12 +76,27 @@ watch(
 
 const jscookie = require("js-cookie");
 const themeChanger = useTheme();
-const selectItems: string[] = ["dark", "light", "red", "pink", "purple", "deep-purple", "indigo", "blue", "light-blue", "cyan", "teal", "green", "light-green", "lime", "yellow", "amber", "orange", "deep-orange", "brown", "blue-grey"];
+const selectThemeItems: string[] = ["dark", "light", "red", "pink", "purple", "deep-purple", "indigo", "blue", "light-blue", "cyan", "teal", "green", "light-green", "lime", "yellow", "amber", "orange", "deep-orange", "brown", "blue-grey"];
+const selectStatsItems: { title: string; value: number }[] = [
+    {
+        title: "All times",
+        value: -1,
+    },
+    {
+        title: "Today",
+        value: 1,
+    },
+];
 let theme = ref<string>("dark");
 let newTheme = ref(theme.value);
 let isGuest = ref<boolean>(jscookie.get("isGuest") === "1");
+let statsMode = ref<number>(-1);
 
-jscookie.get("timeChartActive") === undefined ? jscookie.set("timeChartActive", 1) : null;
+jscookie.get("timeChartActive") === undefined
+    ? jscookie.set("timeChartActive", 1, {
+          expires: 365 * 10,
+      })
+    : null;
 let timeChartActive = ref<boolean>(jscookie.get("timeChartActive") === "1");
 
 function changeTheme() {
@@ -90,18 +109,25 @@ function changeTheme() {
 }
 
 function changeIsGuest() {
-    jscookie.set("isGuest", Number(isGuest.value));
+    jscookie.set("isGuest", Number(isGuest.value), {
+        expires: 365 * 10,
+    });
     if (jscookie.get("isGuest") !== "1") {
         emit("guest-changed", newUsername.value);
     }
 }
-function changeTimeChartActive() {
-    jscookie.set("timeChartActive", Number(timeChartActive.value));
+
+function changeStatsMode() {
+    jscookie.set("statsMode", Number(statsMode.value), {
+        expires: 365 * 10,
+    });
+    emit("statsModeChanged");
 }
 
-function redirectToWca() {
-    window.location.href =
-        "https://www.worldcubeassociation.org/oauth/authorize?client_id=veUGFyAGSPOnGaI2jpEzn6hZX6FPxnRGyGyf0NEY6N0&client_secret=1aGASn8lsLAVHWz8tUlremODceIazL6CPwUTUH9iu-Y&redirect_uri=https%3A%2F%2Fspeedcubing-timer.netlify.app%2F&response_type=code&scope=";
+function changeTimeChartActive() {
+    jscookie.set("timeChartActive", Number(timeChartActive.value), {
+        expires: 365 * 10,
+    });
 }
 
 function revertChanges() {
@@ -109,6 +135,7 @@ function revertChanges() {
     newTheme.value = theme.value;
     isGuest.value = jscookie.get("isGuest") === "1";
     timeChartActive.value = jscookie.get("timeChartActive") === "1";
+    statsMode.value = Number(jscookie.get("statsMode")) ?? -1;
 }
 </script>
 
@@ -122,7 +149,7 @@ function revertChanges() {
     padding: 20px;
     border-radius: 10px;
     width: 500px;
-    height: 600px;
+    height: 700px;
     position: relative;
     overflow: hidden;
 }

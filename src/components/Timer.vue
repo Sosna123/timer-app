@@ -114,18 +114,22 @@ document.body.addEventListener("keyup", (e) => {
         timerMode.value = timerMode.value == "normal" ? "input" : "normal";
         return;
     }
+
     if (timerMode.value == "normal") {
         if (timerRunning && e.code != "Space" && e.code != "Escape") {
             manageTimer();
         }
+
         if (e.code == "Space") {
             manageTimer();
         }
+
         if (e.code == "Escape" && timerRunning) {
             clearInterval(intervalTimer);
             timerRunning = false;
             currentTime.value = 0;
             currentTimeStr.value = "0.00";
+            emit("timer-running", timerRunning);
         }
     } else if (timerMode.value == "input") {
         if (e.key == "Enter") {

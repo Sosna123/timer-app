@@ -5,10 +5,10 @@
         </div>
         <div class="d-inline-block">
             <h1>Stats:</h1>
-            <h2 class="ma-0">Solves: {{ timeArray.length }}</h2>
-            <h2 class="ma-0">PB single: {{ pbTime.str }}</h2>
-            <h2 class="ma-0">PB ao5: {{ pbAo5.str }}</h2>
-            <h2 class="ma-0">Mean: {{ meanOfArr(timeArray) }}</h2>
+            <h2 class="ma-0">Solves: {{ currStats[0] }}</h2>
+            <h2 class="ma-0">PB single: {{ currStats[1] }}</h2>
+            <h2 class="ma-0">PB ao5: {{ currStats[2] }}</h2>
+            <h2 class="ma-0">Mean: {{ currStats[3] }}</h2>
         </div>
         <v-divider class="my-3" :thickness="3" length="100%"></v-divider>
         <!--* options -->
@@ -39,7 +39,7 @@
 import { ref, toRaw, watch } from "vue";
 import formatNormal from "@/js/timeFormat";
 import TimeChart from "@/components/TimeChart.vue";
-const props = defineProps(["time", "username", "editingOptions", "updateChart", "showChart", "guestModeChanged", "makeChangeToTime"]);
+const props = defineProps(["time", "username", "editingOptions", "updateChart", "showChart", "guestModeChanged", "makeChangeToTime", "updateStats"]);
 const emit = defineEmits<{
     changeOptions: [boolean];
     "modify-time": [Time];
@@ -48,6 +48,7 @@ const emit = defineEmits<{
     timeDeleted: [];
     timeListChanged: [Time[]];
 }>();
+
 //* types
 type Time = {
     id: number;
@@ -57,6 +58,11 @@ type Time = {
     addedDnf: boolean;
     scramble: string;
     date: number;
+};
+
+type Average = {
+    str: string;
+    num: number;
 };
 
 //* vars
@@ -103,6 +109,9 @@ let pbAo5 = ref<{
     num: 0,
 });
 let changeScramble: number = 0;
+
+type Stats = [number, string, string, string];
+let currStats = ref<Stats>([0, "0.00", "0.00", "0.00"]);
 
 //* communication with database
 async function fetchData(method: string, body?: object) {
@@ -308,7 +317,10 @@ watch(
             },
             // four empty averages to offset the first 5 solves
         ];
-        calcAvgs();
+
+        timeArrayAvgs.value.push(...calcAvgs(timeArray));
+
+        currStats.value = getStats(timeArray);
 
         //* cookies change
         jscookie.set("timeArray", JSON.stringify(timeArray), {
@@ -321,17 +333,26 @@ watch(
 const getConsecutiveArrays = <T, _>(arr: T[], size: number): T[][] => (size > arr.length ? [] : arr.slice(size - 1).map((_, i) => arr.slice(i, size + i)));
 
 //* function to calculate avg of 5
-function calcAvgs() {
-    let timeArrayCopy: Time[] = [...toRaw(timeArray.value)];
+function calcAvgs(tempTimeArr: Time[]): Average[] {
+    let timeArrayCopy: Time[] = [...toRaw(tempTimeArr)];
 
     let allArrays = getConsecutiveArrays(timeArrayCopy, 5);
 
+    let allAvgs: Average[] = [];
+
     allArrays.forEach((array) => {
-        calcAvg(array);
+        allAvgs.push(calcAvg(array));
     });
+
+    return allAvgs;
 }
 
-function calcAvg(array: Time[]) {
+function calcAvg(array: Time[]): Average {
+    let finalAvg: Average = {
+        str: "0.00",
+        num: 0,
+    };
+
     array.sort((a, b) => {
         if (a.addedDnf) {
             return 1;
@@ -360,22 +381,73 @@ function calcAvg(array: Time[]) {
     });
 
     if (dnfAvg) {
-        timeArrayAvgs.value.push({
+        finalAvg = {
             str: "DNF",
             num: -1,
-        });
+        };
     } else {
         let sumOfTimes = array.reduce((acc, e) => {
             return acc + e.num;
         }, 0);
 
         sumOfTimes = Math.round(sumOfTimes / 3);
-        timeArrayAvgs.value.push({
+        finalAvg = {
             str: formatNormal(sumOfTimes.toString()),
             num: sumOfTimes,
+        };
+    }
+
+    return finalAvg;
+}
+
+function getStats(tempTimeArr: Time[]): Stats {
+    if (tempTimeArr.length == 0) {
+        currStats.value = [0, "0.00", "0.00", "0.00"];
+        return currStats.value;
+    }
+
+    if (jscookie.get("statsMode") == "1") {
+        tempTimeArr = tempTimeArr.filter((e) => {
+            return new Date(e.date).toDateString() == new Date().toDateString();
         });
     }
+
+    let pbTimeStats = tempTimeArr.toSorted((a, b) => {
+        if (a.num > b.num) {
+            return 1;
+        } else if (a.num < b.num) {
+            return -1;
+        }
+        return 0;
+    })[0];
+
+    let pbAo5Stats: Average = {
+        str: "0.00",
+        num: 0,
+    };
+
+    if (tempTimeArr.length >= 5) {
+        pbAo5Stats = calcAvgs(tempTimeArr)
+            .filter((a) => a.num != -1)
+            .sort((a, b) => {
+                if (a.num > b.num) {
+                    return 1;
+                } else if (a.num < b.num) {
+                    return -1;
+                }
+                return 0;
+            })[0];
+    }
+
+    return [tempTimeArr.length, pbTimeStats.str, pbAo5Stats.str, meanOfArr(tempTimeArr)];
 }
+
+watch(
+    () => props.updateStats,
+    () => {
+        currStats.value = getStats(timeArray.value);
+    },
+);
 
 watch(
     timeArrayAvgs,

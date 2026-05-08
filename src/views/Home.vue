@@ -23,7 +23,8 @@
                     timeChartActive = i;
                     updateChartNum++;
                 }
-            " />
+            "
+            @statsModeChanged="updateStats++" />
     </div>
 
     <div v-show="editingTime && timeModified != null">
@@ -47,6 +48,7 @@
             :update-chart="updateChartNum"
             :show-chart="timeChartActive"
             :makeChangeToTime="makeChangeToTime"
+            :updateStats="updateStats"
             @time-deleted="timeRemoved++"
             @change-options="
                 (i) => {
@@ -85,7 +87,7 @@
             " />
         <Timer
             class="pa-0"
-            style="height: 73vh; width: 100%; /*overflow-x: hidden*/"
+            style="height: 73vh; width: 100%"
             :remove-time="timeRemoved"
             :curr-theme="currTheme"
             :editing-options="editingOptions"
@@ -137,6 +139,7 @@ let currTheme = jscookie.get("theme") ? ref<string>(jscookie.get("theme")) : ref
 let timeChartActive = ref<boolean>(jscookie.get("timeChartActive") === "1");
 let timeListChanged = ref<any>([]);
 let guestModeChanged = ref<number>(0);
+let updateStats = ref<number>(0);
 let currentScramble = ref<string>("");
 let timerRunning = ref<boolean>(false);
 type Time = {
@@ -171,62 +174,6 @@ if (jscookie.get("username")) {
 
 if (username.value == "") {
     editingOptions.value = true;
-}
-
-//* wca authorization
-
-if (route.query.code) {
-    console.log("authorization code found");
-    let authorCode = route.query.code;
-    jscookie.set("authorCode", authorCode, { expires: 365 * 10 });
-
-    console.log("fetching token");
-    fetch(process.env.VUE_APP_DB_API_URL, {
-        method: "POST",
-        body: JSON.stringify({ authorizationCode: authorCode }),
-    }).then((data: any) => {
-        console.log("token fetched");
-        jscookie.set("bearerToken", data.access_token, {
-            expires: data.access_token / 60 / 60 / 24,
-        });
-        jscookie.set("refreshToken", data.access_token, {
-            expires: data.access_token / 60 / 60 / 24,
-        });
-        jscookie.remove("authorCode");
-    });
-}
-
-if (jscookie.get("bearerToken")) {
-    console.log("fetching data");
-    fetch(process.env.VUE_APP_DB_API_URL, {
-        method: "POST",
-        body: JSON.stringify({
-            bearerToken: jscookie.get("bearerToken"),
-        }),
-    }).then((data: any) => {
-        console.log("data fetched");
-        console.log(data);
-        username.value = "wca-" + data.me.id;
-        jscookie.set("username", username.value, {
-            expires: 365 * 10,
-        });
-    });
-}
-
-if (jscookie.get("refreshToken")) {
-    fetch(process.env.VUE_APP_DB_API_URL, {
-        method: "POST",
-        body: JSON.stringify({
-            refreshToken: jscookie.get("refreshToken"),
-        }),
-    }).then((data: any) => {
-        jscookie.set("bearerToken", data.access_token, {
-            expires: data.access_token / 60 / 60 / 24,
-        });
-        jscookie.set("refreshToken", data.access_token, {
-            expires: data.access_token / 60 / 60 / 24,
-        });
-    });
 }
 
 //* change theme
