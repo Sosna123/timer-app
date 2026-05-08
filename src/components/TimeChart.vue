@@ -119,6 +119,20 @@ watch(
     () => props.timeList,
     () => {
         filteredTimeList = props.timeList.filter((i: any) => !i.addedDnf);
+
+        let newFilteredTimeList = [];
+        let i = filteredTimeList.length - 1;
+        while (newFilteredTimeList.length < 100) {
+            if (i < 0) {
+                break;
+            }
+
+            newFilteredTimeList.unshift(filteredTimeList[i]);
+            i--;
+        }
+
+        console.log(newFilteredTimeList);
+        filteredTimeList = newFilteredTimeList;
         tryToUpdateChartUntilShown();
     },
     { deep: true },
