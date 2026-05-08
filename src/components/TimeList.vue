@@ -39,6 +39,7 @@
 import { ref, toRaw, watch } from "vue";
 import formatNormal from "@/js/timeFormat";
 import TimeChart from "@/components/TimeChart.vue";
+import { type Time, Average, Stats } from "@/js/types";
 const props = defineProps(["time", "username", "editingOptions", "updateChart", "showChart", "guestModeChanged", "makeChangeToTime", "updateStats"]);
 const emit = defineEmits<{
     changeOptions: [boolean];
@@ -48,22 +49,6 @@ const emit = defineEmits<{
     timeDeleted: [];
     timeListChanged: [Time[]];
 }>();
-
-//* types
-type Time = {
-    id: number;
-    str: string;
-    num: number;
-    added2: boolean;
-    addedDnf: boolean;
-    scramble: string;
-    date: number;
-};
-
-type Average = {
-    str: string;
-    num: number;
-};
 
 //* vars
 const jscookie = require("js-cookie");
@@ -110,7 +95,6 @@ let pbAo5 = ref<{
 });
 let changeScramble: number = 0;
 
-type Stats = [number, string, string, string];
 let currStats = ref<Stats>([0, "0.00", "0.00", "0.00"]);
 
 //* communication with database

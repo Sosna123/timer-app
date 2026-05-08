@@ -118,6 +118,7 @@ import Options from "@/components/Options.vue";
 import ModifyTime from "@/components/ModifyTime.vue";
 import { useRoute } from "vue-router";
 import { useTheme } from "vuetify";
+import { type Time } from "@/js/types";
 
 //* vars
 const jscookie = require("js-cookie");
@@ -142,15 +143,6 @@ let guestModeChanged = ref<number>(0);
 let updateStats = ref<number>(0);
 let currentScramble = ref<string>("");
 let timerRunning = ref<boolean>(false);
-type Time = {
-    id: number;
-    str: string;
-    num: number;
-    added2: boolean;
-    addedDnf: boolean;
-    scramble: string;
-    date: number;
-};
 let editingTime = ref<boolean>(false);
 let timeModified = ref<Time | null>(null);
 let makeChangeToTime = ref<[string, Time] | null>(null);

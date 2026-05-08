@@ -32,6 +32,7 @@
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
+import { type ScrambleType } from "@/js/types";
 
 // props: ,
 const emit = defineEmits<{
@@ -62,7 +63,6 @@ let scramble = ref<{ scramble_string: string }[]>(scrambleGen.get(1));
 let scrambleText = ref<string>("");
 changeScramble();
 emit("new-scramble", scrambleText.value);
-type ScrambleType = "333" | "222" | "444" | "555" | "666" | "777" | "clock" | "minx" | "pyram" | "skweb" | "sq1";
 let scrambleType = ref<ScrambleType>("333");
 let disableInput = ref<boolean>(false);
 let disableInput2 = ref<boolean>(false);

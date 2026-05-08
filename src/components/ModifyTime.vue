@@ -27,22 +27,13 @@
 </template>
 
 <script lang="ts" setup>
+import { type Time } from "@/js/types";
 const props = defineProps(["time"]);
 const emit = defineEmits<{
     modifyTime: [[string, Time]];
     "exit-time-modifying": [];
 }>();
 let navigator = window.navigator;
-
-type Time = {
-    id: number;
-    str: string;
-    num: number;
-    added2: boolean;
-    addedDnf: boolean;
-    scramble: string;
-    date: number;
-};
 
 function getDateString(date: Date): string {
     //* time hh:mm
