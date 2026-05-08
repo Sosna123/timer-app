@@ -4,7 +4,7 @@
             <TimeChart :timeList="timeArray" :update-chart-num="props.updateChart" v-show="props.showChart" />
         </div>
         <div class="d-inline-block">
-            <h1>Stats:</h1>
+            <h1>Stats {{ statsModeInfo }}:</h1>
             <h2 class="ma-0">Solves: {{ currStats[0] }}</h2>
             <h2 class="ma-0">PB single: {{ currStats[1] }}</h2>
             <h2 class="ma-0">PB ao5: {{ currStats[2] }}</h2>
@@ -95,6 +95,12 @@ let pbAo5 = ref<{
 });
 let changeScramble: number = 0;
 
+let statsModeInfo = ref<string>("");
+if (jscookie.get("statsMode") == -1) {
+    statsModeInfo.value = "(all)";
+} else if (jscookie.get("statsMode") == 1) {
+    statsModeInfo.value = "(today)";
+}
 let currStats = ref<Stats>([0, "0.00", "0.00", "0.00"]);
 
 //* communication with database
@@ -429,6 +435,12 @@ function getStats(tempTimeArr: Time[]): Stats {
 watch(
     () => props.updateStats,
     () => {
+        if (jscookie.get("statsMode") == -1) {
+            statsModeInfo.value = "(all)";
+        } else if (jscookie.get("statsMode") == 1) {
+            statsModeInfo.value = "(today)";
+        }
+
         currStats.value = getStats(timeArray.value);
     },
 );

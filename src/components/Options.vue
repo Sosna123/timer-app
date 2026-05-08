@@ -92,6 +92,10 @@ let newTheme = ref(theme.value);
 let isGuest = ref<boolean>(jscookie.get("isGuest") === "1");
 let statsMode = ref<number>(Number(jscookie.get("statsMode")) ?? -1);
 
+if (isNaN(statsMode.value)) {
+    statsMode.value = -1;
+}
+
 jscookie.get("timeChartActive") === undefined
     ? jscookie.set("timeChartActive", 1, {
           expires: 365 * 10,
