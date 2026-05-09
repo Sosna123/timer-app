@@ -403,6 +403,12 @@ function getStats(tempTimeArr: Time[]): Stats {
     }
 
     let pbTimeStats = tempTimeArr.toSorted((a, b) => {
+        if(a.addedDnf){
+            return 1;
+        } else if(b.addedDnf){
+            return -1;
+        }
+        
         if (a.num > b.num) {
             return 1;
         } else if (a.num < b.num) {
